@@ -77,18 +77,18 @@ svg{display:block;width:100%;height:auto}
 <div class="wrap">
   <section class="hero">
     <div><div class="kicker">FIFA World Cup 2026 · Prediction game</div><h1>Standings race</h1><div class="sub">Cumulative points by tournament day. Move the slider to replay the leaderboard. By default, today shows the next data day because scores are updated with a one-day delay.</div></div>
-    <div class="badge"><div class="small">Leader on selected day</div><div class="big"><span id="leaderName">—</span> <span class="pts" id="leaderPts"></span></div></div>
+    <div class="badge"><div class="small">Leader on selected day</div><div class="big"><span id="leaderName">Dennis Ståhl</span> <span class="pts" id="leaderPts">10 pts</span></div></div>
   </section>
   <div class="statgrid">
-    <div class="stat"><div class="label">Participants</div><div class="value" id="statPlayers">—</div></div>
-    <div class="stat"><div class="label">Selected date</div><div class="value" id="statDate">—</div></div>
-    <div class="stat"><div class="label">Max score</div><div class="value" id="statMax">—</div></div>
+    <div class="stat"><div class="label">Participants</div><div class="value" id="statPlayers">49</div></div>
+    <div class="stat"><div class="label">Selected date</div><div class="value" id="statDate">20/7</div></div>
+    <div class="stat"><div class="label">Max score</div><div class="value" id="statMax">10</div></div>
   </div>
   <main class="grid">
     <section class="card">
       <div class="card-head"><div><div class="card-title">Cumulative score race</div><div class="card-desc">Top lines are highlighted. Players tied on the same score are slightly staggered to keep labels readable.</div></div><div class="legend" id="legend"></div></div>
       <svg id="raceChart" viewBox="0 0 920 560" role="img" aria-label="Cumulative score race chart"></svg>
-      <div class="controls"><div class="range-wrap"><input id="daySlider" type="range" min="0" value="0" step="1" /><div class="date-pill" id="datePill">—</div></div><button id="playBtn" style="border:0;border-radius:999px;padding:11px 16px;font-weight:900;color:#07111f;background:linear-gradient(135deg,#f8c65a,#ffe6a9);cursor:pointer">Play</button></div>
+      <div class="controls"><div class="range-wrap"><input id="daySlider" type="range" min="0" value="0" step="1" /><div class="date-pill" id="datePill">20/7</div></div><button id="playBtn" style="border:0;border-radius:999px;padding:11px 16px;font-weight:900;color:#07111f;background:linear-gradient(135deg,#f8c65a,#ffe6a9);cursor:pointer">Play</button></div>
       <div class="highlight-panel">
         <div class="highlight-top">
           <div><div class="highlight-title">Highlighted players</div><div class="highlight-note" id="highlightMode">Default: top 10 on the selected date</div></div>
@@ -100,156 +100,78 @@ svg{display:block;width:100%;height:auto}
     </section>
     <aside class="card">
       <div class="card-head"><div><div class="card-title">Leaderboard</div><div class="card-desc">All participants at selected date, with change since previous day. Scroll to see everyone.</div></div></div>
-      <div class="table" id="leaderboard"></div>
+      <div class="table" id="leaderboard"><div class="row header"><div>#</div><div>Player</div><div>Pts</div><div>Δ rank</div></div><div class="row"><div class="rank">1</div><div class="name" title="Dennis Ståhl">Dennis Ståhl</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">1</div><div class="name" title="Joel Mars Hagdahl">Joel Mars Hagdahl</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">1</div><div class="name" title="Tomas Stenberg">Tomas Stenberg</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">4</div><div class="name" title="Patrik Lindström">Patrik Lindström</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Axel Eriksson">Axel Eriksson</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Fredrik Mazur">Fredrik Mazur</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Isidor Lundqvist">Isidor Lundqvist</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Perplexity">Perplexity</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Peter Ekroth">Peter Ekroth</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Simon Bjernerup">Simon Bjernerup</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">11</div><div class="name" title="ChatGPT">ChatGPT</div><div class="points">6</div><div class="delta">—</div></div><div class="row"><div class="rank">11</div><div class="name" title="Francesca Bern">Francesca Bern</div><div class="points">6</div><div class="delta">—</div></div><div class="row"><div class="rank">11</div><div class="name" title="Kristin Nerman">Kristin Nerman</div><div class="points">6</div><div class="delta">—</div></div><div class="row"><div class="rank">11</div><div class="name" title="Patrik Bern">Patrik Bern</div><div class="points">6</div><div class="delta">—</div></div><div class="row"><div class="rank">11</div><div class="name" title="Petter Larsson">Petter Larsson</div><div class="points">6</div><div class="delta">—</div></div><div class="row"><div class="rank">16</div><div class="name" title="Axel Sundkvist">Axel Sundkvist</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">16</div><div class="name" title="Claude">Claude</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">16</div><div class="name" title="Gemini">Gemini</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">16</div><div class="name" title="Jonna Wester">Jonna Wester</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">16</div><div class="name" title="Josefine Mars Hagdahl">Josefine Mars Hagdahl</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">16</div><div class="name" title="Linnea Stenberg">Linnea Stenberg</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">16</div><div class="name" title="Ludwig Abrahamsson">Ludwig Abrahamsson</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">16</div><div class="name" title="Mikael Fredriksson">Mikael Fredriksson</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Copilot">Copilot</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Grok">Grok</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Hampus Söderman">Hampus Söderman</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Johan Erkers">Johan Erkers</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Johanna Eriksson">Johanna Eriksson</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Matilda Fredriksson">Matilda Fredriksson</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Oscar Eliasson">Oscar Eliasson</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Simon Olofsson">Simon Olofsson</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">24</div><div class="name" title="Tim Bernström">Tim Bernström</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">33</div><div class="name" title="Andreas Fredriksson">Andreas Fredriksson</div><div class="points">3</div><div class="delta">—</div></div><div class="row"><div class="rank">33</div><div class="name" title="Gustav Rosvall">Gustav Rosvall</div><div class="points">3</div><div class="delta">—</div></div><div class="row"><div class="rank">33</div><div class="name" title="Jan Isaksson">Jan Isaksson</div><div class="points">3</div><div class="delta">—</div></div><div class="row"><div class="rank">33</div><div class="name" title="Kicki Garheden">Kicki Garheden</div><div class="points">3</div><div class="delta">—</div></div><div class="row"><div class="rank">33</div><div class="name" title="Klara Lövgren">Klara Lövgren</div><div class="points">3</div><div class="delta">—</div></div><div class="row"><div class="rank">33</div><div class="name" title="Victor Alonso">Victor Alonso</div><div class="points">3</div><div class="delta">—</div></div><div class="row"><div class="rank">39</div><div class="name" title="Annika Stenberg">Annika Stenberg</div><div class="points">2</div><div class="delta">—</div></div><div class="row"><div class="rank">39</div><div class="name" title="David Carlsson">David Carlsson</div><div class="points">2</div><div class="delta">—</div></div><div class="row"><div class="rank">39</div><div class="name" title="Jesper Blomqvist">Jesper Blomqvist</div><div class="points">2</div><div class="delta">—</div></div><div class="row"><div class="rank">39</div><div class="name" title="Kristoffer Sliwinski">Kristoffer Sliwinski</div><div class="points">2</div><div class="delta">—</div></div><div class="row"><div class="rank">39</div><div class="name" title="Niclas Arvidsson">Niclas Arvidsson</div><div class="points">2</div><div class="delta">—</div></div><div class="row"><div class="rank">39</div><div class="name" title="Philip Andersson">Philip Andersson</div><div class="points">2</div><div class="delta">—</div></div><div class="row"><div class="rank">39</div><div class="name" title="William Djursén">William Djursén</div><div class="points">2</div><div class="delta">—</div></div><div class="row"><div class="rank">46</div><div class="name" title="Caroline Blomqvist">Caroline Blomqvist</div><div class="points">1</div><div class="delta">—</div></div><div class="row"><div class="rank">46</div><div class="name" title="Emilia Örtendahl">Emilia Örtendahl</div><div class="points">1</div><div class="delta">—</div></div><div class="row"><div class="rank">46</div><div class="name" title="Felix Englund">Felix Englund</div><div class="points">1</div><div class="delta">—</div></div><div class="row"><div class="rank">46</div><div class="name" title="Gunnar Stenberg">Gunnar Stenberg</div><div class="points">1</div><div class="delta">—</div></div></div>
     </aside>
   </main>
 </div>
 <div class="tooltip" id="tooltip"></div>
+
+<script id="standings-data" type="application/json">{"dates":["11/6","12/6","13/6","14/6","15/6","16/6","17/6","18/6","19/6","20/6","21/6","22/6","23/6","24/6","25/6","26/6","27/6","28/6","29/6","30/6","1/7","2/7","3/7","4/7","5/7","6/7","7/7","8/7","10/7","11/7","12/7","15/7","16/7","19/7","20/7"],"players":[{"name":"Tomas Stenberg","scores":[0,6,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Dennis Ståhl","scores":[0,6,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Joel Mars Hagdahl","scores":[0,6,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Patrik Lindström","scores":[0,4,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Isidor Lundqvist","scores":[0,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Patrik Bern","scores":[0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Simon Bjernerup","scores":[0,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Kristin Nerman","scores":[0,3,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Peter Ekroth","scores":[0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Axel Eriksson","scores":[0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Petter Larsson","scores":[0,3,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Francesca Bern","scores":[0,3,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Fredrik Mazur","scores":[0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"ChatGPT","scores":[0,3,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Perplexity","scores":[0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Linnea Stenberg","scores":[0,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Mikael Fredriksson","scores":[0,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Jonna Wester","scores":[0,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Josefine Mars Hagdahl","scores":[0,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Axel Sundkvist","scores":[0,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Ludwig Abrahamsson","scores":[0,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Claude","scores":[0,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Gemini","scores":[0,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Kicki Garheden","scores":[0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Johanna Eriksson","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Matilda Fredriksson","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Andreas Fredriksson","scores":[0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Hampus Söderman","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Johan Erkers","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Tim Bernström","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Oscar Eliasson","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Copilot","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Grok","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Simon Olofsson","scores":[0,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Gustav Rosvall","scores":[0,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Klara Lövgren","scores":[0,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Jan Isaksson","scores":[0,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Victor Alonso","scores":[0,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"William Djursén","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Kristoffer Sliwinski","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Gunnar Stenberg","scores":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},{"name":"Caroline Blomqvist","scores":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},{"name":"Annika Stenberg","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Jesper Blomqvist","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"David Carlsson","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Emilia Örtendahl","scores":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},{"name":"Philip Andersson","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Niclas Arvidsson","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Felix Englund","scores":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}],"year":2026}</script>
 <script>
-// Data is fully embedded below. No CSV upload, fetch, or external file is required.
-const EMBEDDED_DATA = {"dates":["11/6","12/6","13/6","14/6","15/6","16/6","17/6","18/6","19/6","20/6","21/6","22/6","23/6","24/6","25/6","26/6","27/6","28/6","29/6","30/6","1/7","2/7","3/7","4/7","5/7","6/7","7/7","8/7","10/7","11/7","12/7","15/7","16/7","19/7","20/7"],"players":[{"name":"Tomas Stenberg","scores":[0,6,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Dennis Ståhl","scores":[0,6,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Joel Mars Hagdahl","scores":[0,6,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Patrik Lindström","scores":[0,4,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Isidor Lundqvist","scores":[0,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Patrik Bern","scores":[0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Simon Bjernerup","scores":[0,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Kristin Nerman","scores":[0,3,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Peter Ekroth","scores":[0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Axel Eriksson","scores":[0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Petter Larsson","scores":[0,3,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Francesca Bern","scores":[0,3,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Fredrik Mazur","scores":[0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"ChatGPT","scores":[0,3,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Perplexity","scores":[0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Linnea Stenberg","scores":[0,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Mikael Fredriksson","scores":[0,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Jonna Wester","scores":[0,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Josefine Mars Hagdahl","scores":[0,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Axel Sundkvist","scores":[0,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Ludwig Abrahamsson","scores":[0,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Claude","scores":[0,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Gemini","scores":[0,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Kicki Garheden","scores":[0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Johanna Eriksson","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Matilda Fredriksson","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Andreas Fredriksson","scores":[0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Hampus Söderman","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Johan Erkers","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Tim Bernström","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Oscar Eliasson","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Copilot","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Grok","scores":[0,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Simon Olofsson","scores":[0,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Gustav Rosvall","scores":[0,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Klara Lövgren","scores":[0,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Jan Isaksson","scores":[0,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"Victor Alonso","scores":[0,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},{"name":"William Djursén","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Kristoffer Sliwinski","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Gunnar Stenberg","scores":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},{"name":"Caroline Blomqvist","scores":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},{"name":"Annika Stenberg","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Jesper Blomqvist","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"David Carlsson","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Emilia Örtendahl","scores":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},{"name":"Philip Andersson","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Niclas Arvidsson","scores":[0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},{"name":"Felix Englund","scores":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}],"year":2026};
-const palette = ['#f8c65a','#63a9ff','#33e0a1','#ff7a90','#b18cff','#ff9f43','#7bedc4','#8ec5ff','#e6e6e6','#c4d5e8'];
-const data = EMBEDDED_DATA;
-const dates = data.dates;
-const players = data.players.map((p,i)=>({...p, color: palette[i%palette.length]}));
-const svg = document.getElementById('raceChart');
-const slider = document.getElementById('daySlider');
-const tooltip = document.getElementById('tooltip');
-let timer = null;
-let customHighlights = null;
-let highlightSearchTerm = '';
-slider.max = dates.length - 1;
-function parseDM(s){ const [d,m]=s.split('/').map(Number); return new Date(data.year, m-1, d); }
-function defaultIndex(){
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const target = new Date(today);
-  target.setDate(target.getDate() + 1); // data is delayed one day: show the next data date by default
-  let idx = 0;
-  for(let i=0;i<dates.length;i++){ if(parseDM(dates[i]) <= target) idx=i; else break; }
-  return Math.max(0, Math.min(idx, dates.length-1));
-}
-slider.value = defaultIndex();
-function scoreAt(p, idx){ const v=p.scores[idx]; return Number.isFinite(v) ? v : null; }
-function prevScoreAt(p, idx){ return idx>0 ? scoreAt(p, idx-1) : scoreAt(p, idx); }
-function ranking(idx){
-  return players.map(p=>({name:p.name, score:scoreAt(p,idx)??0, prev:prevScoreAt(p,idx)??0, color:p.color}))
-    .sort((a,b)=> b.score-a.score || a.name.localeCompare(b.name));
-}
-function rankMap(idx){ const r=ranking(idx); const m=new Map(); let rank=1; for(let i=0;i<r.length;i++){ if(i>0 && r[i].score<r[i-1].score) rank=i+1; m.set(r[i].name, rank); } return m; }
-function getHighlightedNames(idx){
-  if(customHighlights){ return new Set([...customHighlights]); }
-  return new Set(ranking(idx).slice(0,10).map(d=>d.name));
-}
-function niceDate(s){ const [d,m]=s.split('/'); const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(m)-1]; return `${Number(d)} ${mon}`; }
-function linePath(points){ return points.map((pt,i)=>`${i?'L':'M'}${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' '); }
-function stagger(values, minGap, low, high){
-  const arr=values.slice().sort((a,b)=>a.y-b.y);
-  for(let i=1;i<arr.length;i++) if(arr[i].y-arr[i-1].y<minGap) arr[i].y=arr[i-1].y+minGap;
-  const overflow = arr.length ? arr[arr.length-1].y-high : 0;
-  if(overflow>0) for(const a of arr) a.y-=overflow;
-  if(arr.length && arr[0].y<low){ const under=low-arr[0].y; for(const a of arr) a.y+=under; }
-  const m=new Map(); arr.forEach(a=>m.set(a.name,a.y)); return m;
-}
-function render(idx){
-  idx = Number(idx);
-  const W=920,H=560, m={l:56,r:160,t:32,b:54}, cw=W-m.l-m.r, ch=H-m.t-m.b;
-  const shownDates=dates.slice(0,idx+1);
-  const ranks=ranking(idx), topNames=getHighlightedNames(idx);
-  const maxScore=Math.max(1,...players.flatMap(p=>p.scores.slice(0,idx+1).filter(Number.isFinite)));
-  const yMax=Math.max(10, Math.ceil(maxScore/5)*5);
-  const x = i => m.l + (idx===0?0:(i/idx)*cw);
-  const y = v => m.t + ch - (v/yMax)*ch;
-  svg.innerHTML='';
-  const ns='http://www.w3.org/2000/svg';
-  function el(tag,attrs,parent=svg){ const e=document.createElementNS(ns,tag); for(const [k,v] of Object.entries(attrs||{})) e.setAttribute(k,v); parent.appendChild(e); return e; }
-  // grid y
-  const steps=5;
-  for(let g=0; g<=steps; g++){ const val=Math.round((yMax/steps)*g); const yy=y(val); el('line',{x1:m.l,y1:yy,x2:W-m.r,y2:yy,class:'gridline'}); const tx=el('text',{x:m.l-12,y:yy+4,'text-anchor':'end',fill:'#91a4ba','font-size':'11'}); tx.textContent=val; }
-  // x labels
-  shownDates.forEach((d,i)=>{ if(i===0||i===idx||i%Math.ceil(shownDates.length/7)===0){ const xx=x(i); el('line',{x1:xx,y1:H-m.b,x2:xx,y2:H-m.b+5,stroke:'rgba(255,255,255,.18)'}); const t=el('text',{x:xx,y:H-22,'text-anchor':'middle',fill:'#91a4ba','font-size':'11'}); t.textContent=niceDate(d); } });
-  const labelTargets=[];
-  players.forEach((p,pi)=>{
-    const pts=[]; for(let i=0;i<=idx;i++){ const v=scoreAt(p,i); if(v!==null) pts.push({x:x(i),y:y(v),v}); }
-    if(!pts.length) return;
-    const isTop=topNames.has(p.name);
-    const path=el('path',{d:linePath(pts),fill:'none',stroke:p.color,'stroke-width':isTop?3.4:1.25,'stroke-opacity':isTop?0.96:0.16,'stroke-linecap':'round','stroke-linejoin':'round'});
-    path.addEventListener('mousemove',ev=>{ tooltip.style.opacity=1; tooltip.style.left=ev.clientX+'px'; tooltip.style.top=ev.clientY+'px'; tooltip.innerHTML=`<b>${p.name}</b><br>${niceDate(dates[idx])}: ${scoreAt(p,idx)} points<br>Rank: #${rankMap(idx).get(p.name)}`; });
-    path.addEventListener('mouseleave',()=>tooltip.style.opacity=0);
-    if(isTop){ const last=pts[pts.length-1]; el('circle',{cx:last.x,cy:last.y,r:4.3,fill:p.color,stroke:'#07111f','stroke-width':2}); labelTargets.push({name:p.name,score:scoreAt(p,idx),y:last.y,color:p.color}); }
-  });
-  const labelY=stagger(labelTargets,16,m.t+6,H-m.b-6);
-  labelTargets.sort((a,b)=>a.y-b.y).forEach(l=>{
-    const ly=labelY.get(l.name), tx=W-m.r+12;
-    el('line',{x1:W-m.r,y1:y(l.score),x2:tx-4,y2:ly,stroke:l.color,'stroke-opacity':.55,'stroke-width':1});
-    const t=el('text',{x:tx,y:ly+4,fill:l.color,class:'label-end'}); t.textContent=`${l.name} · ${l.score}`;
-  });
-  const ylab=el('text',{x:18,y:m.t+ch/2,fill:'#91a4ba','font-size':'12','text-anchor':'middle',transform:`rotate(-90 18 ${m.t+ch/2})`}); ylab.textContent='Cumulative points';
-  const r0=ranks[0];
-  document.getElementById('leaderName').textContent=r0.name;
-  document.getElementById('leaderPts').textContent=`${r0.score} pts`;
-  document.getElementById('statPlayers').textContent=players.length;
-  document.getElementById('statDate').textContent=niceDate(dates[idx]);
-  document.getElementById('statMax').textContent=r0.score;
-  document.getElementById('datePill').textContent=niceDate(dates[idx]);
-  renderTable(idx, ranks);
-  renderLegend(ranks.filter(d=>topNames.has(d.name)).slice(0,8));
-  renderHighlightPicker(idx);
-}
-
-function renderLegend(items){ document.getElementById('legend').innerHTML=items.map(d=>`<span><i class="dot" style="background:${d.color}"></i>${d.name}</span>`).join(''); }
-function renderTable(idx, ranks){
-  let prevRanks = idx>0 ? rankMap(idx-1) : new Map(ranks.map((r,i)=>[r.name,i+1]));
-  let rank=1; let html='<div class="row header"><div>#</div><div>Player</div><div>Pts</div><div>Δ rank</div></div>';
-  ranks.forEach((r,i)=>{ if(i>0 && r.score<ranks[i-1].score) rank=i+1; const pr=prevRanks.get(r.name)||rank; const diff=pr-rank; const cls=diff>0?'up':diff<0?'down':''; const sym=diff>0?`↑${diff}`:diff<0?`↓${Math.abs(diff)}`:'—'; html+=`<div class="row"><div class="rank">${rank}</div><div class="name" title="${r.name}">${r.name}</div><div class="points">${r.score}</div><div class="delta ${cls}">${sym}</div></div>`; });
-  document.getElementById('leaderboard').innerHTML=html;
-}
-
-function renderHighlightPicker(idx){
-  const list = document.getElementById('highlightList');
-  const mode = document.getElementById('highlightMode');
-  const selected = getHighlightedNames(idx);
-  const count = selected.size;
-  mode.textContent = customHighlights ? `Custom: ${count} highlighted` : 'Default: top 10 on the selected date';
-  const term = highlightSearchTerm.trim().toLowerCase();
-  const ordered = ranking(idx);
-  const rows = ordered.filter(p => !term || p.name.toLowerCase().includes(term));
-  list.innerHTML = rows.map(p => {
-    const checked = selected.has(p.name) ? 'checked' : '';
-    return `<label class="highlight-item" title="${p.name}"><input type="checkbox" data-name="${p.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" ${checked}/><span>${p.name}</span></label>`;
-  }).join('');
-  list.querySelectorAll('input[type=checkbox]').forEach(cb => {
-    cb.addEventListener('change', () => {
-      if(!customHighlights) customHighlights = new Set(getHighlightedNames(Number(slider.value)));
-      if(cb.checked) customHighlights.add(cb.dataset.name); else customHighlights.delete(cb.dataset.name);
-      render(slider.value);
-    });
-  });
-}
-
-document.getElementById('highlightSearch').addEventListener('input', e => {
-  highlightSearchTerm = e.target.value;
-  renderHighlightPicker(Number(slider.value));
-});
-document.getElementById('resetHighlights').addEventListener('click', () => {
-  customHighlights = null;
-  highlightSearchTerm = '';
-  document.getElementById('highlightSearch').value = '';
+(function(){
+  function byId(id){ return document.getElementById(id); }
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function isNum(v){ return typeof v === 'number' && isFinite(v); }
+  function niceDate(s){ var a=String(s).split('/'); var mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(a[1])-1] || ''; return Number(a[0])+' '+mon; }
+  var raw = byId('standings-data').textContent || byId('standings-data').innerText || '';
+  var data;
+  try { data = JSON.parse(raw); } catch(e) { showError('Could not parse embedded data: '+e.message); return; }
+  if(!data || !data.dates || !data.players || !data.players.length){ showError('Embedded data was found, but it contains no players.'); return; }
+  var dates=data.dates;
+  var palette=['#f8c65a','#63a9ff','#33e0a1','#ff7a90','#b18cff','#ff9f43','#7bedc4','#8ec5ff','#e6e6e6','#c4d5e8'];
+  var players=[];
+  for(var i=0;i<data.players.length;i++){ var p=data.players[i]; players.push({name:p.name,scores:p.scores,color:palette[i%palette.length]}); }
+  var svg=byId('raceChart'), slider=byId('daySlider'), tooltip=byId('tooltip');
+  var timer=null, customHighlights=null, highlightSearchTerm='';
+  slider.max=dates.length-1;
+  function parseDM(s){ var a=String(s).split('/'); return new Date(data.year||2026, Number(a[1])-1, Number(a[0])); }
+  function defaultIndex(){ var now=new Date(); var target=new Date(now.getFullYear(), now.getMonth(), now.getDate()); target.setDate(target.getDate()+1); var idx=0; for(var i=0;i<dates.length;i++){ if(parseDM(dates[i]) <= target) idx=i; else break; } if(idx<0)idx=0; if(idx>dates.length-1)idx=dates.length-1; return idx; }
+  slider.value=defaultIndex();
+  function scoreAt(p,idx){ var v=p.scores[idx]; return isNum(v) ? v : null; }
+  function prevScoreAt(p,idx){ return idx>0 ? scoreAt(p,idx-1) : scoreAt(p,idx); }
+  function ranking(idx){ var arr=[]; for(var i=0;i<players.length;i++){ var p=players[i]; arr.push({name:p.name,score:scoreAt(p,idx),prev:prevScoreAt(p,idx),color:p.color}); } arr.sort(function(a,b){ var as=isNum(a.score)?a.score:0, bs=isNum(b.score)?b.score:0; if(bs!==as) return bs-as; return a.name.localeCompare(b.name); }); return arr; }
+  function rankMap(idx){ var r=ranking(idx), m={}; var rank=1; for(var i=0;i<r.length;i++){ if(i>0 && (r[i].score||0)<(r[i-1].score||0)) rank=i+1; m[r[i].name]=rank; } return m; }
+  function getHighlightedNames(idx){ var set={}; if(customHighlights){ for(var k in customHighlights) set[k]=true; return set; } var r=ranking(idx); for(var i=0;i<Math.min(10,r.length);i++) set[r[i].name]=true; return set; }
+  function linePath(points){ var out=[]; for(var i=0;i<points.length;i++) out.push((i?'L':'M')+points[i].x.toFixed(1)+','+points[i].y.toFixed(1)); return out.join(' '); }
+  function stagger(values,minGap,low,high){ var arr=values.slice().sort(function(a,b){return a.y-b.y}); for(var i=1;i<arr.length;i++){ if(arr[i].y-arr[i-1].y<minGap) arr[i].y=arr[i-1].y+minGap; } var overflow=arr.length ? arr[arr.length-1].y-high : 0; if(overflow>0){ for(var j=0;j<arr.length;j++) arr[j].y-=overflow; } if(arr.length && arr[0].y<low){ var under=low-arr[0].y; for(var k=0;k<arr.length;k++) arr[k].y+=under; } var m={}; for(var n=0;n<arr.length;n++) m[arr[n].name]=arr[n].y; return m; }
+  function render(idx){
+    idx=Number(idx); if(!isFinite(idx)) idx=0;
+    var W=920,H=560,m={l:56,r:160,t:32,b:54},cw=W-m.l-m.r,ch=H-m.t-m.b;
+    var ranks=ranking(idx), topNames=getHighlightedNames(idx);
+    var maxScore=1; for(var pi=0;pi<players.length;pi++){ for(var si=0;si<=idx;si++){ var vv=scoreAt(players[pi],si); if(isNum(vv) && vv>maxScore) maxScore=vv; } }
+    var yMax=Math.max(10, Math.ceil(maxScore/5)*5);
+    function x(i){ return m.l + (idx===0?0:(i/idx)*cw); }
+    function y(v){ return m.t + ch - (v/yMax)*ch; }
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    var ns='http://www.w3.org/2000/svg';
+    function el(tag,attrs,parent){ var e=document.createElementNS(ns,tag); attrs=attrs||{}; for(var k in attrs)e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+    for(var g=0;g<=5;g++){ var val=Math.round((yMax/5)*g), yy=y(val); el('line',{x1:m.l,y1:yy,x2:W-m.r,y2:yy,class:'gridline'}); var tx=el('text',{x:m.l-12,y:yy+4,'text-anchor':'end',fill:'#91a4ba','font-size':'11'}); tx.textContent=val; }
+    var step=Math.max(1, Math.ceil((idx+1)/7)); for(var di=0;di<=idx;di++){ if(di===0||di===idx||di%step===0){ var xx=x(di); el('line',{x1:xx,y1:H-m.b,x2:xx,y2:H-m.b+5,stroke:'rgba(255,255,255,.18)'}); var t=el('text',{x:xx,y:H-22,'text-anchor':'middle',fill:'#91a4ba','font-size':'11'}); t.textContent=niceDate(dates[di]); } }
+    var labelTargets=[];
+    for(var pp=0;pp<players.length;pp++){
+      var p=players[pp], pts=[]; for(var s=0;s<=idx;s++){ var v=scoreAt(p,s); if(v!==null) pts.push({x:x(s),y:y(v),v:v}); }
+      if(!pts.length) continue;
+      var isTop=!!topNames[p.name]; var path=el('path',{d:linePath(pts),fill:'none',stroke:p.color,'stroke-width':isTop?3.4:1.25,'stroke-opacity':isTop?0.96:0.16,'stroke-linecap':'round','stroke-linejoin':'round'});
+      (function(p){ path.addEventListener('mousemove',function(ev){ tooltip.style.opacity=1; tooltip.style.left=ev.clientX+'px'; tooltip.style.top=ev.clientY+'px'; var rm=rankMap(idx); tooltip.innerHTML='<b>'+esc(p.name)+'</b><br>'+niceDate(dates[idx])+': '+scoreAt(p,idx)+' points<br>Rank: #'+rm[p.name]; }); path.addEventListener('mouseleave',function(){ tooltip.style.opacity=0; }); })(p);
+      if(isTop){ var last=pts[pts.length-1]; el('circle',{cx:last.x,cy:last.y,r:4.3,fill:p.color,stroke:'#07111f','stroke-width':2}); labelTargets.push({name:p.name,score:scoreAt(p,idx),y:last.y,color:p.color}); }
+    }
+    var labelY=stagger(labelTargets,16,m.t+6,H-m.b-6); labelTargets.sort(function(a,b){return a.y-b.y});
+    for(var li=0;li<labelTargets.length;li++){ var l=labelTargets[li], ly=labelY[l.name], tx2=W-m.r+12; el('line',{x1:W-m.r,y1:y(l.score),x2:tx2-4,y2:ly,stroke:l.color,'stroke-opacity':.55,'stroke-width':1}); var tt=el('text',{x:tx2,y:ly+4,fill:l.color,class:'label-end'}); tt.textContent=l.name+' · '+l.score; }
+    var yl=el('text',{x:18,y:m.t+ch/2,fill:'#91a4ba','font-size':'12','text-anchor':'middle',transform:'rotate(-90 18 '+(m.t+ch/2)+')'}); yl.textContent='Cumulative points';
+    var r0=ranks[0]; byId('leaderName').textContent=r0.name; byId('leaderPts').textContent=(r0.score||0)+' pts'; byId('statPlayers').textContent=players.length; byId('statDate').textContent=niceDate(dates[idx]); byId('statMax').textContent=r0.score||0; byId('datePill').textContent=niceDate(dates[idx]);
+    renderTable(idx,ranks); renderLegend(ranks.filter(function(d){return topNames[d.name];}).slice(0,8)); renderHighlightPicker(idx);
+  }
+  function renderLegend(items){ var h=''; for(var i=0;i<items.length;i++) h+='<span><i class="dot" style="background:'+items[i].color+'"></i>'+esc(items[i].name)+'</span>'; byId('legend').innerHTML=h; }
+  function renderTable(idx,ranks){ var prevRanks=idx>0?rankMap(idx-1):{}; var rank=1; var h='<div class="row header"><div>#</div><div>Player</div><div>Pts</div><div>Δ rank</div></div>'; for(var i=0;i<ranks.length;i++){ var r=ranks[i]; if(i>0 && (r.score||0)<(ranks[i-1].score||0)) rank=i+1; var pr=prevRanks[r.name]||rank; var diff=pr-rank; var cls=diff>0?'up':(diff<0?'down':''); var sym=diff>0?'↑'+diff:(diff<0?'↓'+Math.abs(diff):'—'); h+='<div class="row"><div class="rank">'+rank+'</div><div class="name" title="'+esc(r.name)+'">'+esc(r.name)+'</div><div class="points">'+(r.score||0)+'</div><div class="delta '+cls+'">'+sym+'</div></div>'; } byId('leaderboard').innerHTML=h; }
+  function renderHighlightPicker(idx){ var list=byId('highlightList'), mode=byId('highlightMode'), selected=getHighlightedNames(idx), count=Object.keys(selected).length; mode.textContent=customHighlights?'Custom: '+count+' highlighted':'Default: top 10 on the selected date'; var term=highlightSearchTerm.toLowerCase(); var ordered=ranking(idx), h=''; for(var i=0;i<ordered.length;i++){ var p=ordered[i]; if(term && p.name.toLowerCase().indexOf(term)===-1) continue; var checked=selected[p.name]?'checked':''; h+='<label class="highlight-item" title="'+esc(p.name)+'"><input type="checkbox" data-name="'+esc(p.name)+'" '+checked+'/><span>'+esc(p.name)+'</span></label>'; } list.innerHTML=h; var boxes=list.querySelectorAll('input[type=checkbox]'); for(var b=0;b<boxes.length;b++){ boxes[b].addEventListener('change',function(){ if(!customHighlights){ customHighlights={}; var def=getHighlightedNames(Number(slider.value)); for(var k in def) customHighlights[k]=true; } if(this.checked) customHighlights[this.getAttribute('data-name')]=true; else delete customHighlights[this.getAttribute('data-name')]; render(slider.value); }); } }
+  byId('highlightSearch').addEventListener('input',function(e){ highlightSearchTerm=e.target.value||''; renderHighlightPicker(Number(slider.value)); });
+  byId('resetHighlights').addEventListener('click',function(){ customHighlights=null; highlightSearchTerm=''; byId('highlightSearch').value=''; render(slider.value); });
+  byId('clearHighlights').addEventListener('click',function(){ customHighlights={}; render(slider.value); });
+  slider.addEventListener('input',function(e){ render(e.target.value); });
+  byId('playBtn').addEventListener('click',function(){ var btn=byId('playBtn'); if(timer){ clearInterval(timer); timer=null; btn.textContent='Play'; return; } btn.textContent='Pause'; timer=setInterval(function(){ var v=Number(slider.value); if(v>=dates.length-1) v=-1; slider.value=v+1; render(slider.value); },700); });
   render(slider.value);
-});
-document.getElementById('clearHighlights').addEventListener('click', () => {
-  customHighlights = new Set();
-  render(slider.value);
-});
-
-slider.addEventListener('input', e=>render(e.target.value));
-document.getElementById('playBtn').addEventListener('click',()=>{
-  const btn=document.getElementById('playBtn');
-  if(timer){ clearInterval(timer); timer=null; btn.textContent='Play'; return; }
-  btn.textContent='Pause';
-  timer=setInterval(()=>{ let v=Number(slider.value); if(v>=dates.length-1) v=-1; slider.value=v+1; render(slider.value); },700);
-});
-render(slider.value);
+  function showError(msg){ var lb=byId('leaderboard'); if(lb) lb.innerHTML='<div style="padding:18px;color:#ffb3b3;font-weight:800">'+esc(msg)+'</div>'; console.error(msg); }
+})();
 </script>
 </body>
 </html>
