@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Google Sheet CSV Test</title>
+<style>
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:#07111f;
+    color:#f7fbff;
+    padding:24px;
+  }
+  .wrap{max-width:1100px;margin:0 auto}
+  h1{margin:0 0 8px;font-size:34px;letter-spacing:-.04em}
+  p{color:#94a7bd}
+  button{
+    border:0;
+    border-radius:999px;
+    padding:12px 18px;
+    font-weight:900;
+    cursor:pointer;
+    background:linear-gradient(135deg,#f8c65a,#ffe6a9);
+    color:#07111f;
+    margin:8px 8px 16px 0;
+  }
+  input{
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    padding:12px;
+    border-radius:12px;
+    margin:8px 0 14px;
+  }
+  .card{
+    background:rgba(255,255,255,.075);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:20px;
+    padding:16px;
+    margin:14px 0;
+    overflow:auto;
+  }
+  .ok{color:#33e0a1;font-weight:900}
+  .bad{color:#ff6b6b;font-weight:900}
+  pre{
+    white-space:pre-wrap;
+    word-break:break-word;
+    color:#dce9f7;
+    font-size:13px;
+    line-height:1.45;
+  }
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{border-bottom:1px solid rgba(255,255,255,.1);padding:8px;text-align:left;white-space:nowrap}
+  th{color:#f8c65a;position:sticky;top:0;background:#0b1d35}
+  .muted{color:#94a7bd}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Google Sheet CSV Test</h1>
+  <p>This page tests if the published Google Sheet CSV can be loaded by the browser and parsed as a Player × Date matrix.</p>
+
+  <label class="muted">CSV URL</label>
+  <input id="url" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vSM1s2vhc3_enNrdDo_oRxsi97JbHUW8bnf9YnzVtXe3_Q87pGXKgndbDvnN3xr1ada_U7Qq5PelK56/pub?gid=1314027812&single=true&output=csv" />
+
+  <button id="testBtn">Test CSV fetch</button>
+  <button id="gvizBtn">Test GViz CSV URL</button>
+
+  <div class="card">
+    <div id="status">Not tested yet.</div>
+  </div>
+
+  <div class="card">
+    <h3>Debug</h3>
+    <pre id="debug"></pre>
+  </div>
+
+  <div class="card">
+    <h3>Raw first 1000 characters</h3>
+    <pre id="raw"></pre>
+  </div>
+
+  <div class="card">
+    <h3>Parsed preview</h3>
+    <div id="preview"></div>
+  </div>
+</div>
+
+<script>
+const defaultPublishedUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSM1s2vhc3_enNrdDo_oRxsi97JbHUW8bnf9YnzVtXe3_Q87pGXKgndbDvnN3xr1ada_U7Qq5PelK56/pub?gid=1314027812&single=true&output=csv";
+const gvizUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSM1s2vhc3_enNrdDo_oRxsi97JbHUW8bnf9YnzVtXe3_Q87pGXKgndbDvnN3xr1ada_U7Qq5PelK56/gviz/tq?tqx=out:csv&gid=1314027812";
+
+function byId(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function parseCsv(text){
+  // Handles comma/semicolon/tab separated CSV, quoted values, CRLF, and BOM.
+  text = String(text || "").replace(/^\uFEFF/, "");
+  const firstLine = text.split(/\r?\n/).find(line => line.trim().length) || "";
+  const candidates = [",", ";", "\t"];
+  let delimiter = ",";
+  let bestCount = -1;
+
+  for (const d of candidates) {
+    const count = splitCsvLine(firstLine, d).length;
+    if (count > bestCount) {
+      bestCount = count;
+      delimiter = d;
+    }
+  }
+
+  const rows = [];
+  let row = [], cell = "", inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+
+    if (ch === '"') {
+      if (inQuotes && next === '"') {
+        cell += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === delimiter && !inQuotes) {
+      row.push(cell);
+      cell = "";
+    } else if ((ch === "\n" || ch === "\r") && !inQuotes) {
+      if (ch === "\r" && next === "\n") i++;
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += ch;
+    }
+  }
+
+  if (cell.length || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return { delimiter, rows: rows.filter(r => r.some(c => String(c).trim() !== "")) };
+}
+
+function splitCsvLine(line, delimiter){
+  const out = [];
+  let cell = "", inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i], next = line[i+1];
+    if (ch === '"') {
+      if (inQuotes && next === '"') { cell += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (ch === delimiter && !inQuotes) {
+      out.push(cell); cell = "";
+    } else {
+      cell += ch;
+    }
+  }
+  out.push(cell);
+  return out;
+}
+
+function rowsToRaceData(rows){
+  if (!rows.length) throw new Error("No rows found.");
+
+  // Find the header row: first row where first cell is Namn/Name/Player OR row has multiple date-like cells.
+  let headerIndex = 0;
+  for (let i = 0; i < Math.min(rows.length, 10); i++) {
+    const first = String(rows[i][0] || "").trim().toLowerCase();
+    const dateLike = rows[i].slice(1).filter(v => /^\d{1,2}\/\d{1,2}/.test(String(v).trim())).length;
+    if (["namn", "name", "player", "spelare"].includes(first) || dateLike >= 2) {
+      headerIndex = i;
+      break;
+    }
+  }
+
+  const header = rows[headerIndex].map(v => String(v || "").trim());
+  const dates = header.slice(1).filter(Boolean);
+
+  if (dates.length < 1) {
+    throw new Error("Could not detect date columns in header row.");
+  }
+
+  const players = [];
+  for (const row of rows.slice(headerIndex + 1)) {
+    const name = String(row[0] || "").trim();
+    if (!name) continue;
+
+    const scores = dates.map((_, i) => {
+      const raw = String(row[i + 1] ?? "").replace(",", ".").trim();
+      if (raw === "") return null;
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : null;
+    });
+
+    if (scores.some(v => v !== null)) {
+      players.push({ name, scores });
+    }
+  }
+
+  if (!players.length) throw new Error("No player rows with numeric scores found.");
+
+  return { dates, players, headerIndex };
+}
+
+async function test(url){
+  byId("status").innerHTML = "Loading...";
+  byId("debug").textContent = "";
+  byId("raw").textContent = "";
+  byId("preview").innerHTML = "";
+
+  try {
+    const cacheBust = (url.includes("?") ? "&" : "?") + "_=" + Date.now();
+    const response = await fetch(url + cacheBust, { method: "GET", cache: "no-store" });
+
+    const text = await response.text();
+
+    byId("raw").textContent = text.slice(0, 1000);
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status + " " + response.statusText);
+    }
+
+    if (/^\s*</.test(text)) {
+      throw new Error("Received HTML instead of CSV. The URL may be redirecting or not published as CSV.");
+    }
+
+    const parsed = parseCsv(text);
+    const race = rowsToRaceData(parsed.rows);
+
+    byId("status").innerHTML =
+      '<span class="ok">SUCCESS</span> — loaded ' +
+      parsed.rows.length + " rows, " +
+      race.players.length + " players, " +
+      race.dates.length + " date columns.";
+
+    byId("debug").textContent =
+      "Fetch URL: " + url + "\n" +
+      "HTTP status: " + response.status + "\n" +
+      "Final response URL: " + response.url + "\n" +
+      "Detected delimiter: " + JSON.stringify(parsed.delimiter) + "\n" +
+      "Header row index: " + race.headerIndex + "\n" +
+      "First header cells: " + JSON.stringify(parsed.rows[race.headerIndex].slice(0, 10)) + "\n" +
+      "First dates: " + JSON.stringify(race.dates.slice(0, 10)) + "\n" +
+      "First players: " + JSON.stringify(race.players.slice(0, 5).map(p => ({name:p.name, scores:p.scores.slice(0,5)})), null, 2);
+
+    renderPreview(race);
+
+  } catch (err) {
+    byId("status").innerHTML = '<span class="bad">FAILED</span> — ' + esc(err.message);
+    byId("debug").textContent =
+      "Error: " + err.message + "\n\n" +
+      "Common causes:\n" +
+      "1. Opening the HTML as file:// can block Google fetches. Try GitHub Pages or any local web server.\n" +
+      "2. The sheet/tab is not published as CSV.\n" +
+      "3. The response is HTML instead of CSV.\n" +
+      "4. The first row is not the date header row.";
+  }
+}
+
+function renderPreview(data){
+  const cols = ["Player", ...data.dates.slice(0, 8)];
+  let html = "<table><thead><tr>" + cols.map(c => "<th>" + esc(c) + "</th>").join("") + "</tr></thead><tbody>";
+
+  for (const p of data.players.slice(0, 12)) {
+    html += "<tr><td>" + esc(p.name) + "</td>" +
+      p.scores.slice(0, 8).map(v => "<td>" + esc(v ?? "") + "</td>").join("") +
+      "</tr>";
+  }
+
+  html += "</tbody></table>";
+  byId("preview").innerHTML = html;
+}
+
+byId("testBtn").addEventListener("click", () => test(byId("url").value.trim() || defaultPublishedUrl));
+byId("gvizBtn").addEventListener("click", () => {
+  byId("url").value = gvizUrl;
+  test(gvizUrl);
+});
+</script>
+</body>
+</html>
