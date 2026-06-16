@@ -77,18 +77,18 @@ svg{display:block;width:100%;height:auto}
 <div class="wrap">
   <section class="hero">
     <div><div class="kicker">FIFA World Cup 2026 · Prediction game</div><h1>Standings race</h1><div class="sub">Cumulative points by tournament day. Move the slider to replay the leaderboard. By default, today shows the next data day because scores are updated with a one-day delay.</div></div>
-    <div class="badge"><div class="small">Leader on selected day</div><div class="big"><span id="leaderName">Dennis Ståhl</span> <span class="pts" id="leaderPts">10 pts</span></div></div>
+    <div class="badge"><div class="small">Leader on selected day</div><div class="big"><span id="leaderName">Loading…</span> <span class="pts" id="leaderPts">—</span></div></div>
   </section>
   <div class="statgrid">
-    <div class="stat"><div class="label">Participants</div><div class="value" id="statPlayers">49</div></div>
-    <div class="stat"><div class="label">Selected date</div><div class="value" id="statDate">20/7</div></div>
-    <div class="stat"><div class="label">Max score</div><div class="value" id="statMax">10</div></div>
+    <div class="stat"><div class="label">Participants</div><div class="value" id="statPlayers">—</div></div>
+    <div class="stat"><div class="label">Selected date</div><div class="value" id="statDate">—</div></div>
+    <div class="stat"><div class="label">Max score</div><div class="value" id="statMax">—</div></div>
   </div>
   <main class="grid">
     <section class="card">
       <div class="card-head"><div><div class="card-title">Cumulative score race</div><div class="card-desc">Top lines are highlighted. Players tied on the same score are slightly staggered to keep labels readable.</div></div><div class="legend" id="legend"></div></div>
       <svg id="raceChart" viewBox="0 0 920 560" role="img" aria-label="Cumulative score race chart"></svg>
-      <div class="controls"><div class="range-wrap"><input id="daySlider" type="range" min="0" value="0" step="1" /><div class="date-pill" id="datePill">20/7</div></div><button id="playBtn" style="border:0;border-radius:999px;padding:11px 16px;font-weight:900;color:#07111f;background:linear-gradient(135deg,#f8c65a,#ffe6a9);cursor:pointer">Play</button></div>
+      <div class="controls"><div class="range-wrap"><input id="daySlider" type="range" min="0" value="0" step="1" /><div class="date-pill" id="datePill">Loading…</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button id="refreshBtn" style="border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:11px 16px;font-weight:900;color:#f7fbff;background:rgba(255,255,255,.08);cursor:pointer">Refresh data</button><button id="playBtn" style="border:0;border-radius:999px;padding:11px 16px;font-weight:900;color:#07111f;background:linear-gradient(135deg,#f8c65a,#ffe6a9);cursor:pointer">Play</button></div></div>
       <div class="highlight-panel">
         <div class="highlight-top">
           <div><div class="highlight-title">Highlighted players</div><div class="highlight-note" id="highlightMode">Default: top 10 on the selected date</div></div>
@@ -100,77 +100,513 @@ svg{display:block;width:100%;height:auto}
     </section>
     <aside class="card">
       <div class="card-head"><div><div class="card-title">Leaderboard</div><div class="card-desc">All participants at selected date, with change since previous day. Scroll to see everyone.</div></div></div>
-      <div class="table" id="leaderboard"><div class="row header"><div>#</div><div>Player</div><div>Pts</div><div>Δ rank</div></div><div class="row"><div class="rank">1</div><div class="name" title="Dennis Ståhl">Dennis Ståhl</div><div class="points">16</div><div class="delta">—</div></div><div class="row"><div class="rank">2</div><div class="name" title="Peter Ekroth">Peter Ekroth</div><div class="points">15</div><div class="delta">—</div></div><div class="row"><div class="rank">2</div><div class="name" title="Tomas Stenberg">Tomas Stenberg</div><div class="points">15</div><div class="delta">—</div></div><div class="row"><div class="rank">4</div><div class="name" title="Fredrik Mazur">Fredrik Mazur</div><div class="points">14</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Axel Eriksson">Axel Eriksson</div><div class="points">13</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Joel Mars Hagdahl">Joel Mars Hagdahl</div><div class="points">13</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Jonna Wester">Jonna Wester</div><div class="points">13</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Linnea Stenberg">Linnea Stenberg</div><div class="points">13</div><div class="delta">—</div></div><div class="row"><div class="rank">5</div><div class="name" title="Perplexity">Perplexity</div><div class="points">13</div><div class="delta">—</div></div><div class="row"><div class="rank">10</div><div class="name" title="Gustav Rosvall">Gustav Rosvall</div><div class="points">11</div><div class="delta">—</div></div><div class="row"><div class="rank">10</div><div class="name" title="Ludwig Abrahamsson">Ludwig Abrahamsson</div><div class="points">11</div><div class="delta">—</div></div><div class="row"><div class="rank">10</div><div class="name" title="Patrik Lindström">Patrik Lindström</div><div class="points">11</div><div class="delta">—</div></div><div class="row"><div class="rank">13</div><div class="name" title="ChatGPT">ChatGPT</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">13</div><div class="name" title="Isidor Lundqvist">Isidor Lundqvist</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">13</div><div class="name" title="Kristin Nerman">Kristin Nerman</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">13</div><div class="name" title="Max Thiel">Max Thiel</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">13</div><div class="name" title="Oscar Eliasson">Oscar Eliasson</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">13</div><div class="name" title="Patrik Bern">Patrik Bern</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">13</div><div class="name" title="Simon Bjernerup">Simon Bjernerup</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">13</div><div class="name" title="Tim Bernström">Tim Bernström</div><div class="points">10</div><div class="delta">—</div></div><div class="row"><div class="rank">21</div><div class="name" title="Francesca Bern">Francesca Bern</div><div class="points">9</div><div class="delta">—</div></div><div class="row"><div class="rank">21</div><div class="name" title="Hampus Söderman">Hampus Söderman</div><div class="points">9</div><div class="delta">—</div></div><div class="row"><div class="rank">21</div><div class="name" title="Petter Larsson">Petter Larsson</div><div class="points">9</div><div class="delta">—</div></div><div class="row"><div class="rank">21</div><div class="name" title="Simon Olofsson">Simon Olofsson</div><div class="points">9</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="Axel Sundkvist">Axel Sundkvist</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="Caroline Blomqvist">Caroline Blomqvist</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="Claude">Claude</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="Copilot">Copilot</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="David Carlsson">David Carlsson</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="Johan Erkers">Johan Erkers</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="Josefine Mars Hagdahl">Josefine Mars Hagdahl</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="Kicki Garheden">Kicki Garheden</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">25</div><div class="name" title="Saga Herlenius">Saga Herlenius</div><div class="points">8</div><div class="delta">—</div></div><div class="row"><div class="rank">34</div><div class="name" title="Annika Stenberg">Annika Stenberg</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">34</div><div class="name" title="Gemini">Gemini</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">34</div><div class="name" title="Grok">Grok</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">34</div><div class="name" title="Johanna Eriksson">Johanna Eriksson</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">34</div><div class="name" title="Klara Lövgren">Klara Lövgren</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">34</div><div class="name" title="Matilda Fredriksson">Matilda Fredriksson</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">34</div><div class="name" title="Mikael Fredriksson">Mikael Fredriksson</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">34</div><div class="name" title="William Djursén">William Djursén</div><div class="points">7</div><div class="delta">—</div></div><div class="row"><div class="rank">42</div><div class="name" title="Andreas Fredriksson">Andreas Fredriksson</div><div class="points">6</div><div class="delta">—</div></div><div class="row"><div class="rank">42</div><div class="name" title="Jan Isaksson">Jan Isaksson</div><div class="points">6</div><div class="delta">—</div></div><div class="row"><div class="rank">44</div><div class="name" title="Emilia Örtendahl">Emilia Örtendahl</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">44</div><div class="name" title="Jesper Blomqvist">Jesper Blomqvist</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">44</div><div class="name" title="Kristoffer Sliwinski">Kristoffer Sliwinski</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">44</div><div class="name" title="Niclas Arvidsson">Niclas Arvidsson</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">44</div><div class="name" title="Philip Andersson">Philip Andersson</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">44</div><div class="name" title="Victor Alonso">Victor Alonso</div><div class="points">5</div><div class="delta">—</div></div><div class="row"><div class="rank">50</div><div class="name" title="Felix Englund">Felix Englund</div><div class="points">4</div><div class="delta">—</div></div><div class="row"><div class="rank">50</div><div class="name" title="Gunnar Stenberg">Gunnar Stenberg</div><div class="points">4</div><div class="delta">—</div></div></div>
+      <div class="table" id="leaderboard"><div style="padding:18px;color:#94a7bd;font-weight:800">Loading Google Sheet data…</div></div>
     </aside>
   </main>
 </div>
 <div class="tooltip" id="tooltip"></div>
+<div id="loadStatus" style="position:fixed;right:14px;bottom:14px;z-index:30;max-width:460px;background:rgba(6,17,31,.92);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:10px 12px;color:#94a7bd;font:12px Inter,system-ui,sans-serif;box-shadow:0 18px 45px rgba(0,0,0,.35)">Loading Google Sheet…</div>
 
-<script id="standings-data" type="application/json">{"dates":["11/6","12/6","13/6","14/6","15/6","16/6","17/6","18/6","19/6","20/6","21/6","22/6","23/6","24/6","25/6","26/6","27/6","28/6","29/6","30/6","1/7","2/7","3/7","4/7","5/7","6/7","7/7","8/7","10/7","11/7","12/7","15/7","16/7","19/7","20/7"],"players":[{"name":"Peter Ekroth","scores":[0,3,7,11,15,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18]},{"name":"Fredrik Mazur","scores":[0,3,7,11,14,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17]},{"name":"Dennis Ståhl","scores":[0,6,10,14,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16]},{"name":"Axel Eriksson","scores":[0,3,7,11,13,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16]},{"name":"Perplexity","scores":[0,3,7,11,13,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16]},{"name":"Tomas Stenberg","scores":[0,6,10,12,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15]},{"name":"Patrik Lindström","scores":[0,4,8,9,11,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14]},{"name":"Jonna Wester","scores":[0,4,5,11,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13]},{"name":"Joel Mars Hagdahl","scores":[0,6,10,11,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13]},{"name":"Linnea Stenberg","scores":[0,2,5,11,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13]},{"name":"Gustav Rosvall","scores":[0,0,3,9,11,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12]},{"name":"Ludwig Abrahamsson","scores":[0,1,5,9,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},{"name":"ChatGPT","scores":[0,3,6,7,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},{"name":"Max Thiel","scores":[0,3,6,7,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},{"name":"Johanna Eriksson","scores":[0,3,4,5,7,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},{"name":"Kristin Nerman","scores":[0,3,6,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Isidor Lundqvist","scores":[0,6,7,8,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Simon Bjernerup","scores":[0,6,7,8,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Patrik Bern","scores":[0,6,6,7,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Tim Bernström","scores":[0,3,4,7,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Oscar Eliasson","scores":[0,3,4,5,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Petter Larsson","scores":[0,3,6,7,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},{"name":"Francesca Bern","scores":[0,3,6,7,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9]},{"name":"Hampus Söderman","scores":[0,3,4,6,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9]},{"name":"Simon Olofsson","scores":[0,2,4,5,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9]},{"name":"David Carlsson","scores":[0,1,2,6,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9]},{"name":"Caroline Blomqvist","scores":[0,1,1,3,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9]},{"name":"Annika Stenberg","scores":[0,1,2,5,7,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9]},{"name":"Josefine Mars Hagdahl","scores":[0,4,5,6,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Axel Sundkvist","scores":[0,4,5,6,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Claude","scores":[0,1,5,6,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Kicki Garheden","scores":[0,3,3,6,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Saga Herlenius","scores":[0,1,5,6,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Johan Erkers","scores":[0,3,4,5,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Copilot","scores":[0,3,4,5,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Gemini","scores":[0,1,5,6,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Mikael Fredriksson","scores":[0,2,5,5,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]},{"name":"Matilda Fredriksson","scores":[0,3,4,5,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Grok","scores":[0,3,4,5,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Klara Lövgren","scores":[0,2,3,5,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"William Djursén","scores":[0,1,2,5,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Jan Isaksson","scores":[0,1,3,4,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]},{"name":"Andreas Fredriksson","scores":[0,3,3,4,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Jesper Blomqvist","scores":[0,1,2,3,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]},{"name":"Victor Alonso","scores":[0,1,3,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Kristoffer Sliwinski","scores":[0,1,2,3,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Philip Andersson","scores":[0,1,2,3,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Niclas Arvidsson","scores":[0,1,2,3,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Emilia Örtendahl","scores":[0,1,1,2,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]},{"name":"Gunnar Stenberg","scores":[0,1,1,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"Felix Englund","scores":[0,1,1,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},{"name":"nan","scores":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"name":"nan","scores":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Kan inte längre komma på pallen","scores":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Kan endast komma trea som bäst","scores":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Kan endast komma tvåa som bäst","scores":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Kan fortfarande komma på första plats","scores":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"name":"Robot","scores":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}],"year":2026}</script>
+
 <script>
 (function(){
+  var CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSM1s2vhc3_enNrdDo_oRxsi97JbHUW8bnf9YnzVtXe3_Q87pGXKgndbDvnN3xr1ada_U7Qq5PelK56/pub?gid=1314027812&single=true&output=csv";
+  var GVIZ_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSM1s2vhc3_enNrdDo_oRxsi97JbHUW8bnf9YnzVtXe3_Q87pGXKgndbDvnN3xr1ada_U7Qq5PelK56/gviz/tq?tqx=out:csv&gid=1314027812";
+
+  var data = null;
+  var dates = [];
+  var players = [];
+  var palette = ['#f8c65a','#63a9ff','#33e0a1','#ff7a90','#b18cff','#ff9f43','#7bedc4','#8ec5ff','#e6e6e6','#c4d5e8'];
+
+  var svg = null;
+  var slider = null;
+  var tooltip = null;
+  var timer = null;
+  var customHighlights = null;
+  var highlightSearchTerm = '';
+  var hasBoundEvents = false;
+  var isLoading = false;
+
   function byId(id){ return document.getElementById(id); }
-  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function isNum(v){ return typeof v === 'number' && isFinite(v); }
-  function niceDate(s){ var a=String(s).split('/'); var mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(a[1])-1] || ''; return Number(a[0])+' '+mon; }
-  var raw = byId('standings-data').textContent || byId('standings-data').innerText || '';
-  var data;
-  try { data = JSON.parse(raw); } catch(e) { showError('Could not parse embedded data: '+e.message); return; }
-  if(!data || !data.dates || !data.players || !data.players.length){ showError('Embedded data was found, but it contains no players.'); return; }
-  var dates=data.dates;
-  var palette=['#f8c65a','#63a9ff','#33e0a1','#ff7a90','#b18cff','#ff9f43','#7bedc4','#8ec5ff','#e6e6e6','#c4d5e8'];
-  var players=[];
-  for(var i=0;i<data.players.length;i++){ var p=data.players[i]; players.push({name:p.name,scores:p.scores,color:palette[i%palette.length]}); }
-  var svg=byId('raceChart'), slider=byId('daySlider'), tooltip=byId('tooltip');
-  var timer=null, customHighlights=null, highlightSearchTerm='';
-  slider.max=dates.length-1;
-  function parseDM(s){ var a=String(s).split('/'); return new Date(data.year||2026, Number(a[1])-1, Number(a[0])); }
-  function defaultIndex(){ var now=new Date(); var target=new Date(now.getFullYear(), now.getMonth(), now.getDate()); target.setDate(target.getDate()+1); var idx=0; for(var i=0;i<dates.length;i++){ if(parseDM(dates[i]) <= target) idx=i; else break; } if(idx<0)idx=0; if(idx>dates.length-1)idx=dates.length-1; return idx; }
-  slider.value=defaultIndex();
-  function scoreAt(p,idx){ var v=p.scores[idx]; return isNum(v) ? v : null; }
-  function prevScoreAt(p,idx){ return idx>0 ? scoreAt(p,idx-1) : scoreAt(p,idx); }
-  function ranking(idx){ var arr=[]; for(var i=0;i<players.length;i++){ var p=players[i]; arr.push({name:p.name,score:scoreAt(p,idx),prev:prevScoreAt(p,idx),color:p.color}); } arr.sort(function(a,b){ var as=isNum(a.score)?a.score:0, bs=isNum(b.score)?b.score:0; if(bs!==as) return bs-as; return a.name.localeCompare(b.name); }); return arr; }
-  function rankMap(idx){ var r=ranking(idx), m={}; var rank=1; for(var i=0;i<r.length;i++){ if(i>0 && (r[i].score||0)<(r[i-1].score||0)) rank=i+1; m[r[i].name]=rank; } return m; }
-  function getHighlightedNames(idx){ var set={}; if(customHighlights){ for(var k in customHighlights) set[k]=true; return set; } var r=ranking(idx); for(var i=0;i<Math.min(10,r.length);i++) set[r[i].name]=true; return set; }
-  function linePath(points){ var out=[]; for(var i=0;i<points.length;i++) out.push((i?'L':'M')+points[i].x.toFixed(1)+','+points[i].y.toFixed(1)); return out.join(' '); }
-  function stagger(values,minGap,low,high){ var arr=values.slice().sort(function(a,b){return a.y-b.y}); for(var i=1;i<arr.length;i++){ if(arr[i].y-arr[i-1].y<minGap) arr[i].y=arr[i-1].y+minGap; } var overflow=arr.length ? arr[arr.length-1].y-high : 0; if(overflow>0){ for(var j=0;j<arr.length;j++) arr[j].y-=overflow; } if(arr.length && arr[0].y<low){ var under=low-arr[0].y; for(var k=0;k<arr.length;k++) arr[k].y+=under; } var m={}; for(var n=0;n<arr.length;n++) m[arr[n].name]=arr[n].y; return m; }
-  function render(idx){
-    idx=Number(idx); if(!isFinite(idx)) idx=0;
-    var W=920,H=560,m={l:56,r:160,t:32,b:54},cw=W-m.l-m.r,ch=H-m.t-m.b;
-    var ranks=ranking(idx), topNames=getHighlightedNames(idx);
-    var maxScore=1; for(var pi=0;pi<players.length;pi++){ for(var si=0;si<=idx;si++){ var vv=scoreAt(players[pi],si); if(isNum(vv) && vv>maxScore) maxScore=vv; } }
-    var yMax=Math.max(10, Math.ceil(maxScore/5)*5);
-    function x(i){ return m.l + (idx===0?0:(i/idx)*cw); }
-    function y(v){ return m.t + ch - (v/yMax)*ch; }
-    while(svg.firstChild) svg.removeChild(svg.firstChild);
-    var ns='http://www.w3.org/2000/svg';
-    function el(tag,attrs,parent){ var e=document.createElementNS(ns,tag); attrs=attrs||{}; for(var k in attrs)e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
-    for(var g=0;g<=5;g++){ var val=Math.round((yMax/5)*g), yy=y(val); el('line',{x1:m.l,y1:yy,x2:W-m.r,y2:yy,class:'gridline'}); var tx=el('text',{x:m.l-12,y:yy+4,'text-anchor':'end',fill:'#91a4ba','font-size':'11'}); tx.textContent=val; }
-    var step=Math.max(1, Math.ceil((idx+1)/7)); for(var di=0;di<=idx;di++){ if(di===0||di===idx||di%step===0){ var xx=x(di); el('line',{x1:xx,y1:H-m.b,x2:xx,y2:H-m.b+5,stroke:'rgba(255,255,255,.18)'}); var t=el('text',{x:xx,y:H-22,'text-anchor':'middle',fill:'#91a4ba','font-size':'11'}); t.textContent=niceDate(dates[di]); } }
-    var labelTargets=[];
-    for(var pp=0;pp<players.length;pp++){
-      var p=players[pp], pts=[]; for(var s=0;s<=idx;s++){ var v=scoreAt(p,s); if(v!==null) pts.push({x:x(s),y:y(v),v:v}); }
-      if(!pts.length) continue;
-      var isTop=!!topNames[p.name]; var path=el('path',{d:linePath(pts),fill:'none',stroke:p.color,'stroke-width':isTop?3.4:1.25,'stroke-opacity':isTop?0.96:0.16,'stroke-linecap':'round','stroke-linejoin':'round'});
-      (function(p){ path.addEventListener('mousemove',function(ev){ tooltip.style.opacity=1; tooltip.style.left=ev.clientX+'px'; tooltip.style.top=ev.clientY+'px'; var rm=rankMap(idx); tooltip.innerHTML='<b>'+esc(p.name)+'</b><br>'+niceDate(dates[idx])+': '+scoreAt(p,idx)+' points<br>Rank: #'+rm[p.name]; }); path.addEventListener('mouseleave',function(){ tooltip.style.opacity=0; }); })(p);
-      if(isTop){ var last=pts[pts.length-1]; el('circle',{cx:last.x,cy:last.y,r:4.3,fill:p.color,stroke:'#07111f','stroke-width':2}); labelTargets.push({name:p.name,score:scoreAt(p,idx),y:last.y,color:p.color}); }
-    }
-    var labelY=stagger(labelTargets,16,m.t+6,H-m.b-6); labelTargets.sort(function(a,b){return a.y-b.y});
-    for(var li=0;li<labelTargets.length;li++){ var l=labelTargets[li], ly=labelY[l.name], tx2=W-m.r+12; el('line',{x1:W-m.r,y1:y(l.score),x2:tx2-4,y2:ly,stroke:l.color,'stroke-opacity':.55,'stroke-width':1}); var tt=el('text',{x:tx2,y:ly+4,fill:l.color,class:'label-end'}); tt.textContent=l.name+' · '+l.score; }
-    var yl=el('text',{x:18,y:m.t+ch/2,fill:'#91a4ba','font-size':'12','text-anchor':'middle',transform:'rotate(-90 18 '+(m.t+ch/2)+')'}); yl.textContent='Cumulative points';
-    var r0=ranks[0]; byId('leaderName').textContent=r0.name; byId('leaderPts').textContent=(r0.score||0)+' pts'; byId('statPlayers').textContent=players.length; byId('statDate').textContent=niceDate(dates[idx]); byId('statMax').textContent=r0.score||0; byId('datePill').textContent=niceDate(dates[idx]);
-    renderTable(idx,ranks); renderLegend(ranks.filter(function(d){return topNames[d.name];}).slice(0,8)); renderHighlightPicker(idx);
+
+  function setStatus(msg, ok){
+    var el = byId('loadStatus');
+    if (!el) return;
+    el.style.color = ok ? '#33e0a1' : '#94a7bd';
+    el.innerHTML = msg;
   }
-  function renderLegend(items){ var h=''; for(var i=0;i<items.length;i++) h+='<span><i class="dot" style="background:'+items[i].color+'"></i>'+esc(items[i].name)+'</span>'; byId('legend').innerHTML=h; }
-  function renderTable(idx,ranks){ var prevRanks=idx>0?rankMap(idx-1):{}; var rank=1; var h='<div class="row header"><div>#</div><div>Player</div><div>Pts</div><div>Δ rank</div></div>'; for(var i=0;i<ranks.length;i++){ var r=ranks[i]; if(i>0 && (r.score||0)<(ranks[i-1].score||0)) rank=i+1; var pr=prevRanks[r.name]||rank; var diff=pr-rank; var cls=diff>0?'up':(diff<0?'down':''); var sym=diff>0?'↑'+diff:(diff<0?'↓'+Math.abs(diff):'—'); h+='<div class="row"><div class="rank">'+rank+'</div><div class="name" title="'+esc(r.name)+'">'+esc(r.name)+'</div><div class="points">'+(r.score||0)+'</div><div class="delta '+cls+'">'+sym+'</div></div>'; } byId('leaderboard').innerHTML=h; }
-  function renderHighlightPicker(idx){ var list=byId('highlightList'), mode=byId('highlightMode'), selected=getHighlightedNames(idx), count=Object.keys(selected).length; mode.textContent=customHighlights?'Custom: '+count+' highlighted':'Default: top 10 on the selected date'; var term=highlightSearchTerm.toLowerCase(); var ordered=ranking(idx), h=''; for(var i=0;i<ordered.length;i++){ var p=ordered[i]; if(term && p.name.toLowerCase().indexOf(term)===-1) continue; var checked=selected[p.name]?'checked':''; h+='<label class="highlight-item" title="'+esc(p.name)+'"><input type="checkbox" data-name="'+esc(p.name)+'" '+checked+'/><span>'+esc(p.name)+'</span></label>'; } list.innerHTML=h; var boxes=list.querySelectorAll('input[type=checkbox]'); for(var b=0;b<boxes.length;b++){ boxes[b].addEventListener('change',function(){ if(!customHighlights){ customHighlights={}; var def=getHighlightedNames(Number(slider.value)); for(var k in def) customHighlights[k]=true; } if(this.checked) customHighlights[this.getAttribute('data-name')]=true; else delete customHighlights[this.getAttribute('data-name')]; render(slider.value); }); } }
-  byId('highlightSearch').addEventListener('input',function(e){ highlightSearchTerm=e.target.value||''; renderHighlightPicker(Number(slider.value)); });
-  byId('resetHighlights').addEventListener('click',function(){ customHighlights=null; highlightSearchTerm=''; byId('highlightSearch').value=''; render(slider.value); });
-  byId('clearHighlights').addEventListener('click',function(){ customHighlights={}; render(slider.value); });
-  slider.addEventListener('input',function(e){ render(e.target.value); });
-  byId('playBtn').addEventListener('click',function(){ var btn=byId('playBtn'); if(timer){ clearInterval(timer); timer=null; btn.textContent='Play'; return; } btn.textContent='Pause'; timer=setInterval(function(){ var v=Number(slider.value); if(v>=dates.length-1) v=-1; slider.value=v+1; render(slider.value); },700); });
-  render(slider.value);
-  function showError(msg){ var lb=byId('leaderboard'); if(lb) lb.innerHTML='<div style="padding:18px;color:#ffb3b3;font-weight:800">'+esc(msg)+'</div>'; console.error(msg); }
+
+  function showError(msg){
+    setStatus('Error: ' + esc(msg), false);
+    var lb = byId('leaderboard');
+    if (lb) lb.innerHTML = '<div style="padding:18px;color:#ffb3b3;font-weight:800">' + esc(msg) + '</div>';
+    var ln = byId('leaderName'); if (ln) ln.textContent = 'Load failed';
+    var lp = byId('leaderPts'); if (lp) lp.textContent = '—';
+    console.error(msg);
+  }
+
+  function splitCsvLine(line, delimiter){
+    var out = [], cell = '', inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i], next = line[i + 1];
+      if (ch === '"') {
+        if (inQuotes && next === '"') { cell += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if (ch === delimiter && !inQuotes) {
+        out.push(cell); cell = '';
+      } else {
+        cell += ch;
+      }
+    }
+    out.push(cell);
+    return out;
+  }
+
+  function parseCsv(text){
+    text = String(text || '').replace(/^\uFEFF/, '');
+    var firstLine = (text.split(/\r?\n/).find(function(line){ return line.trim().length; }) || '');
+    var candidates = [',',';','\t'], delimiter = ',', best = -1;
+    for (var c = 0; c < candidates.length; c++) {
+      var count = splitCsvLine(firstLine, candidates[c]).length;
+      if (count > best) { best = count; delimiter = candidates[c]; }
+    }
+
+    var rows = [], row = [], cell = '', inQuotes = false;
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i], next = text[i + 1];
+      if (ch === '"') {
+        if (inQuotes && next === '"') { cell += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if (ch === delimiter && !inQuotes) {
+        row.push(cell); cell = '';
+      } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+        if (ch === '\r' && next === '\n') i++;
+        row.push(cell); rows.push(row); row = []; cell = '';
+      } else {
+        cell += ch;
+      }
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    rows = rows.filter(function(r){ return r.some(function(c){ return String(c).trim() !== ''; }); });
+    return { delimiter: delimiter, rows: rows };
+  }
+
+  function normalizeDateCell(v){
+    v = String(v == null ? '' : v).trim();
+    var iso = v.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+    if (iso) return Number(iso[3]) + '/' + Number(iso[2]);
+    var dm = v.match(/^(\d{1,2})\/(\d{1,2})(?:\/\d{2,4})?/);
+    if (dm) return Number(dm[1]) + '/' + Number(dm[2]);
+    return v;
+  }
+
+  function rowsToRaceData(rows){
+    if (!rows.length) throw new Error('CSV loaded, but no rows were found.');
+
+    var headerIndex = 0;
+    for (var i = 0; i < Math.min(rows.length, 12); i++) {
+      var first = String(rows[i][0] || '').trim().toLowerCase();
+      var dateLike = rows[i].slice(1).filter(function(v) {
+        return /^\s*\d{1,4}[-\/]\d{1,2}(?:[-\/]\d{1,4})?/.test(String(v || ''));
+      }).length;
+      if (['namn','name','player','spelare'].indexOf(first) >= 0 || dateLike >= 2) {
+        headerIndex = i;
+        break;
+      }
+    }
+
+    var header = rows[headerIndex].map(function(v){ return String(v || '').trim(); });
+    var foundDates = header.slice(1).map(normalizeDateCell).filter(Boolean);
+    if (foundDates.length < 1) throw new Error('Could not detect date columns. First row should be Namn, 11/6, 12/6, ...');
+
+    var foundPlayers = [];
+    for (var r = headerIndex + 1; r < rows.length; r++) {
+      var row = rows[r];
+      var name = String(row[0] || '').trim();
+      if (!name) continue;
+
+      var scores = [];
+      for (var j = 0; j < foundDates.length; j++) {
+        var raw = String(row[j + 1] == null ? '' : row[j + 1]).trim().replace(',', '.');
+        if (raw === '') scores.push(null);
+        else {
+          var n = Number(raw);
+          scores.push(isFinite(n) ? n : null);
+        }
+      }
+
+      if (scores.some(function(v){ return v !== null; })) {
+        foundPlayers.push({ name: name, scores: scores });
+      }
+    }
+
+    if (!foundPlayers.length) throw new Error('Found dates, but no player rows with numeric scores.');
+    return { dates: foundDates, players: foundPlayers, year: 2026 };
+  }
+
+  async function fetchCsvText(url){
+    var sep = url.indexOf('?') >= 0 ? '&' : '?';
+    var res = await fetch(url + sep + '_=' + Date.now(), { cache: 'no-store' });
+    var text = await res.text();
+    if (!res.ok) throw new Error('HTTP ' + res.status + ' from ' + url);
+    if (/^\s*</.test(text)) throw new Error('Received HTML instead of CSV from ' + url);
+    return text;
+  }
+
+  async function loadData(manual){
+    if (isLoading) return;
+    isLoading = true;
+
+    var refreshBtn = byId('refreshBtn');
+    if (refreshBtn) refreshBtn.textContent = 'Loading…';
+
+    try {
+      setStatus(manual ? 'Refreshing Google Sheet…' : 'Loading Google Sheet…', false);
+
+      var text, used = 'published CSV';
+      try {
+        text = await fetchCsvText(CSV_URL);
+      } catch (e1) {
+        console.warn('Published CSV failed, trying GViz CSV:', e1);
+        used = 'GViz CSV';
+        text = await fetchCsvText(GVIZ_URL);
+      }
+
+      var parsed = parseCsv(text);
+      data = rowsToRaceData(parsed.rows);
+      dates = data.dates;
+      players = data.players.map(function(p, i) {
+        return { name: p.name, scores: p.scores, color: palette[i % palette.length] };
+      });
+
+      setStatus('Loaded ' + players.length + ' players · ' + dates.length + ' dates · ' + used, true);
+
+      slider.max = dates.length - 1;
+
+      // On first page load, select default date. On manual refresh, preserve the current slider position when possible.
+      if (!manual) {
+        slider.value = defaultIndex();
+      } else {
+        slider.value = Math.min(Number(slider.value || 0), dates.length - 1);
+      }
+
+      render(slider.value);
+    } catch (e) {
+      showError(e.message || String(e));
+    } finally {
+      isLoading = false;
+      if (refreshBtn) refreshBtn.textContent = 'Refresh data';
+    }
+  }
+
+  function niceDate(s){
+    var a = String(s).split('/');
+    var mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(a[1]) - 1] || '';
+    return Number(a[0]) + ' ' + mon;
+  }
+
+  function parseDM(s){
+    var a = String(s).split('/');
+    return new Date(data.year || 2026, Number(a[1]) - 1, Number(a[0]));
+  }
+
+  function defaultIndex(){
+    var now = new Date();
+    var target = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    target.setDate(target.getDate() + 1);
+
+    var idx = 0;
+    for (var i = 0; i < dates.length; i++) {
+      if (parseDM(dates[i]) <= target) idx = i;
+      else break;
+    }
+    if (idx < 0) idx = 0;
+    if (idx > dates.length - 1) idx = dates.length - 1;
+    return idx;
+  }
+
+  function scoreAt(p, idx){ var v = p.scores[idx]; return isNum(v) ? v : null; }
+  function prevScoreAt(p, idx){ return idx > 0 ? scoreAt(p, idx - 1) : scoreAt(p, idx); }
+
+  function ranking(idx){
+    var arr = [];
+    for (var i = 0; i < players.length; i++) {
+      var p = players[i];
+      arr.push({ name: p.name, score: scoreAt(p, idx), prev: prevScoreAt(p, idx), color: p.color });
+    }
+    arr.sort(function(a, b) {
+      var as = isNum(a.score) ? a.score : 0, bs = isNum(b.score) ? b.score : 0;
+      if (bs !== as) return bs - as;
+      return a.name.localeCompare(b.name);
+    });
+    return arr;
+  }
+
+  function rankMap(idx){
+    var r = ranking(idx), m = {}, rank = 1;
+    for (var i = 0; i < r.length; i++) {
+      if (i > 0 && (r[i].score || 0) < (r[i - 1].score || 0)) rank = i + 1;
+      m[r[i].name] = rank;
+    }
+    return m;
+  }
+
+  function getHighlightedNames(idx){
+    var set = {};
+    if (customHighlights) {
+      for (var k in customHighlights) set[k] = true;
+      return set;
+    }
+    var r = ranking(idx);
+    for (var i = 0; i < Math.min(10, r.length); i++) set[r[i].name] = true;
+    return set;
+  }
+
+  function linePath(points){
+    var out = [];
+    for (var i = 0; i < points.length; i++) out.push((i ? 'L' : 'M') + points[i].x.toFixed(1) + ',' + points[i].y.toFixed(1));
+    return out.join(' ');
+  }
+
+  function stagger(values, minGap, low, high){
+    var arr = values.slice().sort(function(a,b){ return a.y - b.y; });
+    for (var i = 1; i < arr.length; i++) if (arr[i].y - arr[i - 1].y < minGap) arr[i].y = arr[i - 1].y + minGap;
+
+    var overflow = arr.length ? arr[arr.length - 1].y - high : 0;
+    if (overflow > 0) for (var j = 0; j < arr.length; j++) arr[j].y -= overflow;
+
+    if (arr.length && arr[0].y < low) {
+      var under = low - arr[0].y;
+      for (var k = 0; k < arr.length; k++) arr[k].y += under;
+    }
+
+    var m = {};
+    for (var n = 0; n < arr.length; n++) m[arr[n].name] = arr[n].y;
+    return m;
+  }
+
+  function render(idx){
+    if (!data || !dates.length || !players.length) return;
+
+    idx = Number(idx);
+    if (!isFinite(idx)) idx = 0;
+
+    var W = 920, H = 560, m = { l:56, r:160, t:32, b:54 }, cw = W - m.l - m.r, ch = H - m.t - m.b;
+    var ranks = ranking(idx), topNames = getHighlightedNames(idx);
+
+    var maxScore = 1;
+    for (var pi = 0; pi < players.length; pi++) {
+      for (var si = 0; si <= idx; si++) {
+        var vv = scoreAt(players[pi], si);
+        if (isNum(vv) && vv > maxScore) maxScore = vv;
+      }
+    }
+
+    var yMax = Math.max(10, Math.ceil(maxScore / 5) * 5);
+    function x(i){ return m.l + (idx === 0 ? 0 : (i / idx) * cw); }
+    function y(v){ return m.t + ch - (v / yMax) * ch; }
+
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    var ns = 'http://www.w3.org/2000/svg';
+    function el(tag, attrs, parent){
+      var e = document.createElementNS(ns, tag);
+      attrs = attrs || {};
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      (parent || svg).appendChild(e);
+      return e;
+    }
+
+    for (var g = 0; g <= 5; g++) {
+      var val = Math.round((yMax / 5) * g), yy = y(val);
+      el('line', { x1:m.l, y1:yy, x2:W-m.r, y2:yy, class:'gridline' });
+      var tx = el('text', { x:m.l-12, y:yy+4, 'text-anchor':'end', fill:'#91a4ba', 'font-size':'11' });
+      tx.textContent = val;
+    }
+
+    var step = Math.max(1, Math.ceil((idx + 1) / 7));
+    for (var di = 0; di <= idx; di++) {
+      if (di === 0 || di === idx || di % step === 0) {
+        var xx = x(di);
+        el('line', { x1:xx, y1:H-m.b, x2:xx, y2:H-m.b+5, stroke:'rgba(255,255,255,.18)' });
+        var t = el('text', { x:xx, y:H-22, 'text-anchor':'middle', fill:'#91a4ba', 'font-size':'11' });
+        t.textContent = niceDate(dates[di]);
+      }
+    }
+
+    var labelTargets = [];
+    for (var pp = 0; pp < players.length; pp++) {
+      var p = players[pp], pts = [];
+      for (var s = 0; s <= idx; s++) {
+        var v = scoreAt(p, s);
+        if (v !== null) pts.push({ x:x(s), y:y(v), v:v });
+      }
+      if (!pts.length) continue;
+
+      var isTop = !!topNames[p.name];
+      var path = el('path', { d:linePath(pts), fill:'none', stroke:p.color, 'stroke-width':isTop?3.4:1.25, 'stroke-opacity':isTop?0.96:0.16, 'stroke-linecap':'round', 'stroke-linejoin':'round' });
+
+      (function(p) {
+        path.addEventListener('mousemove', function(ev) {
+          tooltip.style.opacity = 1;
+          tooltip.style.left = ev.clientX + 'px';
+          tooltip.style.top = ev.clientY + 'px';
+          var rm = rankMap(idx);
+          tooltip.innerHTML = '<b>' + esc(p.name) + '</b><br>' + niceDate(dates[idx]) + ': ' + scoreAt(p, idx) + ' points<br>Rank: #' + rm[p.name];
+        });
+        path.addEventListener('mouseleave', function() { tooltip.style.opacity = 0; });
+      })(p);
+
+      if (isTop) {
+        var last = pts[pts.length - 1];
+        el('circle', { cx:last.x, cy:last.y, r:4.3, fill:p.color, stroke:'#07111f', 'stroke-width':2 });
+        labelTargets.push({ name:p.name, score:scoreAt(p,idx), y:last.y, color:p.color });
+      }
+    }
+
+    var labelY = stagger(labelTargets, 16, m.t + 6, H - m.b - 6);
+    labelTargets.sort(function(a,b){ return a.y - b.y; });
+    for (var li = 0; li < labelTargets.length; li++) {
+      var l = labelTargets[li], ly = labelY[l.name], tx2 = W - m.r + 12;
+      el('line', { x1:W-m.r, y1:y(l.score), x2:tx2-4, y2:ly, stroke:l.color, 'stroke-opacity':.55, 'stroke-width':1 });
+      var tt = el('text', { x:tx2, y:ly+4, fill:l.color, class:'label-end' });
+      tt.textContent = l.name + ' · ' + l.score;
+    }
+
+    var yl = el('text', { x:18, y:m.t+ch/2, fill:'#91a4ba', 'font-size':'12', 'text-anchor':'middle', transform:'rotate(-90 18 ' + (m.t+ch/2) + ')' });
+    yl.textContent = 'Cumulative points';
+
+    var r0 = ranks[0] || { name:'—', score:0 };
+    byId('leaderName').textContent = r0.name;
+    byId('leaderPts').textContent = (r0.score || 0) + ' pts';
+    byId('statPlayers').textContent = players.length;
+    byId('statDate').textContent = niceDate(dates[idx]);
+    byId('statMax').textContent = r0.score || 0;
+    byId('datePill').textContent = niceDate(dates[idx]);
+
+    renderTable(idx, ranks);
+    renderLegend(ranks.filter(function(d){ return topNames[d.name]; }).slice(0,8));
+    renderHighlightPicker(idx);
+  }
+
+  function renderLegend(items){
+    var h = '';
+    for (var i = 0; i < items.length; i++) h += '<span><i class="dot" style="background:' + items[i].color + '"></i>' + esc(items[i].name) + '</span>';
+    byId('legend').innerHTML = h;
+  }
+
+  function renderTable(idx, ranks){
+    var prevRanks = idx > 0 ? rankMap(idx - 1) : {};
+    var rank = 1;
+    var h = '<div class="row header"><div>#</div><div>Player</div><div>Pts</div><div>Δ rank</div></div>';
+
+    for (var i = 0; i < ranks.length; i++) {
+      var r = ranks[i];
+      if (i > 0 && (r.score || 0) < (ranks[i - 1].score || 0)) rank = i + 1;
+      var pr = prevRanks[r.name] || rank;
+      var diff = pr - rank;
+      var cls = diff > 0 ? 'up' : (diff < 0 ? 'down' : '');
+      var sym = diff > 0 ? '↑' + diff : (diff < 0 ? '↓' + Math.abs(diff) : '—');
+      h += '<div class="row"><div class="rank">' + rank + '</div><div class="name" title="' + esc(r.name) + '">' + esc(r.name) + '</div><div class="points">' + (r.score || 0) + '</div><div class="delta ' + cls + '">' + sym + '</div></div>';
+    }
+
+    byId('leaderboard').innerHTML = h;
+  }
+
+  function renderHighlightPicker(idx){
+    var list = byId('highlightList'), mode = byId('highlightMode'), selected = getHighlightedNames(idx), count = Object.keys(selected).length;
+    mode.textContent = customHighlights ? 'Custom: ' + count + ' highlighted' : 'Default: top 10 on the selected date';
+
+    var term = highlightSearchTerm.toLowerCase();
+    var ordered = ranking(idx);
+    var h = '';
+
+    for (var i = 0; i < ordered.length; i++) {
+      var p = ordered[i];
+      if (term && p.name.toLowerCase().indexOf(term) === -1) continue;
+      var checked = selected[p.name] ? 'checked' : '';
+      h += '<label class="highlight-item" title="' + esc(p.name) + '"><input type="checkbox" data-name="' + esc(p.name) + '" ' + checked + '/><span>' + esc(p.name) + '</span></label>';
+    }
+
+    list.innerHTML = h;
+
+    var boxes = list.querySelectorAll('input[type=checkbox]');
+    for (var b = 0; b < boxes.length; b++) {
+      boxes[b].addEventListener('change', function() {
+        if (!customHighlights) {
+          customHighlights = {};
+          var def = getHighlightedNames(Number(slider.value));
+          for (var k in def) customHighlights[k] = true;
+        }
+        if (this.checked) customHighlights[this.getAttribute('data-name')] = true;
+        else delete customHighlights[this.getAttribute('data-name')];
+        render(slider.value);
+      });
+    }
+  }
+
+  function bindEventsOnce(){
+    if (hasBoundEvents) return;
+    hasBoundEvents = true;
+
+    byId('highlightSearch').addEventListener('input', function(e) {
+      highlightSearchTerm = e.target.value || '';
+      renderHighlightPicker(Number(slider.value));
+    });
+
+    byId('resetHighlights').addEventListener('click', function() {
+      customHighlights = null;
+      highlightSearchTerm = '';
+      byId('highlightSearch').value = '';
+      render(slider.value);
+    });
+
+    byId('clearHighlights').addEventListener('click', function() {
+      customHighlights = {};
+      render(slider.value);
+    });
+
+    slider.addEventListener('input', function(e) {
+      render(e.target.value);
+    });
+
+    byId('refreshBtn').addEventListener('click', function() {
+      loadData(true);
+    });
+
+    byId('playBtn').addEventListener('click', function() {
+      var btn = byId('playBtn');
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+        btn.textContent = 'Play';
+        return;
+      }
+      btn.textContent = 'Pause';
+      timer = setInterval(function() {
+        var v = Number(slider.value);
+        if (v >= dates.length - 1) v = -1;
+        slider.value = v + 1;
+        render(slider.value);
+      }, 700);
+    });
+  }
+
+  function start(){
+    svg = byId('raceChart');
+    slider = byId('daySlider');
+    tooltip = byId('tooltip');
+
+    bindEventsOnce();
+
+    // Load once when the page is opened. After that, only the Refresh data button fetches again.
+    loadData(false);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
 })();
 </script>
 </body>
