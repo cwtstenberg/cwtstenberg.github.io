@@ -56,6 +56,14 @@ button:hover,button.active{background:var(--gold);color:var(--navy);transform:tr
 .teamTop{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:7px}
 .teamName{font-weight:1000;letter-spacing:-.035em}
 .flag{font-size:20px;margin-right:7px}
+.flagWrap{display:inline-flex;align-items:center;gap:7px;margin-right:7px;vertical-align:middle}
+.flagImg{width:24px;height:18px;object-fit:cover;border-radius:3px;box-shadow:0 0 0 1px rgba(7,28,51,.18)}
+.flagEmoji{font-size:19px;line-height:1;display:none}
+.flagWrap.flagFallback .flagImg{display:none}
+.flagWrap.flagFallback .flagEmoji{display:inline}
+
+}
+
 .meta{color:var(--muted);font-size:12px;font-weight:850;white-space:nowrap}
 .bar{display:flex;height:31px;overflow:hidden;border-radius:999px;background:rgba(7,28,51,.08);box-shadow:inset 0 0 0 1px rgba(7,28,51,.08)}
 .seg{height:100%;min-width:2px;display:grid;place-items:center;font-size:11px;font-weight:1000;color:rgba(0,0,0,.78);cursor:pointer;white-space:nowrap;border-right:1px solid rgba(255,255,255,.38);transition:.16s ease}
@@ -77,7 +85,6 @@ button:hover,button.active{background:var(--gold);color:var(--navy);transform:tr
 <section class="hero">
   <div class="kicker"><span class="dot"></span> FIFA World Cup 2026</div>
   <h1>Group Stage Prediction</h1>
-  <p class="sub">Community prediction consensus for every group. Flags, qualification zone, and clickable segments are all embedded in one offline-ready HTML file.</p>
   <div class="ribbon">
     <div class="pill">🏆 12 Groups</div>
     <div class="pill">🌎 48 Teams</div>
@@ -94,7 +101,7 @@ button:hover,button.active{background:var(--gold);color:var(--navy);transform:tr
 
 <section class="controls" id="controls"></section>
 <main class="grid" id="grid"></main>
-<div class="footer">FIFA World Cup 2026 Prediction Tracker · All data embedded directly in this HTML.</div>
+
 
 <div class="modalOverlay" id="modalOverlay">
   <div class="modal">
@@ -111,6 +118,30 @@ button:hover,button.active{background:var(--gold);color:var(--navy);transform:tr
 const DATA = JSON.parse(document.getElementById("embedded-data").textContent);
 const order = ["1st","2nd","3rd","4th"];
 
+
+const FLAG_CODES = {
+  "Mexico":"mx","South Africa":"za","Rep. of Korea":"kr","South Korea":"kr","Czech Rep.":"cz","Czechia":"cz",
+  "Canada":"ca","Bosnia/Herzeg.":"ba","Bosnia and Herzegovina":"ba","Qatar":"qa","Switzerland":"ch",
+  "Brazil":"br","Morocco":"ma","Haiti":"ht","Scotland":"gb-sct",
+  "USA":"us","United States":"us","Paraguay":"py","Australia":"au","Turkey":"tr",
+  "Germany":"de","Curaçao":"cw","Curacao":"cw","Ivory Coast":"ci","Ecuador":"ec",
+  "Netherlands":"nl","Japan":"jp","Sweden":"se","Tunisia":"tn",
+  "Belgium":"be","Egypt":"eg","IR Iran":"ir","Iran":"ir","New Zealand":"nz",
+  "Spain":"es","Cape Verde":"cv","Saudi Arabia":"sa","Uruguay":"uy",
+  "France":"fr","Senegal":"sn","Iraq":"iq","Norway":"no",
+  "Argentina":"ar","Algeria":"dz","Austria":"at","Jordan":"jo",
+  "Portugal":"pt","DR Congo":"cd","Uzbekistan":"uz","Colombia":"co",
+  "England":"gb-eng","Croatia":"hr","Ghana":"gh","Panama":"pa"
+};
+function flagMarkup(row){
+  const code = FLAG_CODES[row.team];
+  const emoji = escapeHtml(row.flag || "");
+  if(!code) return `<span class="flagWrap flagFallback"><span class="flagEmoji">${emoji}</span></span>`;
+  return `<span class="flagWrap"><img class="flagImg" alt="" src="https://flagcdn.com/w40/${code}.png" onerror="this.parentElement.classList.add('flagFallback')"><span class="flagEmoji">${emoji}</span></span>`;
+}
+
+
+
 function escapeHtml(v) {
   return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
@@ -118,54 +149,56 @@ function escapeHtml(v) {
 function buildControls(){
   const controls=document.getElementById("controls");
   controls.innerHTML="";
-  ["All",...Object.keys(DATA.groups)].forEach(g=>{
+  const filters = [
+    {label:"ALL", groups:null},
+    {label:"A-C", groups:["A","B","C"]},
+    {label:"D-F", groups:["D","E","F"]},
+    {label:"G-I", groups:["G","H","I"]},
+    {label:"J-L", groups:["J","K","L"]},
+    ...Object.keys(DATA.groups).map(g => ({label:g, groups:[g]}))
+  ];
+  filters.forEach((filter, index)=>{
     const b=document.createElement("button");
-    b.textContent = g==="All" ? "ALL" : g;
-    b.className = g==="All" ? "active" : "";
+    b.textContent = filter.label;
+    b.className = index===0 ? "active" : "";
     b.onclick=()=>{
       controls.querySelectorAll("button").forEach(x=>x.classList.remove("active"));
       b.classList.add("active");
-      render(g==="All"?null:g);
+      render(filter.groups);
     };
     controls.appendChild(b);
   });
 }
 
 function showPeople(group,row,pos,pct){
-  document.getElementById("modalTitle").textContent = `${row.flag} ${row.team}`;
+  document.getElementById("modalTitle").innerHTML = `${flagMarkup(row)}${escapeHtml(row.team)}`;
   document.getElementById("modalSubtitle").textContent = `Group ${group} · Predicted ${pos} place · ${row.counts[pos]} picks · ${pct}%`;
   document.getElementById("peopleList").innerHTML = (row.people[pos]||[]).map(p=>`<span class="person">${escapeHtml(p)}</span>`).join("");
   document.getElementById("modalOverlay").style.display="flex";
 }
 
-function render(filter=null){
+function render(filterGroups=null){
   const grid=document.getElementById("grid");
   grid.innerHTML="";
   Object.entries(DATA.groups).forEach(([group,rows])=>{
-    if(filter && group!==filter) return;
+    if(filterGroups && !filterGroups.includes(group)) return;
     const card=document.createElement("article");
     card.className="card";
     card.setAttribute("data-group", group);
     card.innerHTML=`
       <div class="cardHead">
-        <div class="cardTitle"><strong>Group ${group}</strong><span>Qualification forecast</span></div>
+        <div class="cardTitle"><strong>Group ${group}</strong></div>
         <div class="badge">${group}</div>
       </div>
-      <div class="rows"><div class="qualLine">Projected top two</div></div>`;
+      <div class="rows"></div>`;
     const body=card.querySelector(".rows");
     rows.forEach((row,idx)=>{
-      if(idx===2){
-        const line=document.createElement("div");
-        line.className="qualLine";
-        line.textContent="Chasing places";
-        body.appendChild(line);
-      }
       const team=document.createElement("div");
       team.className="team" + (idx<2 ? " qualifier" : "");
       team.innerHTML=`
         <div class="teamTop">
-          <div class="teamName"><span class="flag">${row.flag}</span>${escapeHtml(row.team)}</div>
-          <div class="meta">Top 2: ${row.top2Pct}% · Avg: ${row.avgPosition}</div>
+          <div class="teamName">${flagMarkup(row)}${escapeHtml(row.team)}</div>
+          <div class="meta">Avg: ${row.avgPosition}</div>
         </div>
         <div class="bar"></div>`;
       const bar=team.querySelector(".bar");
