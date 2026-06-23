@@ -17,7 +17,8 @@
   .hero{background:linear-gradient(135deg,var(--navy),#0c2b4f);color:#fff;border-radius:30px;padding:30px;box-shadow:var(--shadow);overflow:hidden;position:relative}
   .hero:after{content:"2026";position:absolute;right:-24px;bottom:-42px;font-weight:1000;font-size:120px;color:rgba(255,255,255,.06);letter-spacing:-8px}
   .kicker{color:var(--gold2);text-transform:uppercase;letter-spacing:.16em;font-weight:900;font-size:12px}
-  .hero h1{margin:8px 0 6px;font-size:clamp(32px,5vw,58px);letter-spacing:-.05em;line-height:.95}
+  .hero h1{margin:8px 0 6px;font-size:clamp(32px,5vw,58px);letter-spacing:-.05em;line-height:.95;display:flex;align-items:center;gap:14px}
+  .hero h1 .cup{font-size:.82em;filter:drop-shadow(0 8px 16px rgba(0,0,0,.25))}
   .hero p{margin:0;max-width:680px;color:rgba(255,255,255,.82);font-size:17px}
   .deadline{display:inline-flex;gap:10px;align-items:center;margin-top:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:10px 14px;border-radius:999px;font-weight:800}
   .grid{display:grid;grid-template-columns:1fr 330px;gap:18px;margin-top:18px}
@@ -44,6 +45,8 @@
   .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.btn{border:0;border-radius:18px;padding:14px 18px;font-size:16px;font-weight:1000;cursor:pointer}
   .primary{background:linear-gradient(135deg,var(--gold),#e1bd63);color:var(--navy);box-shadow:0 12px 28px rgba(201,154,46,.28)}.secondary{background:rgba(8,27,51,.08);color:var(--navy)}
   .status{margin-top:12px;padding:12px 14px;border-radius:16px;font-weight:800;display:none}.status.ok{display:block;background:rgba(21,122,82,.12);color:var(--green)}.status.err{display:block;background:rgba(196,58,47,.12);color:var(--red)}
+  .couponTitle{margin:0 0 8px;letter-spacing:-.04em;display:flex;align-items:center;gap:10px}
+  .couponTitle .couponIcon{width:34px;height:34px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gold),#e1bd63);box-shadow:0 8px 18px rgba(201,154,46,.22)}
   .mini{font-size:13px;color:var(--muted);line-height:1.45}.progress{height:10px;background:rgba(8,27,51,.1);border-radius:999px;overflow:hidden;margin:8px 0 12px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--navy));transition:.2s}.summary{display:grid;gap:8px}.summary div{display:flex;justify-content:space-between;border-bottom:1px dashed rgba(8,27,51,.15);padding:7px 0;font-weight:800;gap:8px}.hiddenFrame{display:none}.loading{padding:16px;border-radius:18px;background:rgba(255,255,255,.7);font-weight:900;color:var(--muted)}
   @media(max-width:860px){.grid{grid-template-columns:1fr}.side{position:static}.scoreRow{grid-template-columns:1fr}.dash{display:none}.hero{padding:24px}.scoreBtns button{padding:12px 0}}
 </style>
@@ -52,7 +55,7 @@
 <div class="wrap">
   <section class="hero">
     <div class="kicker">FIFA World Cup 2026</div>
-    <h1>Sextondelsfinaler</h1>
+    <h1><span class="cup">🏆</span><span>Sextondelsfinaler</span></h1>
     <p>Tippa resultaten i sextondelarna.</p>
     <div class="deadline">⏰ Deadline 28/6 20:00</div>
   </section>
@@ -71,7 +74,7 @@
       <div id="status" class="status"></div>
     </main>
     <aside class="panel side">
-      <h2 style="margin:0 0 8px;letter-spacing:-.04em">Din kupong</h2>
+      <h2 class="couponTitle"><span class="couponIcon">🏆</span><span>Din kupong</span></h2>
       <p class="mini">Fyll i alla matcher. När du skickar sparas svaret i samma Google Form.</p>
       <div class="progress"><div id="bar" class="bar"></div></div>
       <div id="summary" class="summary"></div>
@@ -200,7 +203,7 @@ function render(){
     state[m.match] ||= {home:null, away:null};
     const el=document.createElement('section'); el.className='match';
     el.innerHTML=`<div class="matchTop"><div><div class="matchNo">Match ${m.match}</div><div class="teams">${teamHtml(m.home)} <span class="vs">vs</span> ${teamHtml(m.away)}</div></div></div>
-    <div class="scoreRow"><div class="scoreBox"><span class="label">${teamHtml(m.home)}</span><div class="scoreBtns" data-match="${m.match}" data-side="home"></div></div><div class="dash">–</div><div class="scoreBox"><span class="label">${teamHtml(m.away)}</span><div class="scoreBtns" data-match="${m.match}" data-side="away"></div></div></div>`;
+    <div class="scoreRow"><div class="scoreBox"><span class="label">${m.home}</span><div class="scoreBtns" data-match="${m.match}" data-side="home"></div></div><div class="dash">–</div><div class="scoreBox"><span class="label">${m.away}</span><div class="scoreBtns" data-match="${m.match}" data-side="away"></div></div></div>`;
     root.appendChild(el);
   });
   document.querySelectorAll('.scoreBtns').forEach(box=>{
