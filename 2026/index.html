@@ -12,7 +12,7 @@
   *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 15% 5%,rgba(56,189,248,.25),transparent 28%),radial-gradient(circle at 90% 15%,rgba(248,199,74,.18),transparent 25%),linear-gradient(135deg,#050b18,#08132a 48%,#030712);color:var(--text);min-height:100vh;}
   .wrap{max-width:1180px;margin:auto;padding:28px 16px 44px}.hero{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:28px;background:linear-gradient(135deg,rgba(11,23,48,.95),rgba(16,31,66,.84));padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.32)}
   .hero:after{content:"";position:absolute;inset:-80px -120px auto auto;width:360px;height:360px;border:46px solid rgba(248,199,74,.08);border-radius:50%;transform:rotate(20deg)}
-  .kicker{letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-size:12px;font-weight:800}.hero h1{font-size:clamp(32px,6vw,72px);line-height:.95;margin:12px 0 10px}.hero p{margin:0;color:var(--muted);font-size:16px;max-width:780px}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}.stat{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:18px;padding:16px}.stat b{display:block;font-size:30px}.stat span{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+  .kicker{letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-size:12px;font-weight:800}.hero h1{font-size:clamp(32px,6vw,72px);line-height:.95;margin:12px 0 10px}.hero p{margin:0;color:var(--muted);font-size:16px;max-width:780px}.nav{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.nav a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:850;border:1px solid rgba(248,199,74,.35);background:linear-gradient(135deg,rgba(248,199,74,.18),rgba(56,189,248,.08));border-radius:999px;padding:11px 15px;box-shadow:0 8px 24px rgba(0,0,0,.18)}.nav a:hover{transform:translateY(-1px);background:linear-gradient(135deg,rgba(248,199,74,.26),rgba(56,189,248,.14))}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.panel{border:1px solid var(--line);background:rgba(11,23,48,.82);backdrop-filter:blur(12px);border-radius:24px;padding:20px;box-shadow:0 16px 44px rgba(0,0,0,.24)}
   .panel h2{margin:0 0 4px;font-size:26px}.panel .sub{color:var(--muted);margin:0 0 18px}.row{position:relative;padding:14px 0;border-top:1px solid var(--line)}.row:first-of-type{border-top:0}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.name{display:flex;align-items:center;gap:10px;font-weight:850;font-size:18px}.flag{width:30px;height:22px;border-radius:5px;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.24)}.emoji{font-size:26px;width:32px;text-align:center}.count{font-weight:850;color:var(--gold)}.bar{height:12px;background:rgba(255,255,255,.09);border-radius:99px;overflow:hidden}.fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--cyan));box-shadow:0 0 20px rgba(56,189,248,.22)}.meta{display:flex;justify-content:space-between;margin-top:7px;color:var(--muted);font-size:13px}
   button.toggle{margin-top:10px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:999px;padding:7px 11px;cursor:pointer;font-weight:750}button.toggle:hover{background:rgba(255,255,255,.11)}.people{display:none;margin-top:10px;color:#dce7fb;font-size:13px;line-height:1.65}.people.open{display:block}.pill{display:inline-block;margin:3px 5px 3px 0;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08)}
@@ -25,11 +25,11 @@
   <section class="hero">
     <div class="kicker">FIFA World Cup 2026 Prediction Pool</div>
     <h1>Winner & Top Scorer Picks</h1>
-    <p>Interactive infographic based only on each participant’s predicted World Cup winner and top goalscorer.</p>
-    <div class="stats">
-      <div class="stat"><b id="totalPredictions">—</b><span>Valid participants</span></div>
-      <div class="stat"><b id="winnerLeader">—</b><span>Most picked winner</span></div>
-      <div class="stat"><b id="scorerLeader">—</b><span>Most picked scorer</span></div>
+    <div class="nav" aria-label="World Cup dashboard navigation">
+      <a href="https://cwtstenberg.github.io/2026/standings">📊 Standings</a>
+      <a href="https://cwtstenberg.github.io/2026/heatmap">🔥 Heatmap</a>
+      <a href="https://cwtstenberg.github.io/2026/groups">🏁 Groups</a>
+      <a href="https://cwtstenberg.github.io/2026/tree">🌳 Tree</a>
     </div>
   </section>
 
@@ -44,13 +44,7 @@
       <p class="sub">Players ranked by number of predictions.</p>
       <div id="scorerRows"></div>
     </section>
-    <section class="panel full">
-      <h2>Prediction Summary</h2>
-      <p class="sub">A quick card view of the leading picks.</p>
-      <div class="cards" id="cards"></div>
-    </section>
   </main>
-  <div class="note">Data is embedded directly in this file. No upload or internet connection is required for the dashboard logic.</div>
 </div>
 <script>
 const RAW_DATA = `Deltagare\tPoäng\tVinnare\tMålgörare
@@ -150,16 +144,10 @@ function togglePeople(id){
 }
 function render(){
   const rows=parseData(RAW_DATA);
-  const valid=rows.filter(r=>r.Vinnare || r.Målgörare);
   const winners=groupBy(rows,'Vinnare'); const scorers=groupBy(rows,'Målgörare');
   const totalWinner=winners.reduce((s,i)=>s+i.count,0), totalScorer=scorers.reduce((s,i)=>s+i.count,0);
-  document.getElementById('totalPredictions').textContent=valid.length;
-  document.getElementById('winnerLeader').textContent=winners[0]?.name || '—';
-  document.getElementById('scorerLeader').textContent=scorers[0]?.name || '—';
   renderRows(document.getElementById('winnerRows'),winners,totalWinner,'winner');
   renderRows(document.getElementById('scorerRows'),scorers,totalScorer,'scorer');
-  const cards=[...winners.slice(0,3).map(x=>({...x,type:'Winner'})),...scorers.slice(0,3).map(x=>({...x,type:'Top scorer'}))];
-  document.getElementById('cards').innerHTML=cards.map(c=>`<div class="card"><div class="title">${c.type==='Winner'?flagHtml(c.name):'<span class="emoji">⚽</span>'}<span>${c.name}</span></div><div class="big">${c.count}</div><div class="label">${c.type} predictions</div></div>`).join('');
 }
 render();
 </script>
