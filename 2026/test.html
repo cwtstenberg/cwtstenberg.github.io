@@ -84,27 +84,27 @@ const CONFIG = {
   csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTGpUvuPP93ZzIzy7ni6CuRCeKX2XMVq0Nof1GF1OC3Vem8Nn4Om3sah68frwTmSOC4KuyJOphYmBLg/pub?gid=0&single=true&output=csv',
   targetType: 'Sextondelsfinaler',
   formAction: 'https://docs.google.com/forms/d/1XtP4u-JLtnGQgNZxoyT66sG54zJimeqjZmpO2vo9qD8/formResponse',
-  playerEntryId: 'entry.PLAYER_NAME',
+  playerEntryId: '', // Optional: add the Google Forms entry ID for the name/player field here, if your form has one.
 
   // Keep your existing Google Forms entry IDs here.
   // Match numbers are loaded from the CSV, so only the IDs need to be mapped.
   matchEntryIds: {
-    73: { home: 'entry.MATCH_73_HOME', away: 'entry.MATCH_73_AWAY' },
-    74: { home: 'entry.MATCH_74_HOME', away: 'entry.MATCH_74_AWAY' },
-    75: { home: 'entry.MATCH_75_HOME', away: 'entry.MATCH_75_AWAY' },
-    76: { home: 'entry.MATCH_76_HOME', away: 'entry.MATCH_76_AWAY' },
-    77: { home: 'entry.MATCH_77_HOME', away: 'entry.MATCH_77_AWAY' },
-    78: { home: 'entry.MATCH_78_HOME', away: 'entry.MATCH_78_AWAY' },
-    79: { home: 'entry.MATCH_79_HOME', away: 'entry.MATCH_79_AWAY' },
-    80: { home: 'entry.MATCH_80_HOME', away: 'entry.MATCH_80_AWAY' },
-    81: { home: 'entry.MATCH_81_HOME', away: 'entry.MATCH_81_AWAY' },
-    82: { home: 'entry.MATCH_82_HOME', away: 'entry.MATCH_82_AWAY' },
-    83: { home: 'entry.MATCH_83_HOME', away: 'entry.MATCH_83_AWAY' },
-    84: { home: 'entry.MATCH_84_HOME', away: 'entry.MATCH_84_AWAY' },
-    85: { home: 'entry.MATCH_85_HOME', away: 'entry.MATCH_85_AWAY' },
-    86: { home: 'entry.MATCH_86_HOME', away: 'entry.MATCH_86_AWAY' },
-    87: { home: 'entry.MATCH_87_HOME', away: 'entry.MATCH_87_AWAY' },
-    88: { home: 'entry.MATCH_88_HOME', away: 'entry.MATCH_88_AWAY' }
+    73: { home: 'entry.173039064', away: 'entry.2081138565' },
+    74: { home: 'entry.609149395', away: 'entry.2127856322' },
+    75: { home: 'entry.573199795', away: 'entry.1402494101' },
+    76: { home: 'entry.908071329', away: 'entry.939093872' },
+    77: { home: 'entry.1811573971', away: 'entry.2105608060' },
+    78: { home: 'entry.1873431528', away: 'entry.1243928660' },
+    79: { home: 'entry.1811809815', away: 'entry.1317747161' },
+    80: { home: 'entry.2022588859', away: 'entry.230219765' },
+    81: { home: 'entry.586597121', away: 'entry.1149979591' },
+    82: { home: 'entry.507426087', away: 'entry.1767605536' },
+    83: { home: 'entry.69377434', away: 'entry.1799804871' },
+    84: { home: 'entry.1334845619', away: 'entry.163996980' },
+    85: { home: 'entry.1220620858', away: 'entry.804734771' },
+    86: { home: 'entry.1008189200', away: 'entry.175607673' },
+    87: { home: 'entry.1453532906', away: 'entry.671493641' },
+    88: { home: 'entry.1319186883', away: 'entry.550052967' }
   }
 };
 
@@ -165,8 +165,11 @@ function flagHtml(team){
 function teamHtml(team){ return `<span class="teamName">${flagHtml(team)}<span>${team}</span></span>`; }
 function getEntries(matchNo){ return CONFIG.matchEntryIds[String(matchNo)] || CONFIG.matchEntryIds[matchNo] || {}; }
 function hasRealConfig(){
-  const all = JSON.stringify(CONFIG.matchEntryIds) + CONFIG.playerEntryId;
-  return !all.includes('MATCH_') && !all.includes('PLAYER_NAME') && CONFIG.playerEntryId.startsWith('entry.');
+  const all = JSON.stringify(CONFIG.matchEntryIds);
+  return !all.includes('MATCH_');
+}
+function hasPlayerEntry(){
+  return CONFIG.playerEntryId && CONFIG.playerEntryId.startsWith('entry.');
 }
 
 async function loadMatches(){
@@ -227,7 +230,7 @@ document.getElementById('submitBtn').onclick=()=>{
   if(!hasRealConfig()){status.className='status err'; status.textContent='Entry IDs saknas i CONFIG.'; return;}
   const form=document.createElement('form'); form.method='POST'; form.action=CONFIG.formAction; form.target='hidden_google_submit'; form.style.display='none';
   const add=(name,value)=>{const input=document.createElement('input'); input.name=name; input.value=value; form.appendChild(input);};
-  add(CONFIG.playerEntryId, player);
+  if(hasPlayerEntry()) add(CONFIG.playerEntryId, player);
   matches.forEach(m=>{ const ids=getEntries(m.match); add(ids.home, state[m.match].home); add(ids.away, state[m.match].away); });
   document.body.appendChild(form); form.submit(); form.remove();
   status.className='status ok'; status.textContent='Skickat! Svaret bör nu vara sparat i Google Forms.';
