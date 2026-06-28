@@ -12,7 +12,10 @@
 .wrap{position:relative;padding:10px 20px 34px;overflow-x:auto}.bracket{width:1640px;min-height:860px;margin:0 auto;display:grid;grid-template-columns:228px 170px 170px 170px 230px 170px 170px 170px 228px;grid-template-rows:42px repeat(8,88px);gap:0 26px;position:relative}.roundTitle{align-self:end;text-align:center;color:var(--navy);font-size:12px;font-weight:1000;letter-spacing:.08em;text-transform:uppercase;padding-bottom:8px}.card{position:relative;align-self:center;height:74px;border:1px solid rgba(7,28,51,.28);border-radius:8px;background:var(--paper);box-shadow:0 10px 22px rgba(7,28,51,.09);display:flex;overflow:hidden;z-index:3}.card.final{height:100px;border:3px solid var(--gold);box-shadow:0 18px 34px rgba(7,28,51,.18),inset 0 0 0 1px rgba(255,255,255,.35);background:linear-gradient(135deg,var(--navy),#12395f);color:white}.card.third{height:86px;background:rgba(212,175,55,.18);border-color:rgba(212,175,55,.6)}.num{width:54px;min-width:54px;background:linear-gradient(135deg,var(--navy),#082847);color:var(--gold2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:1000;border-radius:7px 0 0 7px;line-height:.92}.num span{color:white;font-size:10px;letter-spacing:.12em}.num b{font-size:31px;letter-spacing:-.05em}.final .num{background:rgba(0,0,0,.28);border-right:1px solid rgba(212,175,55,.45)}.info{padding:6px 9px;flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;min-width:0}.teams{font-size:12.5px;font-weight:1000;line-height:1.18;letter-spacing:-.025em}.teamName{display:inline-flex;align-items:center;justify-content:center;gap:5px}.flag{font-size:18px;line-height:1;display:inline-block;min-width:22px;text-align:center;filter:saturate(1.05);flex:0 0 auto}.flagImg{width:22px;height:16px;object-fit:cover;border-radius:3px;box-shadow:0 0 0 1px rgba(7,28,51,.18);display:inline-block;vertical-align:-2px;flex:0 0 auto}.seedName{color:rgba(7,28,51,.78);letter-spacing:.015em}.vs{display:block;color:var(--gold);font-size:10px;font-weight:1000;margin:1px 0}.scoreLine{display:grid;grid-template-columns:1fr auto;gap:7px;align-items:center;margin:1px 0}
 .scoreNum{min-width:24px;height:22px;border-radius:7px;background:rgba(7,28,51,.10);border:1px solid rgba(7,28,51,.16);display:grid;place-items:center;font-size:13px;font-weight:1000;color:var(--navy)}
 .card.final .scoreNum{background:rgba(255,255,255,.13);border-color:rgba(242,210,123,.35);color:#fff}
-.card.third .scoreNum{background:rgba(255,248,234,.62);border-color:rgba(212,175,55,.44);color:var(--navy)}
+.card.third .scoreNum{background:rgba(255,248,234,.62);border-color:rgba(212,175,55,.44);color:var(--navy)}.matchNote{display:inline-block;margin-top:2px;padding:2px 7px;border-radius:999px;background:rgba(212,175,55,.18);border:1px solid rgba(212,175,55,.42);color:var(--navy);font-size:9px;font-weight:1000;letter-spacing:.08em;text-transform:uppercase}
+.card.final .matchNote{background:rgba(242,210,123,.18);border-color:rgba(242,210,123,.45);color:#F2D27B}
+.card.third .matchNote{background:rgba(255,248,234,.55);border-color:rgba(212,175,55,.55);color:var(--navy)}
+
 .seed{display:none}.card.final .teams,
 .card.final .teamName,
 .card.final .teamName span,
@@ -126,43 +129,60 @@ function isScoreValue(v){
   v=String(v??'').trim();
   return v!=='' && /^-?\d+$/.test(v);
 }
+function cleanOutcome(v){
+  v=String(v??'').trim();
+  const k=norm(v);
+  if(k==='aet'||k==='afterextratime') return 'AET';
+  if(k==='pen'||k==='pens'||k==='penalty'||k==='penalties'||k==='penaltyshootout'||k==='penaltiesafterextratime') return 'Pen';
+  return '';
+}
 function findFirst(keys, names){
   return keys.findIndex(k=>names.includes(k));
 }
 function rowsToMatches(rows){
-  let headerIndex=-1, cols={match:-1,team1:-1,team2:-1,type:-1,score1:-1,score2:-1};
+  let headerIndex=-1, cols={match:-1,team1:-1,team2:-1,type:-1,score1:-1,score2:-1,outcome:-1};
 
   for(let i=0;i<Math.min(rows.length,20);i++){
     const keys=rows[i].map(headerKey);
     const match=findFirst(keys,['match','matchno','matchnumber','game','gameid']);
     const team1=findFirst(keys,['team1','teamone','home','hometeam','lag1']);
     const team2=findFirst(keys,['team2','teamtwo','away','awayteam','lag2']);
+
     if(match>=0 && team1>=0 && team2>=0){
       const type=findFirst(keys,['type','round','runda']);
       let score1=findFirst(keys,['score1','scoreteam1','team1score','homegoals','homescore','goals1','goal1','result1','res1','team1goals','lag1mal']);
       let score2=findFirst(keys,['score2','scoreteam2','team2score','awaygoals','awayscore','goals2','goal2','result2','res2','team2goals','lag2mal']);
+      let outcome=findFirst(keys,['outcome','note','notes','resulttype','decision','decidedby','aetpen','extra','status','avgorande','avgjord','kommentar']);
 
       if(score1<0 || score2<0){
         const numericCandidates=[];
         for(let c=0;c<rows[i].length;c++){
-          if([match,team1,team2,type].includes(c)) continue;
+          if([match,team1,team2,type,outcome].includes(c)) continue;
           const key=keys[c]||'';
           if(/score|goal|result|mal|mål/.test(key)) numericCandidates.push(c);
         }
         if(numericCandidates.length>=2){ score1=numericCandidates[0]; score2=numericCandidates[1]; }
       }
 
+      // Format: Match | Team 1 | Team 2 | Type | Score 1 | Score 2 | Outcome
       if((score1<0 || score2<0) && type>=0){
         const a=type+1, b=type+2;
         if(a<rows[i].length && b<rows[i].length){ score1=a; score2=b; }
       }
 
+      // Format: Match | Team 1 | Team 2 | Score 1 | Score 2 | Type | Outcome
       if((score1<0 || score2<0)){
         const a=team2+1, b=team2+2;
         if(a<rows[i].length && b<rows[i].length && a!==type && b!==type){ score1=a; score2=b; }
       }
 
-      headerIndex=i; cols={match,team1,team2,type,score1,score2}; break;
+      // If outcome column was not recognized by header, assume it is the column immediately after the two score columns.
+      if(outcome<0 && score1>=0 && score2>=0){
+        const afterScore=Math.max(score1,score2)+1;
+        if(afterScore<rows[i].length && afterScore!==type) outcome=afterScore;
+      }
+
+      headerIndex=i; cols={match,team1,team2,type,score1,score2,outcome}; break;
     }
   }
 
@@ -175,9 +195,14 @@ function rowsToMatches(rows){
     const t1=cleanCell(row[cols.team1]);
     const t2=cleanCell(row[cols.team2]);
     if(!t1 || !t2) continue;
+
     const s1 = cols.score1>=0 ? cleanCell(row[cols.score1]) : '';
     const s2 = cols.score2>=0 ? cleanCell(row[cols.score2]) : '';
-    if(isScoreValue(s1) && isScoreValue(s2)) matches[n]=[t1,t2,s1,s2];
+    const outcome = cols.outcome>=0 ? cleanOutcome(row[cols.outcome]) : '';
+
+    // Only show scores when both score cells contain actual scores.
+    // AET/Pen is only shown together with a scoreline. Empty means regular time and is not displayed.
+    if(isScoreValue(s1) && isScoreValue(s2)) matches[n]=[t1,t2,s1,s2,outcome];
     else matches[n]=[t1,t2];
   }
 
@@ -197,10 +222,12 @@ const layout=[
 function hasScore(m){ return m && m.length>=4 && isScoreValue(m[2]) && isScoreValue(m[3]); }
 function matchTeamsHtml(m){
   if(hasScore(m)){
-    return `<div class="scoreLine">${teamHtml(m[0])}<span class="scoreNum">${esc(m[2])}</span></div><span class="vs">vs</span><div class="scoreLine">${teamHtml(m[1])}<span class="scoreNum">${esc(m[3])}</span></div>`;
+    const note = cleanOutcome(m[4]) ? `<span class="matchNote">${esc(cleanOutcome(m[4]))}</span>` : '';
+    return `<div class="scoreLine">${teamHtml(m[0])}<span class="scoreNum">${esc(m[2])}</span></div><span class="vs">vs</span><div class="scoreLine">${teamHtml(m[1])}<span class="scoreNum">${esc(m[3])}</span></div>${note}`;
   }
   return `${teamHtml(m[0])}<span class="vs">vs</span>${teamHtml(m[1])}`;
 }
+
 function render(matchData){
   const bracket=document.getElementById('bracket'); bracket.innerHTML='';
   layout.forEach(x=>{
@@ -242,7 +269,7 @@ async function loadData(){
   const st=document.getElementById('status'); st.className='status'; st.textContent='Loading published sheet… Flags: '+(IS_WINDOWS?'images':'emoji');
   try{
     const {rows,source}=await loadPublishedRows(); const parsed=rowsToMatches(rows); render(parsed.matches);
-    st.className='status ok'; st.textContent=`Loaded via ${source} · ${parsed.count} matches parsed · scores shown when available · flags: ${IS_WINDOWS?'images':'emoji'}`;
+    st.className='status ok'; st.textContent=`Loaded via ${source} · ${parsed.count} matches parsed · scores/AET/Pen shown when available · flags: ${IS_WINDOWS?'images':'emoji'}`;
   }catch(e){
     render(DEFAULT_MATCHES); st.className='status err'; st.textContent='Could not load/parse the published sheet — showing fallback bracket. '+e.message; console.error(e);
   }
