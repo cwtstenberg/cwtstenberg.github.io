@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RO32 Score Spread Simulator</title>
+<style>
+:root{--navy:#061B49;--green:#76e076;--green-dark:#4fbf4f;--line:#dfe5df;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--navy);background:radial-gradient(circle at top left,rgba(118,224,118,.18),transparent 430px),linear-gradient(135deg,#fbfffb,#eef6f0)}
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid #e1e7e1}.header-inner{max-width:1480px;margin:0 auto;padding:18px 22px;display:flex;justify-content:space-between;gap:18px;align-items:center}
+h1{margin:0;font-size:clamp(24px,3vw,44px);letter-spacing:-.045em;line-height:1;font-weight:950}h1 span{color:var(--green-dark)}.meta{font-size:13px;color:var(--muted);font-weight:750;margin-top:5px}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+button,select,input{border:1px solid #d6dfd6;background:#fff;color:var(--navy);border-radius:999px;padding:10px 14px;font-weight:850;font-size:14px}button{cursor:pointer}button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+main{max-width:1480px;margin:0 auto;padding:24px 22px 70px}.panel,.card{background:rgba(255,255,255,.9);border:1px solid #e1e7e1;border-radius:22px;box-shadow:0 14px 38px rgba(6,27,73,.05)}.panel{padding:16px;margin-bottom:20px}
+.panel-grid{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:12px;align-items:end}@media(max-width:900px){.panel-grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.header-inner{flex-direction:column;align-items:flex-start}.panel-grid{grid-template-columns:1fr}}
+.field label{display:block;font-size:12px;font-weight:950;color:var(--muted);margin:0 0 6px 4px}.field input,.field select{width:100%}.status{margin-top:12px;color:var(--muted);font-weight:800;font-size:13px}.error{display:none;color:#9b1c1c;background:#fff0f0;border:1px solid #f0b6b6;border-radius:14px;padding:12px 14px;margin-bottom:18px;font-weight:800}
+.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(190px,1fr));gap:16px;margin-bottom:20px}@media(max-width:1100px){.summary-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.summary-grid{grid-template-columns:1fr}}.kpi{padding:18px}.kpi-title{font-size:12px;font-weight:950;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.kpi-value{font-size:34px;font-weight:950;letter-spacing:-.05em;margin-top:6px}.kpi-sub{font-size:12px;color:var(--muted);font-weight:800;margin-top:4px}
+.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:20px}@media(max-width:1100px){.layout{grid-template-columns:1fr}}.table-card{padding:18px;overflow:hidden}.table-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.table-head h2{margin:0;font-size:24px;letter-spacing:-.035em}.table-wrap{overflow:auto;max-height:720px;border:1px solid #e5ece5;border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:13px;background:#fff}th,td{padding:10px 11px;border-bottom:1px solid #eef3ee;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1}th{position:sticky;top:0;background:#f7fbf7;z-index:2;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}tr:hover td{background:#fbfffb}.rank{font-weight:950}.name{font-weight:900}.bar-cell{min-width:130px}.bar{height:9px;border-radius:999px;background:#e8f3e8;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,#b4eeb4,#4fbf4f);border-radius:999px}
+.side{display:grid;gap:20px}.side-card{padding:18px}.side-card h2{margin:0 0 12px;font-size:22px;letter-spacing:-.035em}.match-list{display:grid;gap:9px;max-height:360px;overflow:auto}.match-item{border:1px solid #e5ece5;border-radius:14px;padding:10px;background:#fff}.match-title{font-weight:950;font-size:13px}.match-sub{color:var(--muted);font-weight:750;font-size:12px;margin-top:3px}.player-select{width:100%;margin-bottom:12px}.hist{display:grid;gap:5px}.hist-row{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:8px;font-size:12px;font-weight:850}.hist-bar{height:12px;border-radius:999px;background:#edf4ed;overflow:hidden}.hist-bar span{display:block;height:100%;background:#76e076}.note{color:var(--muted);font-size:12px;font-weight:750;line-height:1.45;margin-top:12px}.badge{display:inline-flex;align-items:center;border:1px solid #d6dfd6;border-radius:999px;padding:5px 9px;background:#fff;font-size:12px;font-weight:850;color:var(--muted)}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><div><h1>RO32 SCORE <span>SPREAD</span></h1><div class="meta" id="meta">Loading published CSV…</div></div><div class="controls"><button class="primary" id="reloadBtn">Reload CSV</button><button id="runBtn">Run simulation</button></div></div></header>
+<main>
+<section class="panel"><div class="panel-grid">
+<div class="field"><label>Scenario weighting</label><select id="weighting"><option value="frequency">Weighted by prediction frequency</option><option value="uniform">All predicted scorelines equally likely</option></select></div>
+<div class="field"><label>Simulation runs</label><input id="runs" type="number" min="1000" max="500000" step="1000" value="50000"></div>
+<div class="field"><label>Exact enumeration limit</label><input id="exactLimit" type="number" min="1000" max="2000000" step="10000" value="250000"></div>
+<div class="field"><label>Player histogram</label><select id="playerSelect"></select></div>
+</div><div class="status" id="status">Loading…</div></section>
+<div class="error" id="errorBox"></div>
+<section class="summary-grid">
+<div class="card kpi"><div class="kpi-title">RO32 matches</div><div class="kpi-value" id="kpiMatches">–</div><div class="kpi-sub">Match numbers 73–88</div></div>
+<div class="card kpi"><div class="kpi-title">Players</div><div class="kpi-value" id="kpiPlayers">–</div><div class="kpi-sub">Rows with RO32 predictions</div></div>
+<div class="card kpi"><div class="kpi-title">Scenario space</div><div class="kpi-value" id="kpiSpace">–</div><div class="kpi-sub" id="kpiMode">Exact or simulated</div></div>
+<div class="card kpi"><div class="kpi-title">Top favourite</div><div class="kpi-value" id="kpiFav">–</div><div class="kpi-sub" id="kpiFavSub">Chance to finish 1st</div></div>
+</section>
+<section class="layout"><div class="card table-card"><div class="table-head"><h2>Projected RO32 points</h2><span class="badge">5 exact • 2 outcome</span></div><div class="table-wrap"><table id="resultsTable"></table></div></div>
+<div class="side"><div class="card side-card"><h2>Player distribution</h2><select class="player-select" id="playerSelectSide"></select><div id="histogram" class="hist"></div></div>
+<div class="card side-card"><h2>RO32 match universe</h2><div id="matchUniverse" class="match-list"></div><div class="note">Scenarios are generated from scorelines that appear in the published CSV for each RO32 match. Exact enumeration is used when the total combination count is below the configured limit; otherwise Monte Carlo sampling is used.</div></div></div></section>
+</main>
+<script>
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTtuCy2jTbWd00mfGYs_QPMSe8ZRTCsqpCw5P_0Rm_AOn5LbJC5ebiK4TUnuXaVlz9wUJnRVixThC1j/pub?gid=0&single=true&output=csv";
+const RO32_FROM=73, RO32_TO=88;
+let currentRows=[],players=[],matches=[],latestStats=null;
+
+function parseCSV(text){const rows=[];let row=[],cell="",q=false;for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];if(ch=='"'&&q&&next=='"'){cell+='"';i++}else if(ch=='"')q=!q;else if(ch==","&&!q){row.push(cell);cell=""}else if((ch=="\n"||ch=="\r")&&!q){if(ch=="\r"&&next=="\n")i++;row.push(cell);rows.push(row);row=[];cell=""}else cell+=ch}if(cell.length||row.length){row.push(cell);rows.push(row)}return rows.filter(r=>r.some(c=>String(c).trim()!==""))}
+function num(v){const n=Number(String(v??"").replace(",",".").trim());return Number.isFinite(n)?n:null}
+function outcome(h,a){return h>a?"H":a>h?"A":"D"}
+function fmtBig(n){if(!Number.isFinite(n))return"Huge";if(n>=1e12)return(n/1e12).toFixed(1)+"T";if(n>=1e9)return(n/1e9).toFixed(1)+"B";if(n>=1e6)return(n/1e6).toFixed(1)+"M";if(n>=1e3)return(n/1e3).toFixed(1)+"k";return String(n)}
+function percentile(arr,p){if(!arr.length)return 0;const s=[...arr].sort((a,b)=>a-b);const idx=Math.min(s.length-1,Math.max(0,Math.floor((p/100)*(s.length-1))));return s[idx]}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]))}
+function escapeAttr(s){return escapeHtml(s)}
+
+function loadFromRows(rows){
+ currentRows=rows;
+ const matchNums=rows[2].slice(1), teamNames=rows[4].slice(1);
+ const matchCols=[];
+ for(let c=0;c+1<teamNames.length;c+=2){
+  const no=Number(String(matchNums[c]??"").trim());
+  if(no>=RO32_FROM&&no<=RO32_TO) matchCols.push({matchNo:no,col:c,home:String(teamNames[c]??"").trim(),away:String(teamNames[c+1]??"").trim()});
+ }
+ const rawPlayers=rows.slice(5).filter(r=>{
+  const name=String(r[0]??"").trim();
+  if(!name)return false;
+  return matchCols.some(m=>num(r[m.col+1])!=null&&num(r[m.col+2])!=null);
+ });
+ players=rawPlayers.map(r=>{
+  const predictions=[];
+  for(const m of matchCols){
+   const h=num(r[m.col+1]), a=num(r[m.col+2]);
+   predictions.push(h==null||a==null?null:{h,a,out:outcome(h,a)});
+  }
+  return {name:String(r[0]).trim(),predictions};
+ });
+ matches=matchCols.map((m,idx)=>{
+  const map=new Map();
+  for(const p of players){
+   const pred=p.predictions[idx]; if(!pred)continue;
+   const key=pred.h+"-"+pred.a;
+   if(!map.has(key))map.set(key,{h:pred.h,a:pred.a,out:pred.out,count:0,names:[]});
+   map.get(key).count++; map.get(key).names.push(p.name);
+  }
+  const scorelines=[...map.values()].sort((a,b)=>b.count-a.count||a.h-b.h||a.a-b.a);
+  return {...m,idx,scorelines};
+ });
+ document.getElementById("kpiMatches").textContent=matches.length;
+ document.getElementById("kpiPlayers").textContent=players.length;
+ document.getElementById("meta").textContent=`${matches.length} RO32 matches • ${players.length} players`;
+ populateSelectors(); renderMatchUniverse();
+}
+
+function scenarioSpace(){return matches.reduce((prod,m)=>prod*Math.max(1,m.scorelines.length),1)}
+function scorePlayer(player,scenario){let points=0;for(let i=0;i<scenario.length;i++){const pred=player.predictions[i];if(!pred)continue;const actual=scenario[i];if(pred.h===actual.h&&pred.a===actual.a)points+=5;else if(pred.out===actual.out)points+=2}return points}
+function chooseScoreline(scorelines,weighting){if(!scorelines.length)return{h:0,a:0,out:"D"};if(weighting==="uniform")return scorelines[Math.floor(Math.random()*scorelines.length)];const total=scorelines.reduce((s,x)=>s+x.count,0);let r=Math.random()*total;for(const s of scorelines){r-=s.count;if(r<=0)return s}return scorelines[scorelines.length-1]}
+function initStats(){const stats=new Map();for(const p of players)stats.set(p.name,{name:p.name,wins:0,top3:0,total:0,min:Infinity,max:-Infinity,values:[],histogram:new Map()});return stats}
+function recordScenario(stats,scores){const sorted=[...scores].sort((a,b)=>b.points-a.points);const top=sorted[0]?.points??0;const third=sorted[Math.min(2,sorted.length-1)]?.points??0;for(const item of scores){const st=stats.get(item.name);st.total+=item.points;st.min=Math.min(st.min,item.points);st.max=Math.max(st.max,item.points);st.values.push(item.points);st.histogram.set(item.points,(st.histogram.get(item.points)||0)+1);if(item.points===top)st.wins++;if(item.points>=third)st.top3++}}
+function runMonteCarlo(runs,weighting){const stats=initStats();for(let r=0;r<runs;r++){const scenario=matches.map(m=>chooseScoreline(m.scorelines,weighting));const scores=players.map(p=>({name:p.name,points:scorePlayer(p,scenario)}));recordScenario(stats,scores)}return{stats,samples:runs,exact:false}}
+function runExact(limit){const space=scenarioSpace();if(space>limit)return null;const stats=initStats();const scenario=[];function rec(i){if(i===matches.length){const scores=players.map(p=>({name:p.name,points:scorePlayer(p,scenario)}));recordScenario(stats,scores);return}const universe=matches[i].scorelines.length?matches[i].scorelines:[{h:0,a:0,out:"D",count:1,names:[]}];for(const s of universe){scenario[i]=s;rec(i+1)}}rec(0);return{stats,samples:space,exact:true}}
+function summarize(result){return[...result.stats.values()].map(st=>{const samples=result.samples||st.values.length;return{name:st.name,winPct:st.wins/samples*100,top3Pct:st.top3/samples*100,avg:st.total/samples,min:st.min===Infinity?0:st.min,max:st.max===-Infinity?0:st.max,p10:percentile(st.values,10),p50:percentile(st.values,50),p90:percentile(st.values,90),histogram:st.histogram}}).sort((a,b)=>b.winPct-a.winPct||b.avg-a.avg)}
+function runSimulation(){if(!matches.length||!players.length)return;const weighting=document.getElementById("weighting").value;const runs=Math.max(1000,Math.min(500000,Number(document.getElementById("runs").value)||50000));const exactLimit=Math.max(1000,Math.min(2000000,Number(document.getElementById("exactLimit").value)||250000));const space=scenarioSpace();document.getElementById("kpiSpace").textContent=fmtBig(space);let result=runExact(exactLimit);if(!result)result=runMonteCarlo(runs,weighting);const summary=summarize(result);latestStats={result,summary};document.getElementById("kpiMode").textContent=result.exact?`Exact enumeration: ${fmtBig(result.samples)} scenarios`:`Monte Carlo: ${fmtBig(result.samples)} samples`;document.getElementById("kpiFav").textContent=summary[0]?summary[0].name.split(" ")[0]:"–";document.getElementById("kpiFavSub").textContent=summary[0]?`${summary[0].winPct.toFixed(1)}% chance to finish 1st`:"Chance to finish 1st";renderTable(summary);populateSelectors();renderHistogram();document.getElementById("status").textContent=`${result.exact?"Exact":"Simulated"} spread updated: ${new Date().toLocaleString()}`}
+function renderTable(summary){const maxWin=Math.max(1,...summary.map(r=>r.winPct));document.getElementById("resultsTable").innerHTML=`<thead><tr><th>#</th><th>Player</th><th>Win %</th><th></th><th>Top 3 %</th><th>Avg</th><th>P10</th><th>Median</th><th>P90</th><th>Min</th><th>Max</th></tr></thead><tbody>${summary.map((r,i)=>`<tr><td class="rank">${i+1}</td><td class="name">${escapeHtml(r.name)}</td><td>${r.winPct.toFixed(1)}%</td><td class="bar-cell"><div class="bar"><span style="width:${Math.max(1,r.winPct/maxWin*100)}%"></span></div></td><td>${r.top3Pct.toFixed(1)}%</td><td>${r.avg.toFixed(1)}</td><td>${r.p10}</td><td>${r.p50}</td><td>${r.p90}</td><td>${r.min}</td><td>${r.max}</td></tr>`).join("")}</tbody>`}
+function renderMatchUniverse(){document.getElementById("matchUniverse").innerHTML=matches.map(m=>`<div class="match-item"><div class="match-title">#${m.matchNo} • ${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</div><div class="match-sub">${m.scorelines.length} unique predicted scorelines • most common: ${m.scorelines[0]?m.scorelines[0].h+"-"+m.scorelines[0].a+" ("+m.scorelines[0].count+")":"—"}</div></div>`).join("")}
+function populateSelectors(){const names=players.map(p=>p.name);const options=names.map(n=>`<option value="${escapeAttr(n)}">${escapeHtml(n)}</option>`).join("");const a=document.getElementById("playerSelect"),b=document.getElementById("playerSelectSide");const current=a.value||b.value||names[0]||"";a.innerHTML=options;b.innerHTML=options;a.value=current;b.value=current}
+function renderHistogram(){if(!latestStats)return;const selected=document.getElementById("playerSelectSide").value||document.getElementById("playerSelect").value;document.getElementById("playerSelect").value=selected;document.getElementById("playerSelectSide").value=selected;const row=latestStats.summary.find(x=>x.name===selected);if(!row){document.getElementById("histogram").innerHTML="";return}const entries=[...row.histogram.entries()].sort((a,b)=>a[0]-b[0]);const max=Math.max(1,...entries.map(x=>x[1]));document.getElementById("histogram").innerHTML=entries.map(([points,count])=>`<div class="hist-row"><div>${points} pts</div><div class="hist-bar"><span style="width:${count/max*100}%"></span></div><div>${count}</div></div>`).join("")}
+async function loadLiveCsv(){const status=document.getElementById("status"),err=document.getElementById("errorBox");status.textContent="Loading published CSV…";err.style.display="none";try{const res=await fetch(CSV_URL+"&cachebust="+Date.now(),{cache:"no-store"});if(!res.ok)throw new Error(`HTTP ${res.status}`);const text=await res.text();loadFromRows(parseCSV(text));runSimulation()}catch(e){err.textContent="Could not load the published CSV. Check that the Google Sheet is published to web and accessible. Error: "+e.message;err.style.display="block";status.textContent="Failed to load CSV."}}
+document.getElementById("reloadBtn").addEventListener("click",loadLiveCsv);document.getElementById("runBtn").addEventListener("click",runSimulation);document.getElementById("playerSelect").addEventListener("change",e=>{document.getElementById("playerSelectSide").value=e.target.value;renderHistogram()});document.getElementById("playerSelectSide").addEventListener("change",e=>{document.getElementById("playerSelect").value=e.target.value;renderHistogram()});document.getElementById("weighting").addEventListener("change",runSimulation);loadLiveCsv();
+</script>
+</body>
+</html>
