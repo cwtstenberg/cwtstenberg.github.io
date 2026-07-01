@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RO32 Position Pathfinder</title>
+<style>
+:root{--navy:#061B49;--green:#76e076;--dark:#4fbf4f;--muted:#6b7280;--line:#dfe5df}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:var(--navy);background:linear-gradient(135deg,#fbfffb,#eef6f0)}
+header{position:sticky;top:0;z-index:10;background:#fffffff0;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}.head{max-width:1400px;margin:auto;padding:18px 22px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
+h1{margin:0;font-size:clamp(25px,4vw,44px);letter-spacing:-.05em}h1 span{color:var(--dark)}button,select,input,textarea{border:1px solid #d6dfd6;background:white;color:var(--navy);border-radius:999px;padding:10px 14px;font-weight:850}button{cursor:pointer}button.primary{background:var(--navy);color:white}
+main{max-width:1400px;margin:auto;padding:22px}.card{background:#ffffffee;border:1px solid var(--line);border-radius:22px;box-shadow:0 14px 38px #061b4910;padding:16px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:12px}@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:12px;font-weight:950;color:var(--muted);margin:0 0 6px 4px}select,input{width:100%}textarea{width:100%;min-height:210px;border-radius:16px;font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.45}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}.kpi b{display:block;font-size:34px;letter-spacing:-.04em;margin-top:5px}.kpi small{color:var(--muted);font-weight:800}
+.layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:18px}@media(max-width:1100px){.layout{grid-template-columns:1fr}}
+.tablewrap{overflow:auto;max-height:650px;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-size:13px;background:white}th,td{padding:9px 10px;border-bottom:1px solid #edf3ed;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:white}th{position:sticky;top:0;background:#f7fbf7;color:var(--muted);font-size:11px;text-transform:uppercase}
+.path{display:grid;gap:10px;max-height:720px;overflow:auto}.item{background:white;border:1px solid var(--line);border-radius:15px;padding:12px}.title{font-weight:950}.sub{font-size:12px;color:var(--muted);font-weight:800;margin-top:4px}.lift{display:inline-block;background:#eef9ee;border:1px solid #d6efd6;border-radius:999px;padding:3px 7px;margin-left:6px;font-size:11px}
+.status,.note{color:var(--muted);font-size:13px;font-weight:800}.error{display:none;color:#9b1c1c;background:#fff0f0;border:1px solid #f0b6b6;border-radius:14px;padding:12px;margin-bottom:16px;font-weight:850}
+</style>
+</head>
+<body>
+<header><div class="head"><div><h1>RO32 POSITION <span>PATHFINDER</span></h1><div class="status" id="meta">Loading CSV…</div></div><div><button class="primary" id="reload">Reload CSV</button> <button id="run">Run pathfinder</button></div></div></header>
+<main>
+<section class="card"><div class="grid">
+<div><label>Player</label><select id="player"></select></div>
+<div><label>Target</label><select id="target"><option value="win">Win / 1st place</option><option value="top3">Finish Top 3</option><option value="top5">Finish Top 5</option><option value="pos">Exact position</option></select></div>
+<div><label>Exact position</label><input id="pos" type="number" min="1" value="1"></div>
+<div><label>Runs</label><input id="runs" type="number" min="1000" max="500000" step="1000" value="100000"></div>
+<div><label>Scenario weighting</label><select id="weight"><option value="frequency">Weighted by prediction frequency</option><option value="uniform">All predicted scorelines equally likely</option></select></div>
+</div><div class="status" id="status">Loading…</div></section>
+<div class="error" id="err"></div>
+<section class="kpis">
+<div class="card kpi"><small>RO32 matches</small><b id="km">–</b></div>
+<div class="card kpi"><small>Players</small><b id="kp">–</b></div>
+<div class="card kpi"><small>Target hit rate</small><b id="kh">–</b><small id="khs"></small></div>
+<div class="card kpi"><small>Avg finish</small><b id="kf">–</b></div>
+</section>
+<section class="layout">
+<div class="card"><h2>Current points</h2><textarea id="points"></textarea><p class="note">Paste current score as <b>Name,Points</b>, one per row. Missing names count as 0 points.</p><button id="fill">Fill players with 0</button> <button id="clear">Clear</button></div>
+<div class="card"><h2>Scores that help</h2><div id="paths" class="path"></div><p class="note">“Lift” means how much more common this scoreline is in successful paths than overall.</p></div>
+</section>
+<section class="layout">
+<div class="card"><h2>Projected positions</h2><div class="tablewrap"><table id="ptable"></table></div></div>
+<div class="card"><h2>RO32 match universe</h2><div id="universe" class="path"></div></div>
+</section>
+</main>
+<script>
+const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTtuCy2jTbWd00mfGYs_QPMSe8ZRTCsqpCw5P_0Rm_AOn5LbJC5ebiK4TUnuXaVlz9wUJnRVixThC1j/pub?gid=0&single=true&output=csv', FROM=73, TO=88;
+let rows=[],players=[],matches=[];
+function parseCSV(t){const R=[];let r=[],c="",q=false;for(let i=0;i<t.length;i++){let ch=t[i],n=t[i+1];if(ch=='"'&&q&&n=='"'){c+='"';i++}else if(ch=='"')q=!q;else if(ch==","&&!q){r.push(c);c=""}else if((ch=="\n"||ch=="\r")&&!q){if(ch=="\r"&&n=="\n")i++;r.push(c);R.push(r);r=[];c=""}else c+=ch}if(c.length||r.length){r.push(c);R.push(r)}return R.filter(r=>r.some(c=>String(c).trim()!==""))}
+const N=v=>{let n=Number(String(v??"").replace(",",".").trim());return Number.isFinite(n)?n:null}, out=(h,a)=>h>a?"H":a>h?"A":"D", esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
+function loadRows(R){rows=R;let nums=R[2].slice(1),teams=R[4].slice(1),cols=[];for(let c=0;c+1<teams.length;c+=2){let no=Number(String(nums[c]??"").trim());if(no>=FROM&&no<=TO)cols.push({no,col:c,home:String(teams[c]??"").trim(),away:String(teams[c+1]??"").trim()})}let raw=R.slice(5).filter(r=>{let name=String(r[0]??"").trim();return name&&cols.some(m=>N(r[m.col+1])!=null&&N(r[m.col+2])!=null)});players=raw.map(r=>({name:String(r[0]).trim(),preds:cols.map(m=>{let h=N(r[m.col+1]),a=N(r[m.col+2]);return h==null||a==null?null:{h,a,out:out(h,a),key:h+"-"+a}})}));matches=cols.map((m,i)=>{let map=new Map();for(let p of players){let pr=p.preds[i];if(!pr)continue;if(!map.has(pr.key))map.set(pr.key,{...pr,count:0});map.get(pr.key).count++}return {...m,i,scorelines:[...map.values()].sort((a,b)=>b.count-a.count)}});document.getElementById("km").textContent=matches.length;document.getElementById("kp").textContent=players.length;document.getElementById("meta").textContent=`${matches.length} RO32 matches • ${players.length} players`;document.getElementById("player").innerHTML=players.map(p=>`<option>${esc(p.name)}</option>`).join("");fill(false);universe();run()}
+function fill(over=true){let box=document.getElementById("points");if(!over&&box.value.trim())return;box.value=players.map(p=>p.name+",0").join("\n")}
+function curPts(){let m=new Map();for(let line of document.getElementById("points").value.split(/\r?\n/)){let i=line.lastIndexOf(",");if(i<0)continue;let n=line.slice(0,i).trim(),p=Number(line.slice(i+1).trim());if(n&&Number.isFinite(p))m.set(n,p)}return m}
+function choose(arr,w){if(!arr.length)return {h:0,a:0,out:"D",key:"0-0"};if(w==="uniform")return arr[Math.floor(Math.random()*arr.length)];let tot=arr.reduce((s,x)=>s+x.count,0),r=Math.random()*tot;for(let x of arr){r-=x.count;if(r<=0)return x}return arr[arr.length-1]}
+function score(p,sc){let pts=0;for(let i=0;i<sc.length;i++){let pr=p.preds[i],ac=sc[i];if(!pr)continue;if(pr.h===ac.h&&pr.a===ac.a)pts+=5;else if(pr.out===ac.out)pts+=2}return pts}
+function hit(rank,t,pos){return t==="win"?rank===1:t==="top3"?rank<=3:t==="top5"?rank<=5:rank===pos}
+function run(){if(!players.length)return;let selected=document.getElementById("player").value,t=document.getElementById("target").value,pos=Math.max(1,Number(document.getElementById("pos").value)||1),runs=Math.max(1000,Math.min(500000,Number(document.getElementById("runs").value)||100000)),w=document.getElementById("weight").value,cp=curPts();let hitCounts=matches.map(()=>new Map()),allCounts=matches.map(()=>new Map()),totals=new Map(players.map(p=>[p.name,{rank:0,pts:0,w:0,t3:0}]));let hits=0,rankSum=0;for(let r=0;r<runs;r++){let sc=matches.map((m,i)=>{let s=choose(m.scorelines,w);allCounts[i].set(s.key,(allCounts[i].get(s.key)||0)+1);return s});let table=players.map(p=>({name:p.name,points:(cp.get(p.name)||0)+score(p,sc)})).sort((a,b)=>b.points-a.points||a.name.localeCompare(b.name));let rank=table.findIndex(x=>x.name===selected)+1;rankSum+=rank;for(let row of table){let rr=table.findIndex(x=>x.name===row.name)+1,st=totals.get(row.name);st.rank+=rr;st.pts+=row.points;if(rr===1)st.w++;if(rr<=3)st.t3++}if(hit(rank,t,pos)){hits++;sc.forEach((s,i)=>hitCounts[i].set(s.key,(hitCounts[i].get(s.key)||0)+1))}}document.getElementById("kh").textContent=(hits/runs*100).toFixed(1)+"%";document.getElementById("khs").textContent=`${hits.toLocaleString()} of ${runs.toLocaleString()} scenarios`;document.getElementById("kf").textContent=(rankSum/runs).toFixed(1);paths(hitCounts,allCounts,hits,runs);positions(totals,runs);document.getElementById("status").textContent="Updated: "+new Date().toLocaleString()}
+function paths(H,A,hits,runs){let arr=[];matches.forEach((m,i)=>m.scorelines.forEach(s=>{let hc=H[i].get(s.key)||0;if(!hc)return;let ac=A[i].get(s.key)||0, ih=hc/Math.max(1,hits), ov=ac/runs, lift=ov?ih/ov:0;arr.push({m,s,ih,ov,lift})}));arr.sort((a,b)=>b.lift-a.lift||b.ih-a.ih);document.getElementById("paths").innerHTML=arr.slice(0,24).map(r=>`<div class="item"><div class="title">#${r.m.no} • ${esc(r.m.home)} ${r.s.key} ${esc(r.m.away)} <span class="lift">${r.lift.toFixed(1)}× lift</span></div><div class="sub">Successful paths: ${(r.ih*100).toFixed(1)}% • Overall: ${(r.ov*100).toFixed(1)}%</div></div>`).join("")||'<div class="item"><div class="title">No successful scenarios found</div><div class="sub">Try a lower target or more runs.</div></div>'}
+function positions(T,runs){let arr=[...T.entries()].map(([name,s])=>({name,rank:s.rank/runs,pts:s.pts/runs,win:s.w/runs*100,top3:s.t3/runs*100})).sort((a,b)=>a.rank-b.rank);document.getElementById("ptable").innerHTML=`<thead><tr><th>#</th><th>Player</th><th>Avg rank</th><th>Avg pts</th><th>Win %</th><th>Top 3 %</th></tr></thead><tbody>${arr.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${r.rank.toFixed(1)}</td><td>${r.pts.toFixed(1)}</td><td>${r.win.toFixed(1)}%</td><td>${r.top3.toFixed(1)}%</td></tr>`).join("")}</tbody>`}
+function universe(){document.getElementById("universe").innerHTML=matches.map(m=>`<div class="item"><div class="title">#${m.no} • ${esc(m.home)} vs ${esc(m.away)}</div><div class="sub">${m.scorelines.length} scorelines • most common: ${m.scorelines[0]?m.scorelines[0].key+" ("+m.scorelines[0].count+")":"—"}</div></div>`).join("")}
+async function load(){let st=document.getElementById("status"),er=document.getElementById("err");st.textContent="Loading published CSV…";er.style.display="none";try{let res=await fetch(CSV_URL+"&cachebust="+Date.now(),{cache:"no-store"});if(!res.ok)throw new Error("HTTP "+res.status);loadRows(parseCSV(await res.text()))}catch(e){er.textContent="Could not load CSV: "+e.message;er.style.display="block";st.textContent="Failed to load CSV."}}
+["player","target","pos","runs","weight"].forEach(id=>document.getElementById(id).addEventListener("change",run));document.getElementById("run").onclick=run;document.getElementById("reload").onclick=load;document.getElementById("fill").onclick=()=>fill(true);document.getElementById("clear").onclick=()=>document.getElementById("points").value="";load();
+</script>
+</body></html>
