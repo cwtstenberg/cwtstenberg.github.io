@@ -59,10 +59,13 @@ main{max-width:1480px;margin:0 auto;padding:24px 22px 70px}.panel{background:rgb
 .error{display:none;color:#9b1c1c;background:#fff0f0;border:1px solid #f0b6b6;border-radius:14px;padding:12px 14px;margin-bottom:18px;font-weight:800}
 
 @media print{header,.panel{display:none}body{background:#fff}main{max-width:none;padding:0}.grid{grid-template-columns:repeat(3,1fr);gap:10px}.card{box-shadow:none;break-inside:avoid}}
+
+.back-btn{border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:999px;padding:10px 16px;font-weight:850;text-decoration:none;display:inline-flex;align-items:center}
+
 </style>
 </head>
 <body>
-<header><div class="header-inner"><div><h1>FIFA WORLD CUP <span>2026</span></h1><div class="meta" id="meta"></div></div><div class="controls"><label class="file" for="csvInput">Upload updated CSV</label><input id="csvInput" type="file" accept=".csv,text/csv"><button id="reloadBtn">Reload live CSV</button><button onclick="window.print()">Print / Save PDF</button></div></div></header>
+<header><div class="header-inner"><div><a class="back-btn" href="https://cwtstenberg.github.io/2026/">← Back</a><h1 style="margin-top:12px">FIFA WORLD CUP <span>2026</span></h1><div class="meta" id="meta"></div></div><div class="controls"><label class="file" for="csvInput">Upload updated CSV</label><input id="csvInput" type="file" accept=".csv,text/csv"><button id="reloadBtn">Reload live CSV</button><button onclick="window.print()">Print / Save PDF</button></div></div></header>
 <main>
 <section class="panel"><div class="stage-tabs" id="stageTabs"></div><div class="search-row"><input class="search" id="teamSearch" placeholder="Search by team..."><button id="clearSearch">Clear</button></div><div class="tabs" id="tabs"></div><div class="status" id="status">Loading live CSV…</div></section><div class="error" id="errorBox"></div>
 <section class="grid" id="cards"></section><div class="empty" id="empty">No matches found for this filter.</div>
