@@ -30,17 +30,51 @@ if(!rawRows || rawRows.length < 5 || !rawRows[2] || !rawRows[4]){
   throw new Error("Prediction CSV does not look like the heatmap CSV. Expected metadata rows: matchday, date, match, flag, SPELARE.");
 }
 let [F,T]=range(),nums=rawRows[2].slice(1),teams=rawRows[4].slice(1),cols=[];for(let c=0;c+1<teams.length;c+=2){let no=Number(String(nums[c]??"").trim());if(no>=F&&no<=T)cols.push({no,col:c,home:String(teams[c]??"").trim(),away:String(teams[c+1]??"").trim()})}let raw=rawRows.slice(5).filter(r=>{let name=String(r[0]??"").trim();return name&&cols.some(m=>N(r[m.col+1])!=null&&N(r[m.col+2])!=null)});players=raw.map(r=>({name:String(r[0]).trim(),preds:cols.map(m=>{let h=N(r[m.col+1]),a=N(r[m.col+2]);return h==null||a==null?null:{h,a,out:out(h,a),key:h+"-"+a}})}));matches=cols.map((m,i)=>{let map=new Map();for(let p of players){let pr=p.preds[i];if(!pr)continue;if(!map.has(pr.key))map.set(pr.key,{...pr,count:0});map.get(pr.key).count++}return {...m,i,scorelines:[...map.values()].sort((a,b)=>b.count-a.count)}});matches.forEach(m=>{if(!states.has(m.no))states.set(m.no,{state:"future",h:"",a:""})});document.getElementById("km").textContent=matches.length;document.getElementById("kp").textContent=players.length;document.getElementById("player").innerHTML=players.map(p=>`<option>${esc(p.name)}</option>`).join("");document.getElementById("meta").textContent=`${matches.length} matches • ${players.length} players`;renderStates();universe();runPathfinder()}
-function parsePointsRows(R){let found=new Map();for(let r of R)for(let i=0;i<r.length-1;i++){let name=String(r[i]??"").trim(),pts=N(r[i+1]);if(name&&pts!=null&&players.some(p=>p.name===name))found.set(name,pts)}return found}
+function normName(s){return String(s??"").trim().toLowerCase().replace(/\s+/g," ")}
+function parsePointsRows(R){
+  const found=new Map();
+  const playerByNorm=new Map(players.map(p=>[normName(p.name),p.name]));
+
+  for(const r of R){
+    if(!r || !r.length) continue;
+
+    const first=normName(r[0]);
+    if(playerByNorm.has(first)){
+      let latest=null;
+      for(let i=1;i<r.length;i++){
+        const pts=N(r[i]);
+        if(pts!=null) latest=pts;
+      }
+      if(latest!=null) found.set(playerByNorm.get(first),latest);
+      continue;
+    }
+
+    for(let i=0;i<r.length;i++){
+      const cellName=normName(r[i]);
+      if(!playerByNorm.has(cellName)) continue;
+      let latest=null;
+      for(let j=i+1;j<r.length;j++){
+        const pts=N(r[j]);
+        if(pts!=null) latest=pts;
+      }
+      if(latest!=null) found.set(playerByNorm.get(cellName),latest);
+    }
+  }
+  return found;
+}
 async function loadPointsCsv(){
-try{
-  let res=await fetch(POINTS_URL+"&cachebust="+Date.now(),{cache:"no-store"});
-  if(!res.ok)throw Error("points HTTP "+res.status);
-  let pts=parsePointsRows(parseCSV(await res.text()));
-  document.getElementById("points").value=players.map(p=>p.name+","+(pts.get(p.name)??0)).join("\\n");
-}catch(e){
-  document.getElementById("points").value=players.map(p=>p.name+",0").join("\\n");
-  status.textContent="Prediction CSV loaded, but current-points CSV failed. Using 0 points. "+e.message;
-}}
+  try{
+    let res=await fetch(POINTS_URL+"&cachebust="+Date.now(),{cache:"no-store"});
+    if(!res.ok)throw Error("points HTTP "+res.status);
+    let text=await res.text();
+    let pts=parsePointsRows(parseCSV(text));
+    document.getElementById("points").value=players.map(p=>p.name+","+(pts.get(p.name)??0)).join("\\n");
+    status.textContent="Loaded current points for "+pts.size+" of "+players.length+" players.";
+  }catch(e){
+    document.getElementById("points").value=players.map(p=>p.name+",0").join("\\n");
+    status.textContent="Prediction CSV loaded, but current-points CSV failed. Using 0 points. "+e.message;
+  }
+}
 function fill(over=true){let box=document.getElementById("points");if(!over&&box.value.trim())return;box.value=players.map(p=>p.name+",0").join("\\n")}
 function curPts(){let m=new Map();for(let line of document.getElementById("points").value.split(/\\r?\\n/)){let i=line.lastIndexOf(",");if(i<0)continue;let name=line.slice(0,i).trim(),pts=N(line.slice(i+1));if(name&&pts!=null)m.set(name,pts)}return m}
 function renderStates(){document.getElementById("matches").innerHTML=matches.map(m=>{let s=states.get(m.no)||{state:"future",h:"",a:""};let cls=s.state==="exclude"?"exclude":s.state==="lock"?"lock":"";return `<div class="box ${cls}"><div class=title>#${m.no} • ${esc(m.home)} vs ${esc(m.away)}</div><p><select data-no="${m.no}" data-k=state><option value=future ${s.state==="future"?"selected":""}>Future / simulate</option><option value=exclude ${s.state==="exclude"?"selected":""}>Exclude / already in standings</option><option value=lock ${s.state==="lock"?"selected":""}>Locked score / manual</option></select></p><div class=score><div class=sub>Actual score</div><input data-no="${m.no}" data-k=h value="${s.h}" placeholder=H><input data-no="${m.no}" data-k=a value="${s.a}" placeholder=A></div></div>`}).join("");document.querySelectorAll("#matches select,#matches input").forEach(el=>el.addEventListener("input",updateState));countStates()}
