@@ -7,7 +7,22 @@
 <section class=layout><div class=card><h2>Scores that help</h2><div id=paths class=path></div></div><div class=card><h2>Projected positions</h2><div class=tw><table id=ptable></table></div></div></section><section class=card><h2>Match universe</h2><div id=universe class=path></div></section></main>
 <script>
 const PRED_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTtuCy2jTbWd00mfGYs_QPMSe8ZRTCsqpCw5P_0Rm_AOn5LbJC5ebiK4TUnuXaVlz9wUJnRVixThC1j/pub?gid=0&single=true&output=csv",POINTS_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSM1s2vhc3_enNrdDo_oRxsi97JbHUW8bnf9YnzVtXe3_Q87pGXKgndbDvnN3xr1ada_U7Qq5PelK56/pub?gid=0&single=true&output=csv";let rawRows=[],players=[],matches=[],states=new Map();
-function parseCSV(t){const R=[];let r=[],c="",q=false;for(let i=0;i<t.length;i++){let ch=t[i],n=t[i+1];if(ch=='"'&&q&&n=='"'){c+='"';i++}else if(ch=='"')q=!q;else if(ch==","&&!q){r.push(c);c=""}else if((ch=="\\n"||ch=="\\r")&&!q){if(ch=="\\r"&&n=="\\n")i++;r.push(c);R.push(r);r=[];c=""}else c+=ch}if(c.length||r.length){r.push(c);R.push(r)}return R.filter(r=>r.some(c=>String(c).trim()!==""))}
+function parseCSV(t){
+  const R=[];
+  let r=[],c="",q=false;
+  for(let i=0;i<t.length;i++){
+    const ch=t[i], code=t.charCodeAt(i), next=t[i+1];
+    if(ch=='"'&&q&&next=='"'){c+='"';i++}
+    else if(ch=='"'){q=!q}
+    else if(ch==","&&!q){r.push(c);c=""}
+    else if((code===10||code===13)&&!q){
+      if(code===13 && t.charCodeAt(i+1)===10)i++;
+      r.push(c);R.push(r);r=[];c="";
+    }else c+=ch;
+  }
+  if(c.length||r.length){r.push(c);R.push(r)}
+  return R.filter(r=>r.some(c=>String(c).trim()!==""));
+}
 const N=v=>{let n=Number(String(v??"").replace(",",".").trim());return Number.isFinite(n)?n:null},out=(h,a)=>h>a?"H":a>h?"A":"D",esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
 function range(){return document.getElementById("stage").value.split("-").map(Number)}
 function buildStage(){
@@ -48,6 +63,7 @@ try{
   if(!res.ok)throw Error("prediction HTTP "+res.status);
   let text=await res.text();
   rawRows=parseCSV(text);
+  console.log("Prediction CSV rows parsed:", rawRows.length, rawRows[0]);
   if(!rawRows || rawRows.length<5){
     throw Error("prediction CSV returned too few rows. First response text: "+text.slice(0,120));
   }
