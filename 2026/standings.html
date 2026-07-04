@@ -76,7 +76,8 @@ svg{display:block;width:100%;height:auto}
 <body>
 <div class="wrap">
   <section class="hero">
-    <div><div class="kicker">FIFA World Cup 2026 · Prediction game</div><h1>Standings race</h1><div class="sub">Cumulative points by tournament day. Move the slider to replay the leaderboard. By default, today shows the next data day because scores are updated with a one-day delay.</div></div>
+    <button onclick="location.href='https://cwtstenberg.github.io/2026/'" style="position:absolute;left:20px;top:20px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:10px 16px;font-weight:800;cursor:pointer">← Back</button>
+    <div><div class="kicker">FIFA World Cup 2026 · Prediction game</div><h1>Standings race</h1><div class="sub">Cumulative points by tournament day. Move the slider to replay the leaderboard. By default, the current day is selected when available.</div></div>
     <div class="badge"><div class="small">Leader on selected day</div><div class="big"><span id="leaderName">Loading…</span> <span class="pts" id="leaderPts">—</span></div></div>
   </section>
   <div class="statgrid">
@@ -315,7 +316,8 @@ svg{display:block;width:100%;height:auto}
   function defaultIndex(){
     var now = new Date();
     var target = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    target.setDate(target.getDate() + 1);
+    // Use current day instead of automatically advancing one day.
+    // target.setDate(target.getDate() + 1);
 
     var idx = 0;
     for (var i = 0; i < dates.length; i++) {
