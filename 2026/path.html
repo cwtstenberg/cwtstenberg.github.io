@@ -36,32 +36,24 @@ if(!rawRows || rawRows.length < 5 || !rawRows[2] || !rawRows[4]){
 }
 let [F,T]=range(),nums=rawRows[2].slice(1),teams=rawRows[4].slice(1),cols=[];for(let c=0;c+1<teams.length;c+=2){let no=Number(String(nums[c]??"").trim());if(no>=F&&no<=T)cols.push({no,col:c,home:String(teams[c]??"").trim(),away:String(teams[c+1]??"").trim()})}let raw=rawRows.slice(5).filter(r=>{let name=String(r[0]??"").trim();return name&&cols.some(m=>N(r[m.col+1])!=null&&N(r[m.col+2])!=null)});players=raw.map(r=>({name:String(r[0]).trim(),preds:cols.map(m=>{let h=N(r[m.col+1]),a=N(r[m.col+2]);return h==null||a==null?null:{h,a,out:out(h,a),key:h+"-"+a}})}));matches=cols.map((m,i)=>{let map=new Map();for(let p of players){let pr=p.preds[i];if(!pr)continue;if(!map.has(pr.key))map.set(pr.key,{...pr,count:0});map.get(pr.key).count++}return {...m,i,scorelines:[...map.values()].sort((a,b)=>b.count-a.count)}});matches.forEach(m=>{if(!states.has(m.no))states.set(m.no,{state:"future",h:"",a:""})});document.getElementById("km").textContent=matches.length;document.getElementById("kp").textContent=players.length;document.getElementById("player").innerHTML=players.map(p=>`<option>${esc(p.name)}</option>`).join("");document.getElementById("meta").textContent=`${matches.length} matches • ${players.length} players`;renderStates();universe();updateRuleInfo();runPathfinder()}
 function normName(s){return String(s??"").trim().toLowerCase().replace(/\s+/g," ")}
-function nameKey(s){return normName(s).replace(/[^a-zåäöéèü0-9 ]/gi,"")}
 function parsePointsRows(R){
   const found=new Map();
-  const playerKeys=players.map(p=>({name:p.name,key:nameKey(p.name)}));
+  const playerByNorm=new Map(players.map(p=>[normName(p.name),p.name]));
+
   for(const r of R){
-    if(!r || !r.length) continue;
-    const rowCells=r.map(c=>String(c??"").trim());
-    const rowKeys=rowCells.map(c=>nameKey(c));
-    for(const p of playerKeys){
-      let idx=rowKeys.findIndex(k=>k===p.key);
-      if(idx<0) idx=rowKeys.findIndex(k=>k && (k.includes(p.key)||p.key.includes(k)));
-      if(idx<0) continue;
-      let latest=null;
-      for(let j=idx+1;j<rowCells.length;j++){
-        const pts=N(rowCells[j]);
-        if(pts!=null) latest=pts;
-      }
-      if(latest==null){
-        for(let j=0;j<rowCells.length;j++){
-          const pts=N(rowCells[j]);
-          if(pts!=null) latest=pts;
-        }
-      }
-      if(latest!=null) found.set(p.name,latest);
+    if(!r || r.length < 2) continue;
+
+    const name = String(r[0] ?? "").trim();
+    const pts = N(r[1]); // current score is column B / the second CSV value
+
+    if(!name || pts == null) continue;
+
+    const normalized = normName(name);
+    if(playerByNorm.has(normalized)){
+      found.set(playerByNorm.get(normalized), pts);
     }
   }
+
   return found;
 }
 async function loadPointsCsv(){
@@ -71,7 +63,7 @@ async function loadPointsCsv(){
     let text=await res.text();
     let pts=parsePointsRows(parseCSV(text));
     document.getElementById("points").value=players.map(p=>p.name+","+(pts.get(p.name)??0)).join("\\n");
-    status.textContent="Loaded current points for "+pts.size+" of "+players.length+" players.";
+    status.textContent="Loaded current points from column B for "+pts.size+" of "+players.length+" players.";
   }catch(e){
     document.getElementById("points").value=players.map(p=>p.name+",0").join("\\n");
     status.textContent="Prediction CSV loaded, but current-points CSV failed. Using 0 points. "+e.message;
