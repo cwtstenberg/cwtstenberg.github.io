@@ -62,15 +62,15 @@ async function loadPointsCsv(){
     if(!res.ok)throw Error("points HTTP "+res.status);
     let text=await res.text();
     let pts=parsePointsRows(parseCSV(text));
-    document.getElementById("points").value=players.map(p=>p.name+","+(pts.get(p.name)??0)).join("\\n");
+    document.getElementById("points").value=players.map(p=>p.name+","+(pts.get(p.name)??0)).join("\n");
     status.textContent="Loaded current points from column B for "+pts.size+" of "+players.length+" players.";
   }catch(e){
-    document.getElementById("points").value=players.map(p=>p.name+",0").join("\\n");
+    document.getElementById("points").value=players.map(p=>p.name+",0").join("\n");
     status.textContent="Prediction CSV loaded, but current-points CSV failed. Using 0 points. "+e.message;
   }
 }
-function fill(over=true){let box=document.getElementById("points");if(!over&&box.value.trim())return;box.value=players.map(p=>p.name+",0").join("\\n")}
-function curPts(){let m=new Map();for(let line of document.getElementById("points").value.split(/\\r?\\n/)){let i=line.lastIndexOf(",");if(i<0)continue;let name=line.slice(0,i).trim(),pts=N(line.slice(i+1));if(name&&pts!=null)m.set(name,pts)}return m}
+function fill(over=true){let box=document.getElementById("points");if(!over&&box.value.trim())return;box.value=players.map(p=>p.name+",0").join("\n")}
+function curPts(){let m=new Map();for(let line of document.getElementById("points").value.split(/\r?\n/)){let i=line.lastIndexOf(",");if(i<0)continue;let name=line.slice(0,i).trim(),pts=N(line.slice(i+1));if(name&&pts!=null)m.set(name,pts)}return m}
 function renderStates(){document.getElementById("matches").innerHTML=matches.map(m=>{let s=states.get(m.no)||{state:"future",h:"",a:""};let cls=s.state==="exclude"?"exclude":s.state==="lock"?"lock":"";return `<div class="box ${cls}"><div class=title>#${m.no} • ${esc(m.home)} vs ${esc(m.away)}</div><p><select data-no="${m.no}" data-k=state><option value=future ${s.state==="future"?"selected":""}>Future / simulate</option><option value=exclude ${s.state==="exclude"?"selected":""}>Exclude / already in standings</option><option value=lock ${s.state==="lock"?"selected":""}>Locked score / manual</option></select></p><div class=score><div class=sub>Actual score</div><input data-no="${m.no}" data-k=h value="${s.h}" placeholder=H><input data-no="${m.no}" data-k=a value="${s.a}" placeholder=A></div></div>`}).join("");document.querySelectorAll("#matches select,#matches input").forEach(el=>el.addEventListener("input",updateState));countStates()}
 function updateState(e){let no=Number(e.target.dataset.no),k=e.target.dataset.k,s=states.get(no)||{state:"future",h:"",a:""};if(k==="state")s.state=e.target.value;else s[k]=e.target.value.trim();states.set(no,s);renderStates();runPathfinder()}
 function countStates(){let f=0,e=0,l=0;for(let m of matches){let s=states.get(m.no)||{state:"future"};if(s.state==="exclude")e++;else if(s.state==="lock")l++;else f++}kfut.textContent=f;kex.textContent=e;kl.textContent=l}
