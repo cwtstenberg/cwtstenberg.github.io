@@ -486,6 +486,138 @@
       margin-bottom:11px;
     }
 
+
+    .scenario-modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:1000;
+    }
+
+    .scenario-modal.open{
+      display:flex;
+    }
+
+    .scenario-modal-backdrop{
+      position:absolute;
+      inset:0;
+      background:rgba(2,10,18,.72);
+      backdrop-filter:blur(7px);
+    }
+
+    .scenario-modal-card{
+      position:relative;
+      width:min(560px,100%);
+      max-height:min(760px,88vh);
+      overflow:auto;
+      border-radius:24px;
+      padding:24px;
+      background:linear-gradient(180deg,#f9fbfd,#eef3f8);
+      color:#06192a;
+      border:1px solid rgba(255,255,255,.32);
+      box-shadow:0 30px 90px rgba(0,0,0,.42);
+      animation:modalIn .2s ease both;
+    }
+
+    @keyframes modalIn{
+      from{opacity:0;transform:translateY(10px) scale(.98)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+
+    .scenario-modal-close{
+      position:absolute;
+      right:14px;
+      top:12px;
+      width:34px;
+      height:34px;
+      border:0;
+      border-radius:50%;
+      background:rgba(6,25,42,.08);
+      color:#06192a;
+      font-size:1.35rem;
+      line-height:1;
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .scenario-modal-eyebrow{
+      color:#54708d;
+      font-size:.7rem;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:8px;
+      padding-right:42px;
+    }
+
+    .scenario-modal-card h2{
+      margin:0 0 16px;
+      font-size:clamp(1.5rem,4vw,2.3rem);
+      letter-spacing:-.03em;
+    }
+
+    .modal-scenario{
+      border-radius:16px;
+      padding:15px;
+      background:#fff;
+      border:1px solid rgba(6,25,42,.09);
+      box-shadow:0 5px 16px rgba(6,25,42,.08);
+    }
+
+    .modal-scenario + .modal-scenario{
+      margin-top:12px;
+    }
+
+    .modal-scenario.winner-spa{
+      border-top:5px solid #d83f52;
+    }
+
+    .modal-scenario.winner-arg{
+      border-top:5px solid #3479d3;
+    }
+
+    .modal-scoreline{
+      font-size:1.05rem;
+      font-weight:950;
+      margin-bottom:10px;
+    }
+
+    .modal-related{
+      margin-top:18px;
+      padding-top:15px;
+      border-top:1px solid rgba(6,25,42,.12);
+    }
+
+    .modal-related-title{
+      font-size:.78rem;
+      font-weight:950;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      color:#5f7388;
+      margin-bottom:8px;
+    }
+
+    .modal-related-list{
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+    }
+
+    .modal-related-chip{
+      border-radius:999px;
+      padding:6px 9px;
+      background:#e8eef5;
+      font-size:.74rem;
+      font-weight:850;
+    }
+
+    body.modal-open{
+      overflow:hidden;
+    }
+
     @media(max-width:800px){
       body{padding:10px}
       .hero{padding:18px;border-radius:20px}
@@ -528,12 +660,8 @@
 
   <section class="panel">
     <div class="toolbar">
-      <div class="filter-group">
+      <div class="filter-group" id="filterGroup">
         <span class="filter-title">Who finishes first?</span>
-        <button class="filter-chip active" data-filter="all">All</button>
-        <button class="filter-chip" data-filter="Tomas">Tomas</button>
-        <button class="filter-chip" data-filter="Linnea">Linnea</button>
-        <button class="filter-chip" data-filter="Ante">Ante</button>
       </div>
     </div>
 
@@ -559,6 +687,16 @@
     </div>
   </section>
 </main>
+
+  <div class="scenario-modal" id="scenarioModal" aria-hidden="true">
+    <div class="scenario-modal-backdrop" data-close-modal></div>
+    <div class="scenario-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="scenario-modal-close" type="button" aria-label="Close" data-close-modal>×</button>
+      <div class="scenario-modal-eyebrow">FIFA World Cup 2026 · Scenario details</div>
+      <h2 id="modalTitle">Scenario</h2>
+      <div id="modalContent"></div>
+    </div>
+  </div>
 
 <script>
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYGVO-_Mm0Pf1MzkyMgAoaeYWMtgCZEAwr-BgHs0CXU4NOhTxbBpzHItDzTTbxuPrXf2xEbdLg9uw8/pub?gid=0&single=true&output=csv";
@@ -705,8 +843,95 @@
     return `hsl(${hue} 68% 91%)`;
   }
 
+
+  function buildFilters(rows){
+    const group = document.getElementById("filterGroup");
+    const counts = {};
+
+    rows.forEach(row => {
+      if(row.first) counts[row.first] = (counts[row.first] || 0) + 1;
+    });
+
+    const ordered = Object.entries(counts)
+      .sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+    group.innerHTML = `
+      <span class="filter-title">Who finishes first?</span>
+      <button class="filter-chip ${currentFilter === "all" ? "active" : ""}" data-filter="all">All</button>
+      ${ordered.map(([name]) => `
+        <button class="filter-chip ${currentFilter === name ? "active" : ""}" data-filter="${escapeHtml(name)}">${escapeHtml(name)}</button>
+      `).join("")}
+    `;
+
+    group.querySelectorAll(".filter-chip").forEach(button => {
+      button.addEventListener("click", () => {
+        currentFilter = button.dataset.filter;
+        render(currentRows,"Current data");
+      });
+    });
+  }
+
+  function scenarioHtml(row){
+    return `
+      <section class="modal-scenario ${row.winner === "SPA" ? "winner-spa" : "winner-arg"}">
+        <div class="modal-scoreline">Spain ${escapeHtml(row.spa)}–${escapeHtml(row.arg)} Argentina</div>
+        <div class="winner-banner">
+          <span class="winner-team">
+            <span class="mini-flag" data-flag="${row.winner}"></span>
+            ${row.winner === "SPA" ? "SPAIN" : "ARGENTINA"}
+          </span>
+          <span class="winner-word">WINS</span>
+        </div>
+        <div class="winner-name"><span class="medal gold">1</span><span>${escapeHtml(row.first)}</span></div>
+        <div class="runner-line"><span class="medal silver">2</span><span class="runner-name">${escapeHtml(row.second)}</span></div>
+        <div class="runner-line"><span class="medal bronze">3</span><span class="runner-name">${escapeHtml(row.third)}</span></div>
+      </section>`;
+  }
+
+  function openScenarioModal(scenarios){
+    const modal = document.getElementById("scenarioModal");
+    const content = document.getElementById("modalContent");
+    const title = document.getElementById("modalTitle");
+    if(!scenarios?.length) return;
+
+    title.textContent = `Spain ${scenarios[0].spa}–${scenarios[0].arg} Argentina`;
+
+    const relatedKey = podiumKey(scenarios[0]);
+    const related = currentRows
+      .filter(row => podiumKey(row) === relatedKey)
+      .filter(row => !(row.spa === scenarios[0].spa && row.arg === scenarios[0].arg && row.winner === scenarios[0].winner))
+      .slice(0,12);
+
+    content.innerHTML = `
+      ${scenarios.map(scenarioHtml).join("")}
+      ${related.length ? `
+        <div class="modal-related">
+          <div class="modal-related-title">Other scorelines with the same podium</div>
+          <div class="modal-related-list">
+            ${related.map(row => `
+              <span class="modal-related-chip">${escapeHtml(row.spa)}–${escapeHtml(row.arg)} · ${row.winner}</span>
+            `).join("")}
+          </div>
+        </div>
+      ` : ""}
+    `;
+
+    hydrateFlags(content);
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden","false");
+    document.body.classList.add("modal-open");
+  }
+
+  function closeScenarioModal(){
+    const modal = document.getElementById("scenarioModal");
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden","true");
+    document.body.classList.remove("modal-open");
+  }
+
   function render(rows, sourceLabel){
     currentRows = rows;
+    buildFilters(rows);
     const lookup = new Map();
     rows.forEach(row => {
       const l=labels(row);
@@ -740,6 +965,7 @@
           html += `
             <td class="result${filtered ? " filtered-out" : ""}"
                 data-row="${rowIndex}" data-col="${colIndex}"
+                data-scenario-key="${escapeHtml(`${spaLabel}|${argLabel}`)}"
                 title="${scenarios.map(row => `Spain ${row.spa}–${row.arg} Argentina · Winner: ${row.winner}`).join(" | ")}">
               ${scenarios.map(row => `
                 <div class="scenario-in-cell winner-${row.winner.toLowerCase()}${scenarios.length > 1 ? " split-scenario" : ""}">
@@ -796,6 +1022,12 @@
         document.querySelector(`.rowhead[data-row="${row}"]`)?.classList.add("axis-highlight");
         document.querySelector(`thead th[data-col="${col}"]`)?.classList.add("axis-highlight");
       });
+      cell.addEventListener("click", () => {
+        const [spa,arg] = cell.dataset.scenarioKey.split("|");
+        const scenarios = currentRows.filter(row => row.spa === spa && row.arg === arg);
+        openScenarioModal(scenarios);
+      });
+
       cell.addEventListener("mouseleave", () => {
         cell.classList.remove("is-hovered");
         document.querySelectorAll(".axis-highlight").forEach(el => el.classList.remove("axis-highlight"));
@@ -822,14 +1054,6 @@
     }
   }
 
-  document.querySelectorAll(".filter-chip").forEach(button => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
-      button.classList.add("active");
-      currentFilter = button.dataset.filter;
-      render(currentRows,"Current data");
-    });
-  });
 
   document.getElementById("csvFile").addEventListener("change", async event => {
     const file=event.target.files[0];
@@ -843,8 +1067,15 @@
 
   document.getElementById("demoButton").addEventListener("click",() => {
     currentFilter="all";
-    document.querySelectorAll(".filter-chip").forEach(b => b.classList.toggle("active",b.dataset.filter==="all"));
     render(parseDelimited(demoText),"Demo data");
+  });
+
+  document.querySelectorAll("[data-close-modal]").forEach(el => {
+    el.addEventListener("click", closeScenarioModal);
+  });
+
+  document.addEventListener("keydown", event => {
+    if(event.key === "Escape") closeScenarioModal();
   });
 
   (async function init(){
