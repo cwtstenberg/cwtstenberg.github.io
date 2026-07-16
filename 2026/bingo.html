@@ -237,14 +237,37 @@
       background:var(--blue);
       transition:.15s ease;
     }
-    thead tr:first-child th{
+    thead th{
       top:0;
-      height:40px;
+      height:96px;
       background:linear-gradient(180deg,var(--blue-dark),var(--blue));
     }
-    thead tr:nth-child(2) th{
-      top:40px;
+
+    .arg-score-head{
+      display:table-cell;
+      padding:0;
+      overflow:hidden;
+    }
+
+    .arg-score-head .arg-label,
+    .arg-score-head .arg-score{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+    }
+
+    .arg-score-head .arg-label{
+      height:40px;
+      font-size:.82rem;
+      letter-spacing:.06em;
+      background:rgba(0,0,0,.035);
+    }
+
+    .arg-score-head .arg-score{
       height:56px;
+      font-size:.92rem;
+      border-top:0;
     }
 
     .corner{
@@ -463,83 +486,6 @@
       margin-bottom:11px;
     }
 
-
-    .stats-grid{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:12px;
-      margin-top:22px;
-    }
-
-    .stat-card{
-      min-height:105px;
-      border-radius:18px;
-      padding:15px 16px;
-      border:1px solid rgba(255,255,255,.11);
-      background:rgba(255,255,255,.065);
-      backdrop-filter:blur(8px);
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-    }
-
-    .stat-label{
-      color:#aebdcc;
-      font-size:.73rem;
-      font-weight:850;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-    }
-
-    .stat-value{
-      display:flex;
-      align-items:center;
-      gap:9px;
-      margin-top:9px;
-      font-size:1.55rem;
-      line-height:1;
-      font-weight:950;
-    }
-
-    .stat-detail{
-      margin-top:7px;
-      color:#91a3b5;
-      font-size:.72rem;
-    }
-
-    .stat-flag{
-      width:29px;
-      height:19px;
-      border-radius:3px;
-      overflow:hidden;
-      box-shadow:0 2px 6px rgba(0,0,0,.22);
-      flex:none;
-    }
-
-    .stat-flag svg{width:100%;height:100%;display:block}
-
-    .result,
-    .scenario-card{
-      animation:scenarioFade .28s ease both;
-    }
-
-    @keyframes scenarioFade{
-      from{opacity:0;transform:translateY(5px)}
-      to{opacity:1;transform:translateY(0)}
-    }
-
-    .filter-chip.active{
-      box-shadow:0 4px 16px rgba(244,201,93,.2);
-    }
-
-    @media(max-width:1050px){
-      .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    }
-
-    @media(max-width:520px){
-      .stats-grid{grid-template-columns:1fr}
-    }
-
     @media(max-width:800px){
       body{padding:10px}
       .hero{padding:18px;border-radius:20px}
@@ -577,29 +523,6 @@
       <div class="team spa"><span class="flag" data-flag="SPA"></span><span>SPAIN</span></div>
       <div class="vs">VS</div>
       <div class="team arg"><span>ARGENTINA</span><span class="flag" data-flag="ARG"></span></div>
-    </div>
-
-    <div class="stats-grid" id="statsGrid">
-      <div class="stat-card">
-        <div class="stat-label">Scenarios</div>
-        <div class="stat-value" id="statTotal">—</div>
-        <div class="stat-detail">Published combinations</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Spain wins</div>
-        <div class="stat-value"><span class="stat-flag" data-flag="SPA"></span><span id="statSpa">—</span></div>
-        <div class="stat-detail" id="statSpaDetail">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Argentina wins</div>
-        <div class="stat-value"><span class="stat-flag" data-flag="ARG"></span><span id="statArg">—</span></div>
-        <div class="stat-detail" id="statArgDetail">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Most winning scenarios</div>
-        <div class="stat-value" id="statLeader">—</div>
-        <div class="stat-detail" id="statLeaderDetail">First-place outcomes</div>
-      </div>
     </div>
   </section>
 
@@ -721,26 +644,6 @@
     });
   }
 
-  function updateStats(rows){
-    const total = rows.length;
-    const spaWins = rows.filter(r => r.winner === "SPA").length;
-    const argWins = rows.filter(r => r.winner === "ARG").length;
-
-    const firstCounts = {};
-    rows.forEach(r => firstCounts[r.first] = (firstCounts[r.first] || 0) + 1);
-    const sorted = Object.entries(firstCounts).sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    const topCount = sorted[0]?.[1] || 0;
-    const leaders = sorted.filter(([,count]) => count === topCount).map(([name]) => name);
-
-    document.getElementById("statTotal").textContent = total;
-    document.getElementById("statSpa").textContent = spaWins;
-    document.getElementById("statArg").textContent = argWins;
-    document.getElementById("statSpaDetail").textContent = total ? `${Math.round(spaWins/total*100)}% of scenarios` : "0% of scenarios";
-    document.getElementById("statArgDetail").textContent = total ? `${Math.round(argWins/total*100)}% of scenarios` : "0% of scenarios";
-    document.getElementById("statLeader").textContent = leaders.join(" / ") || "—";
-    document.getElementById("statLeaderDetail").textContent = topCount ? `${topCount} first-place scenario${topCount === 1 ? "" : "s"}` : "No scenarios";
-  }
-
   function parseDelimited(text){
     const cleaned = text.replace(/^\uFEFF/, "").trim();
     if(!cleaned) return [];
@@ -815,11 +718,13 @@
     let html = `
       <thead>
         <tr>
-          <th class="corner" rowspan="2">SPA ↓ / ARG →</th>
-          ${scoreLabels.map(() => `<th>ARG</th>`).join("")}
-        </tr>
-        <tr>
-          ${scoreLabels.map((label,i) => `<th data-col="${i}">${escapeHtml(label)}</th>`).join("")}
+          <th class="corner">SPA ↓ / ARG →</th>
+          ${scoreLabels.map((label,i) => `
+            <th class="arg-score-head" data-col="${i}">
+              <span class="arg-label">ARG</span>
+              <span class="arg-score">${escapeHtml(label)}</span>
+            </th>
+          `).join("")}
         </tr>
       </thead><tbody>`;
 
@@ -879,7 +784,6 @@
     document.getElementById("status").textContent =
       `${sourceLabel} · ${filteredRows.length} shown of ${rows.length}`;
 
-    updateStats(rows);
     hydrateFlags();
     addHoverEffects();
   }
