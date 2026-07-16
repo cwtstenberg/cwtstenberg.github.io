@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spain vs Argentina — Outcome Matrix</title>
+  <style>
+    :root{
+      --navy:#06192a;
+      --navy2:#0b2a45;
+      --blue:#8bb2ec;
+      --blue-dark:#5f91d9;
+      --red:#e98a8e;
+      --red-dark:#d9666d;
+      --gold:#f4c95d;
+      --silver:#cad3df;
+      --bronze:#d59a66;
+      --white:#f8fbff;
+      --muted:#9fb0c0;
+      --na:#cfd5db;
+      --panel:rgba(255,255,255,.055);
+    }
+
+    *{box-sizing:border-box}
+
+    html,body{
+      margin:0;
+      min-height:100%;
+      background:
+        radial-gradient(circle at 12% 0%,rgba(103,157,226,.16),transparent 32%),
+        radial-gradient(circle at 88% 4%,rgba(232,108,115,.14),transparent 32%),
+        linear-gradient(180deg,#061421 0%,#071a2c 55%,#04111d 100%);
+      color:var(--white);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    body{padding:22px}
+    .page{max-width:1650px;margin:0 auto}
+
+    .topbar,
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .topbar{margin-bottom:18px}
+
+    .button,.file-button,.filter-chip{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      border-radius:999px;
+      padding:10px 15px;
+      font-weight:850;
+      text-decoration:none;
+      cursor:pointer;
+      transition:.18s ease;
+      backdrop-filter:blur(8px);
+    }
+    .button:hover,.file-button:hover,.filter-chip:hover{
+      background:rgba(255,255,255,.14);
+      transform:translateY(-1px);
+    }
+
+    .controls,.filter-group{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    input[type=file]{display:none}
+
+    .hero{
+      padding:26px;
+      border:1px solid rgba(255,255,255,.11);
+      border-radius:28px;
+      background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.045));
+      box-shadow:0 18px 55px rgba(0,0,0,.28);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-190px;
+      top:-230px;
+      width:390px;
+      height:390px;
+      border:54px solid rgba(244,201,93,.065);
+      border-radius:50%;
+      pointer-events:none;
+    }
+
+    .eyebrow{
+      color:var(--gold);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:.78rem;
+      font-weight:950;
+      margin-bottom:8px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(2rem,4vw,4.1rem);
+      line-height:.96;
+      letter-spacing:-.045em;
+      text-transform:uppercase;
+    }
+
+    .intro{
+      max-width:860px;
+      margin:13px 0 0;
+      line-height:1.55;
+      color:var(--muted);
+    }
+
+    .match-strip{
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      margin-top:23px;
+      border-radius:22px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .team{
+      min-height:88px;
+      padding:18px 22px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      font-size:clamp(1.1rem,2vw,1.6rem);
+      font-weight:950;
+      letter-spacing:.04em;
+    }
+    .team.spa{background:linear-gradient(135deg,#b71d31,#e96870)}
+    .team.arg{background:linear-gradient(135deg,#2862b4,#79acef);justify-content:flex-end}
+    .vs{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 24px;
+      background:#06192a;
+      color:var(--gold);
+      font-weight:950;
+      letter-spacing:.12em;
+    }
+
+    .flag{
+      width:48px;
+      height:32px;
+      border-radius:5px;
+      overflow:hidden;
+      box-shadow:0 3px 10px rgba(0,0,0,.25);
+      flex:none;
+    }
+    .flag svg,
+    .mini-flag svg{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+
+    .panel{
+      margin-top:22px;
+      padding:15px;
+      border:1px solid rgba(255,255,255,.11);
+      border-radius:26px;
+      background:var(--panel);
+      box-shadow:0 18px 55px rgba(0,0,0,.28);
+    }
+
+    .toolbar{
+      margin-bottom:14px;
+      padding:2px 2px 0;
+    }
+
+    .filter-title{
+      font-weight:900;
+      color:#dbe7f3;
+      margin-right:4px;
+    }
+
+    .filter-chip{
+      padding:8px 13px;
+      font-size:.82rem;
+    }
+
+    .filter-chip.active{
+      color:#06192a;
+      background:var(--gold);
+      border-color:var(--gold);
+    }
+
+    .view-toggle{
+      display:none;
+      gap:8px;
+    }
+
+    .table-wrap{
+      overflow:auto;
+      max-height:74vh;
+      border-radius:18px;
+      background:#fff;
+    }
+
+    table{
+      border-collapse:separate;
+      border-spacing:0;
+      width:max-content;
+      min-width:100%;
+      table-layout:fixed;
+      color:#06192a;
+    }
+
+    th,td{
+      min-width:124px;
+      height:104px;
+      padding:8px;
+      border-right:1px solid rgba(6,25,42,.16);
+      border-bottom:1px solid rgba(6,25,42,.16);
+      vertical-align:top;
+      font-size:.76rem;
+    }
+
+    thead th{
+      position:sticky;
+      z-index:5;
+      text-align:center;
+      vertical-align:middle;
+      font-weight:950;
+      background:var(--blue);
+      transition:.15s ease;
+    }
+    thead tr:first-child th{
+      top:0;
+      height:40px;
+      background:linear-gradient(180deg,var(--blue-dark),var(--blue));
+    }
+    thead tr:nth-child(2) th{
+      top:40px;
+      height:56px;
+    }
+
+    .corner{
+      position:sticky;
+      left:0;
+      z-index:9!important;
+      min-width:122px;
+      color:#fff;
+      background:#06192a!important;
+    }
+
+    .rowhead{
+      position:sticky;
+      left:0;
+      z-index:4;
+      min-width:122px;
+      text-align:center;
+      vertical-align:middle;
+      font-size:.9rem;
+      font-weight:950;
+      background:linear-gradient(180deg,var(--red-dark),var(--red));
+      transition:.15s ease;
+    }
+
+    td{
+      background:#f9fbfd;
+      transition:.15s ease;
+    }
+
+    td.empty-cell{
+      background:rgba(6,25,42,.045)!important;
+      border-color:rgba(6,25,42,.07);
+    }
+
+    .scenario-in-cell{
+      position:relative;
+      min-height:74px;
+    }
+
+    .scenario-in-cell.split-scenario{
+      padding:5px 4px 7px;
+    }
+
+    .scenario-in-cell.split-scenario + .scenario-in-cell.split-scenario{
+      margin-top:8px;
+    }
+
+    .scenario-in-cell{
+      border-radius:10px;
+      padding:7px 8px 9px;
+      background:#ffffff;
+      border:1px solid rgba(6,25,42,.08);
+      box-shadow:0 2px 7px rgba(6,25,42,.055);
+      overflow:hidden;
+    }
+
+    .scenario-in-cell.winner-spa{
+      border-top:4px solid #d83f52;
+    }
+
+    .scenario-in-cell.winner-arg{
+      border-top:4px solid #3479d3;
+    }
+
+    .winner-banner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin:-1px 0 8px;
+      padding-bottom:6px;
+      border-bottom:1px solid rgba(6,25,42,.08);
+      font-weight:950;
+      letter-spacing:.05em;
+    }
+
+    .winner-team{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:.69rem;
+      color:#06192a;
+    }
+
+    .winner-spa .winner-team{color:#a91f32}
+    .winner-arg .winner-team{color:#205a9f}
+
+    .winner-word{
+      font-size:.56rem;
+      opacity:.5;
+    }
+
+    .mini-flag{
+      width:18px;
+      height:12px;
+      border-radius:2px;
+      box-shadow:0 1px 3px rgba(0,0,0,.18);
+      flex:none;
+      display:inline-block;
+    }
+
+    .mini-flag{
+      overflow:hidden;
+    }
+
+    td.result{
+      background:#f7f9fc!important;
+      cursor:pointer;
+      position:relative;
+    }
+
+    td.result.filtered-out{
+      opacity:.12;
+      filter:grayscale(.9);
+    }
+
+    td.result:hover,
+    td.result.is-hovered{
+      z-index:7;
+      transform:scale(1.03);
+      box-shadow:0 12px 28px rgba(6,25,42,.28);
+    }
+
+    .axis-highlight{
+      filter:brightness(1.08) saturate(1.15);
+      box-shadow:inset 0 0 0 3px rgba(244,201,93,.72);
+    }
+
+    .result-tag{display:none}
+
+    .winner-name{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      font-size:.92rem;
+      font-weight:950;
+      line-height:1.15;
+      padding-right:28px;
+      margin-bottom:7px;
+    }
+
+    .winner-name .medal{
+      flex:none;
+    }
+
+    .runner-line{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-top:4px;
+      font-size:.72rem;
+      min-width:0;
+    }
+
+    .medal{
+      width:20px;height:20px;border-radius:50%;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-size:.65rem;font-weight:950;color:#06192a;
+      flex:none;
+    }
+    .gold{background:var(--gold)}
+    .silver{background:var(--silver)}
+    .bronze{background:var(--bronze)}
+
+    .runner-name{
+      font-weight:790;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .legend{
+      display:flex;
+      gap:15px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:12px;
+      color:var(--muted);
+      font-size:.82rem;
+    }
+    .legend-item{display:flex;align-items:center;gap:7px}
+    .legend-dot{width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.18)}
+    .status{margin-left:auto;color:var(--gold);font-weight:850}
+
+    .note{
+      margin-top:12px;
+      color:#91a3b5;
+      font-size:.78rem;
+      line-height:1.5;
+    }
+
+    .cards{
+      display:none;
+      gap:12px;
+    }
+
+    .scenario-card{
+      border-radius:18px;
+      padding:15px;
+      color:#06192a;
+      background:#fff;
+      border:1px solid rgba(6,25,42,.12);
+      box-shadow:0 9px 22px rgba(0,0,0,.14);
+    }
+
+    .scenario-score{
+      font-size:1rem;
+      font-weight:950;
+      margin-bottom:10px;
+    }
+
+    .scenario-winner{
+      font-size:.75rem;
+      font-weight:850;
+      opacity:.68;
+      margin-bottom:11px;
+    }
+
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+      margin-top:22px;
+    }
+
+    .stat-card{
+      min-height:105px;
+      border-radius:18px;
+      padding:15px 16px;
+      border:1px solid rgba(255,255,255,.11);
+      background:rgba(255,255,255,.065);
+      backdrop-filter:blur(8px);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .stat-label{
+      color:#aebdcc;
+      font-size:.73rem;
+      font-weight:850;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .stat-value{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      margin-top:9px;
+      font-size:1.55rem;
+      line-height:1;
+      font-weight:950;
+    }
+
+    .stat-detail{
+      margin-top:7px;
+      color:#91a3b5;
+      font-size:.72rem;
+    }
+
+    .stat-flag{
+      width:29px;
+      height:19px;
+      border-radius:3px;
+      overflow:hidden;
+      box-shadow:0 2px 6px rgba(0,0,0,.22);
+      flex:none;
+    }
+
+    .stat-flag svg{width:100%;height:100%;display:block}
+
+    .result,
+    .scenario-card{
+      animation:scenarioFade .28s ease both;
+    }
+
+    @keyframes scenarioFade{
+      from{opacity:0;transform:translateY(5px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    .filter-chip.active{
+      box-shadow:0 4px 16px rgba(244,201,93,.2);
+    }
+
+    @media(max-width:1050px){
+      .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
+    @media(max-width:520px){
+      .stats-grid{grid-template-columns:1fr}
+    }
+
+    @media(max-width:800px){
+      body{padding:10px}
+      .hero{padding:18px;border-radius:20px}
+      .match-strip{grid-template-columns:1fr}
+      .team.arg{justify-content:flex-start}
+      .vs{padding:9px}
+      .table-wrap{display:none}
+      .cards{display:grid}
+      .view-toggle{display:flex}
+      .toolbar{align-items:flex-start}
+      .status{margin-left:0;width:100%}
+    }
+  </style>
+</head>
+<body>
+<main class="page">
+  <div class="topbar">
+    <a class="button" href="https://cwtstenberg.github.io/2026/">← Back to main page</a>
+    <div class="controls">
+      <label class="file-button" for="csvFile">Load CSV</label>
+      <input id="csvFile" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values">
+      <button class="button" id="demoButton">Reset demo</button>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="eyebrow">FIFA World Cup 2026 · Final standings scenarios</div>
+    <h1>Spain vs Argentina</h1>
+    <p class="intro">
+      Each numeric score combination has one neutral cell. Spain victories use a thin red winner strip, Argentina victories use blue, and equal-score cells show both possible outcomes. Use the filters to quickly see
+      which results put Tomas, Linnea or Ante in first place.
+    </p>
+
+    <div class="match-strip">
+      <div class="team spa"><span class="flag" data-flag="SPA"></span><span>SPAIN</span></div>
+      <div class="vs">VS</div>
+      <div class="team arg"><span>ARGENTINA</span><span class="flag" data-flag="ARG"></span></div>
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-label">Scenarios</div>
+        <div class="stat-value" id="statTotal">—</div>
+        <div class="stat-detail">Published combinations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Spain wins</div>
+        <div class="stat-value"><span class="stat-flag" data-flag="SPA"></span><span id="statSpa">—</span></div>
+        <div class="stat-detail" id="statSpaDetail">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Argentina wins</div>
+        <div class="stat-value"><span class="stat-flag" data-flag="ARG"></span><span id="statArg">—</span></div>
+        <div class="stat-detail" id="statArgDetail">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Most winning scenarios</div>
+        <div class="stat-value" id="statLeader">—</div>
+        <div class="stat-detail" id="statLeaderDetail">First-place outcomes</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar">
+      <div class="filter-group">
+        <span class="filter-title">Who finishes first?</span>
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="Tomas">Tomas</button>
+        <button class="filter-chip" data-filter="Linnea">Linnea</button>
+        <button class="filter-chip" data-filter="Ante">Ante</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="matrix"></table>
+    </div>
+
+    <div class="cards" id="cards"></div>
+
+    <div class="legend">
+      <span class="legend-item"><i class="legend-dot" style="background:#fff;border-top:4px solid #d83f52"></i> Spain wins</span>
+      <span class="legend-item"><i class="legend-dot" style="background:#fff;border-top:4px solid #3479d3"></i> Argentina wins</span>
+      <span class="legend-item"><i class="legend-dot" style="background:linear-gradient(180deg,#fff 0 46%,#d83f52 46% 52%,#fff 52% 94%,#3479d3 94% 100%)"></i> Both winner outcomes</span>
+      <span class="legend-item"><i class="medal gold">1</i> First place</span>
+      <span class="legend-item"><i class="medal silver">2</i> Second place</span>
+      <span class="legend-item"><i class="medal bronze">3</i> Third place</span>
+      <span class="status" id="status">Demo data</span>
+    </div>
+
+    <div class="note">
+      The + and − score variants are combined for every value from 0 to 5. All cells now use the same neutral background. A thin red or blue strip, together with a small flag, identifies the match winner. Equal-score cells contain both possible winner scenarios. Hovering a cell highlights its
+      Spain row and Argentina column. On mobile, the matrix becomes a simpler card list.
+    </div>
+  </section>
+</main>
+
+<script>
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYGVO-_Mm0Pf1MzkyMgAoaeYWMtgCZEAwr-BgHs0CXU4NOhTxbBpzHItDzTTbxuPrXf2xEbdLg9uw8/pub?gid=0&single=true&output=csv";
+  const scoreLabels = ["0","1","2","3","4","5"];
+  let currentRows = [];
+  let currentFilter = "all";
+
+  const demoText = `SPA\tARG\tWinner\tfirst place\tsecond place\tthird place
+0\t0\tARG\tTomas\tLinnea\tAnte
+0\t0\tSPA\tTomas\tLinnea\tAnte
+1\t0\tSPA\tTomas\tLinnea\tAnte
+0\t1\tARG\tTomas\tLinnea\tAnte
+2\t0\tSPA\tTomas\tLinnea\tAnte
+1\t1\tARG\tTomas\tLinnea\tAnte
+1\t1\tSPA\tTomas\tLinnea\tAnte
+0\t2\tARG\tTomas\tLinnea\tAnte
+3\t0\tSPA\tLinnea\tAnte\tTomas
+2\t1\tSPA\tLinnea\tAnte\tTomas
+1\t2\tARG\tLinnea\tAnte\tTomas
+0\t3\tARG\tLinnea\tAnte\tTomas
+4\t0\tSPA\tLinnea\tAnte\tTomas
+3\t1\tSPA\tLinnea\tAnte\tTomas
+2\t2\tARG\tLinnea\tAnte\tTomas
+2\t2\tSPA\tLinnea\tAnte\tTomas
+1\t3\tARG\tLinnea\tAnte\tTomas
+0\t4\tARG\tLinnea\tAnte\tTomas
+5\t0\tSPA\tAnte\tTomas\tLinnea
+4\t1\tSPA\tAnte\tTomas\tLinnea
+3\t2\tSPA\tAnte\tTomas\tLinnea
+2\t3\tARG\tAnte\tTomas\tLinnea
+1\t4\tARG\tAnte\tTomas\tLinnea
+0\t5\tARG\tAnte\tTomas\tLinnea
+5\t1\tSPA\tAnte\tTomas\tLinnea
+4\t2\tSPA\tAnte\tTomas\tLinnea
+3\t3\tARG\tAnte\tTomas\tLinnea
+3\t3\tSPA\tAnte\tTomas\tLinnea
+2\t4\tARG\tAnte\tTomas\tLinnea
+1\t5\tARG\tAnte\tTomas\tLinnea
+5\t2\tSPA\tAnte\tTomas\tLinnea
+4\t3\tSPA\tAnte\tTomas\tLinnea
+3\t4\tARG\tAnte\tTomas\tLinnea
+2\t5\tARG\tAnte\tTomas\tLinnea
+5\t3\tSPA\tAnte\tTomas\tLinnea
+4\t4\tARG\tAnte\tTomas\tLinnea
+4\t4\tSPA\tAnte\tTomas\tLinnea
+3\t5\tARG\tAnte\tTomas\tLinnea
+5\t4\tSPA\tAnte\tTomas\tLinnea
+4\t5\tARG\tAnte\tTomas\tLinnea
+5\t5\tARG\tAnte\tTomas\tLinnea
+5\t5\tSPA\tAnte\tTomas\tLinnea`;
+
+
+  function flagSvg(team){
+    if(team === "SPA"){
+      return `
+        <svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" aria-label="Spain flag" role="img">
+          <rect width="60" height="40" fill="#AA151B"/>
+          <rect y="10" width="60" height="20" fill="#F1BF00"/>
+          <g transform="translate(17 20) scale(.45)">
+            <rect x="-6" y="-11" width="12" height="22" rx="1" fill="#C60B1E"/>
+            <rect x="-3.6" y="-8" width="7.2" height="16" fill="#F1BF00"/>
+            <circle cx="0" cy="-10.5" r="2.8" fill="#F1BF00"/>
+          </g>
+        </svg>`;
+    }
+    return `
+      <svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" aria-label="Argentina flag" role="img">
+        <rect width="60" height="40" fill="#74ACDF"/>
+        <rect y="13.333" width="60" height="13.334" fill="#FFF"/>
+        <g transform="translate(30 20)">
+          <circle r="4.3" fill="#F6B40E" stroke="#85340A" stroke-width=".5"/>
+          <g stroke="#85340A" stroke-width=".45">
+            <path d="M0-8V-5.1M0 8V5.1M-8 0H-5.1M8 0H5.1"/>
+            <path d="M-5.65-5.65L-3.6-3.6M5.65 5.65L3.6 3.6M5.65-5.65L3.6-3.6M-5.65 5.65L-3.6 3.6"/>
+          </g>
+        </g>
+      </svg>`;
+  }
+
+  function hydrateFlags(root=document){
+    root.querySelectorAll("[data-flag]").forEach(el => {
+      el.innerHTML = flagSvg(el.dataset.flag);
+    });
+  }
+
+  function updateStats(rows){
+    const total = rows.length;
+    const spaWins = rows.filter(r => r.winner === "SPA").length;
+    const argWins = rows.filter(r => r.winner === "ARG").length;
+
+    const firstCounts = {};
+    rows.forEach(r => firstCounts[r.first] = (firstCounts[r.first] || 0) + 1);
+    const sorted = Object.entries(firstCounts).sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const topCount = sorted[0]?.[1] || 0;
+    const leaders = sorted.filter(([,count]) => count === topCount).map(([name]) => name);
+
+    document.getElementById("statTotal").textContent = total;
+    document.getElementById("statSpa").textContent = spaWins;
+    document.getElementById("statArg").textContent = argWins;
+    document.getElementById("statSpaDetail").textContent = total ? `${Math.round(spaWins/total*100)}% of scenarios` : "0% of scenarios";
+    document.getElementById("statArgDetail").textContent = total ? `${Math.round(argWins/total*100)}% of scenarios` : "0% of scenarios";
+    document.getElementById("statLeader").textContent = leaders.join(" / ") || "—";
+    document.getElementById("statLeaderDetail").textContent = topCount ? `${topCount} first-place scenario${topCount === 1 ? "" : "s"}` : "No scenarios";
+  }
+
+  function parseDelimited(text){
+    const cleaned = text.replace(/^\uFEFF/, "").trim();
+    if(!cleaned) return [];
+    const delimiter = cleaned.split(/\r?\n/,1)[0].includes("\t") ? "\t" : ",";
+    const rows = [];
+    let row=[], value="", quoted=false;
+
+    for(let i=0;i<cleaned.length;i++){
+      const c=cleaned[i], n=cleaned[i+1];
+      if(c === '"' && quoted && n === '"'){ value += '"'; i++; }
+      else if(c === '"'){ quoted = !quoted; }
+      else if(c === delimiter && !quoted){ row.push(value.trim()); value=""; }
+      else if((c === "\n" || c === "\r") && !quoted){
+        if(c === "\r" && n === "\n") i++;
+        row.push(value.trim());
+        if(row.some(Boolean)) rows.push(row);
+        row=[]; value="";
+      } else value += c;
+    }
+    row.push(value.trim());
+    if(row.some(Boolean)) rows.push(row);
+
+    const headers = rows[0].map(v => String(v).toLowerCase().replace(/[^a-z0-9]/g,""));
+    const idx = {
+      spa: headers.indexOf("spa"),
+      arg: headers.indexOf("arg"),
+      winner: headers.indexOf("winner"),
+      first: headers.indexOf("firstplace"),
+      second: headers.indexOf("secondplace"),
+      third: headers.indexOf("thirdplace")
+    };
+    if(Object.values(idx).some(i => i < 0)) throw new Error("The CSV does not contain all required columns.");
+
+    return rows.slice(1).filter(r => r.some(Boolean)).map(r => ({
+      spa:String(r[idx.spa] ?? "").trim(),
+      arg:String(r[idx.arg] ?? "").trim(),
+      winner:String(r[idx.winner] ?? "").trim().toUpperCase(),
+      first:String(r[idx.first] ?? "").trim(),
+      second:String(r[idx.second] ?? "").trim(),
+      third:String(r[idx.third] ?? "").trim()
+    })).filter(r => r.spa !== "" && r.arg !== "" && ["SPA","ARG"].includes(r.winner));
+  }
+
+  function labels(row){
+    return {
+      spaLabel: row.spa,
+      argLabel: row.arg
+    };
+  }
+
+  function podiumKey(row){
+    return `${row.first}|${row.second}|${row.third}`;
+  }
+
+  function podiumColor(key){
+    let hash=0;
+    for(let i=0;i<key.length;i++) hash=(hash*31+key.charCodeAt(i))>>>0;
+    const hue=hash%360;
+    return `hsl(${hue} 68% 91%)`;
+  }
+
+  function render(rows, sourceLabel){
+    currentRows = rows;
+    const lookup = new Map();
+    rows.forEach(row => {
+      const l=labels(row);
+      const key = `${l.spaLabel}|${l.argLabel}`;
+      if(!lookup.has(key)) lookup.set(key, []);
+      lookup.get(key).push(row);
+    });
+
+    let html = `
+      <thead>
+        <tr>
+          <th class="corner" rowspan="2">SPA ↓ / ARG →</th>
+          ${scoreLabels.map(() => `<th>ARG</th>`).join("")}
+        </tr>
+        <tr>
+          ${scoreLabels.map((label,i) => `<th data-col="${i}">${escapeHtml(label)}</th>`).join("")}
+        </tr>
+      </thead><tbody>`;
+
+    scoreLabels.forEach((spaLabel,rowIndex) => {
+      html += `<tr><th class="rowhead" data-row="${rowIndex}">SPA&nbsp;&nbsp;${escapeHtml(spaLabel)}</th>`;
+      scoreLabels.forEach((argLabel,colIndex) => {
+        const scenarios = lookup.get(`${spaLabel}|${argLabel}`) || [];
+        if(!scenarios.length){
+          html += `<td class="empty-cell" data-row="${rowIndex}" data-col="${colIndex}"></td>`;
+        }else{
+          const visibleScenarios = scenarios.filter(row => currentFilter === "all" || row.first === currentFilter);
+          const filtered = visibleScenarios.length === 0;
+          html += `
+            <td class="result${filtered ? " filtered-out" : ""}"
+                data-row="${rowIndex}" data-col="${colIndex}"
+                title="${scenarios.map(row => `Spain ${row.spa}–${row.arg} Argentina · Winner: ${row.winner}`).join(" | ")}">
+              ${scenarios.map(row => `
+                <div class="scenario-in-cell winner-${row.winner.toLowerCase()}${scenarios.length > 1 ? " split-scenario" : ""}">
+                  <div class="winner-banner">
+                    <span class="winner-team">
+                      <span class="mini-flag" data-flag="${row.winner}"></span>
+                      ${row.winner === "SPA" ? "SPAIN" : "ARGENTINA"}
+                    </span>
+                    <span class="winner-word">WINS</span>
+                  </div>
+                  <div class="winner-name"><span class="medal gold">1</span><span>${escapeHtml(row.first)}</span></div>
+                  <div class="runner-line"><span class="medal silver">2</span><span class="runner-name">${escapeHtml(row.second)}</span></div>
+                  <div class="runner-line"><span class="medal bronze">3</span><span class="runner-name">${escapeHtml(row.third)}</span></div>
+                </div>
+              `).join("")}
+            </td>`;
+        }
+      });
+      html += `</tr>`;
+    });
+    html += `</tbody>`;
+    document.getElementById("matrix").innerHTML = html;
+
+    const filteredRows = rows.filter(r => currentFilter === "all" || r.first === currentFilter);
+    document.getElementById("cards").innerHTML = filteredRows.map(row => {
+      return `
+        <article class="scenario-card ${row.winner === "SPA" ? "winner-spa" : "winner-arg"}">
+          <div class="scenario-score">Spain ${row.spa}–${row.arg} Argentina</div>
+          <div class="winner-banner">
+            <span class="winner-team">
+              <span class="mini-flag" data-flag="${row.winner}"></span>
+              ${row.winner === "SPA" ? "SPAIN" : "ARGENTINA"}
+            </span>
+            <span class="winner-word">WINS</span>
+          </div>
+          <div class="winner-name"><span class="medal gold">1</span><span>${escapeHtml(row.first)}</span></div>
+          <div class="runner-line"><span class="medal silver">2</span><span class="runner-name">${escapeHtml(row.second)}</span></div>
+          <div class="runner-line"><span class="medal bronze">3</span><span class="runner-name">${escapeHtml(row.third)}</span></div>
+        </article>`;
+    }).join("");
+
+    document.getElementById("status").textContent =
+      `${sourceLabel} · ${filteredRows.length} shown of ${rows.length}`;
+
+    updateStats(rows);
+    hydrateFlags();
+    addHoverEffects();
+  }
+
+  function addHoverEffects(){
+    document.querySelectorAll("td.result").forEach(cell => {
+      cell.addEventListener("mouseenter", () => {
+        const row = cell.dataset.row, col = cell.dataset.col;
+        cell.classList.add("is-hovered");
+        document.querySelector(`.rowhead[data-row="${row}"]`)?.classList.add("axis-highlight");
+        document.querySelector(`thead th[data-col="${col}"]`)?.classList.add("axis-highlight");
+      });
+      cell.addEventListener("mouseleave", () => {
+        cell.classList.remove("is-hovered");
+        document.querySelectorAll(".axis-highlight").forEach(el => el.classList.remove("axis-highlight"));
+      });
+    });
+  }
+
+  function escapeHtml(value){
+    return String(value)
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+
+  async function loadPublishedCsv(){
+    if(!CSV_URL) return false;
+    try{
+      const response = await fetch(CSV_URL,{cache:"no-store"});
+      if(!response.ok) throw new Error(`HTTP ${response.status}`);
+      render(parseDelimited(await response.text()),"Published CSV");
+      return true;
+    }catch(error){
+      console.error(error);
+      return false;
+    }
+  }
+
+  document.querySelectorAll(".filter-chip").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
+      button.classList.add("active");
+      currentFilter = button.dataset.filter;
+      render(currentRows,"Current data");
+    });
+  });
+
+  document.getElementById("csvFile").addEventListener("change", async event => {
+    const file=event.target.files[0];
+    if(!file) return;
+    try{
+      render(parseDelimited(await file.text()),file.name);
+    }catch(error){
+      alert(error.message || "The file could not be read.");
+    }
+  });
+
+  document.getElementById("demoButton").addEventListener("click",() => {
+    currentFilter="all";
+    document.querySelectorAll(".filter-chip").forEach(b => b.classList.toggle("active",b.dataset.filter==="all"));
+    render(parseDelimited(demoText),"Demo data");
+  });
+
+  (async function init(){
+    hydrateFlags();
+    const loaded=await loadPublishedCsv();
+    if(!loaded) render(parseDelimited(demoText),"Demo data");
+  })();
+</script>
+</body>
+</html>
