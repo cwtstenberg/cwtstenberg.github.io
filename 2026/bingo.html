@@ -180,6 +180,45 @@
       padding:2px 2px 0;
     }
 
+
+    .filter-toolbar{
+      align-items:flex-start;
+      justify-content:flex-start;
+      gap:12px 22px;
+    }
+
+    .placement-group{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .placement-chip{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      border-radius:999px;
+      padding:8px 13px;
+      font-size:.82rem;
+      font-weight:850;
+      cursor:pointer;
+      transition:.18s ease;
+      backdrop-filter:blur(8px);
+    }
+
+    .placement-chip:hover{
+      background:rgba(255,255,255,.14);
+      transform:translateY(-1px);
+    }
+
+    .placement-chip.active{
+      color:#06192a;
+      background:#dbe7f3;
+      border-color:#dbe7f3;
+      box-shadow:0 4px 14px rgba(219,231,243,.14);
+    }
+
     .filter-title{
       font-weight:900;
       color:#dbe7f3;
@@ -647,8 +686,7 @@
     <div class="eyebrow">FIFA World Cup 2026 · Final standings scenarios</div>
     <h1>Spain vs Argentina</h1>
     <p class="intro">
-      Each numeric score combination has one neutral cell. Spain victories use a thin red winner strip, Argentina victories use blue, and equal-score cells show both possible outcomes. Use the filters to quickly see
-      which results put Tomas, Linnea or Ante in first place.
+      Each numeric score combination has one neutral cell. Spain victories use a thin red winner strip, Argentina victories use blue, and equal-score cells show both possible outcomes. Use the filters to highlight who finishes first, second or third.
     </p>
 
     <div class="match-strip">
@@ -659,9 +697,16 @@
   </section>
 
   <section class="panel">
-    <div class="toolbar">
+    <div class="toolbar filter-toolbar">
+      <div class="placement-group" aria-label="Choose finishing position">
+        <span class="filter-title">Highlight:</span>
+        <button class="placement-chip active" data-placement="first">First place</button>
+        <button class="placement-chip" data-placement="second">Second place</button>
+        <button class="placement-chip" data-placement="third">Third place</button>
+      </div>
+
       <div class="filter-group" id="filterGroup">
-        <span class="filter-title">Who finishes first?</span>
+        <span class="filter-title">Player:</span>
       </div>
     </div>
 
@@ -682,7 +727,7 @@
     </div>
 
     <div class="note">
-      The + and − score variants are combined for every value from 0 to 5. All cells now use the same neutral background. A thin red or blue strip, together with a small flag, identifies the match winner. Equal-score cells contain both possible winner scenarios. Hovering a cell highlights its
+      The matrix shows scorelines from 0 to 3 goals for each team. All cells now use the same neutral background. A thin red or blue strip, together with a small flag, identifies the match winner. Equal-score cells contain both possible winner scenarios. Hovering a cell highlights its
       Spain row and Argentina column. On mobile, the matrix becomes a simpler card list.
     </div>
   </section>
@@ -700,9 +745,10 @@
 
 <script>
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYGVO-_Mm0Pf1MzkyMgAoaeYWMtgCZEAwr-BgHs0CXU4NOhTxbBpzHItDzTTbxuPrXf2xEbdLg9uw8/pub?gid=0&single=true&output=csv";
-  const scoreLabels = ["0","1","2","3","4","5"];
+  const scoreLabels = ["0","1","2","3"];
   let currentRows = [];
   let currentFilter = "all";
+  let currentPlacement = "first";
 
   const demoText = `SPA\tARG\tWinner\tfirst place\tsecond place\tthird place
 0\t0\tARG\tTomas\tLinnea\tAnte
@@ -849,14 +895,15 @@
     const counts = {};
 
     rows.forEach(row => {
-      if(row.first) counts[row.first] = (counts[row.first] || 0) + 1;
+      const name = row[currentPlacement];
+      if(name) counts[name] = (counts[name] || 0) + 1;
     });
 
     const ordered = Object.entries(counts)
       .sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
     group.innerHTML = `
-      <span class="filter-title">Who finishes first?</span>
+      <span class="filter-title">Player:</span>
       <button class="filter-chip ${currentFilter === "all" ? "active" : ""}" data-filter="all">All</button>
       ${ordered.map(([name]) => `
         <button class="filter-chip ${currentFilter === name ? "active" : ""}" data-filter="${escapeHtml(name)}">${escapeHtml(name)}</button>
@@ -868,6 +915,10 @@
         currentFilter = button.dataset.filter;
         render(currentRows,"Current data");
       });
+    });
+
+    document.querySelectorAll(".placement-chip").forEach(button => {
+      button.classList.toggle("active", button.dataset.placement === currentPlacement);
     });
   }
 
@@ -960,7 +1011,7 @@
         if(!scenarios.length){
           html += `<td class="empty-cell" data-row="${rowIndex}" data-col="${colIndex}"></td>`;
         }else{
-          const visibleScenarios = scenarios.filter(row => currentFilter === "all" || row.first === currentFilter);
+          const visibleScenarios = scenarios.filter(row => currentFilter === "all" || row[currentPlacement] === currentFilter);
           const filtered = visibleScenarios.length === 0;
           html += `
             <td class="result${filtered ? " filtered-out" : ""}"
@@ -989,7 +1040,7 @@
     html += `</tbody>`;
     document.getElementById("matrix").innerHTML = html;
 
-    const filteredRows = rows.filter(r => currentFilter === "all" || r.first === currentFilter);
+    const filteredRows = rows.filter(r => currentFilter === "all" || r[currentPlacement] === currentFilter);
     document.getElementById("cards").innerHTML = filteredRows.map(row => {
       return `
         <article class="scenario-card ${row.winner === "SPA" ? "winner-spa" : "winner-arg"}">
@@ -1008,7 +1059,7 @@
     }).join("");
 
     document.getElementById("status").textContent =
-      `${sourceLabel} · ${filteredRows.length} shown of ${rows.length}`;
+      `${sourceLabel} · ${filteredRows.length} shown of ${rows.length} · ${currentPlacement} place`;
 
     hydrateFlags();
     addHoverEffects();
@@ -1055,6 +1106,15 @@
   }
 
 
+
+  document.querySelectorAll(".placement-chip").forEach(button => {
+    button.addEventListener("click", () => {
+      currentPlacement = button.dataset.placement;
+      currentFilter = "all";
+      render(currentRows,"Current data");
+    });
+  });
+
   document.getElementById("csvFile").addEventListener("change", async event => {
     const file=event.target.files[0];
     if(!file) return;
@@ -1067,6 +1127,7 @@
 
   document.getElementById("demoButton").addEventListener("click",() => {
     currentFilter="all";
+    currentPlacement="first";
     render(parseDelimited(demoText),"Demo data");
   });
 
