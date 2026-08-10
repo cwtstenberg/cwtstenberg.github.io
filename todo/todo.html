@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gaming To-Do</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a2b;
+      --panel-2: #182238;
+      --line: rgba(255,255,255,.08);
+      --text: #f4f7fb;
+      --muted: #93a0b8;
+      --accent: #7c9cff;
+      --accent-soft: rgba(124,156,255,.14);
+      --success: #72d6a0;
+      --shadow: 0 20px 60px rgba(0,0,0,.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 5%, rgba(124,156,255,.13), transparent 28rem),
+        linear-gradient(180deg, #0b1020 0%, #0d1324 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .wrap {
+      width: min(940px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0 72px;
+    }
+
+    header {
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 5vw, 50px);
+      line-height: 1;
+      letter-spacing: -.035em;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin: 26px 0 18px;
+    }
+
+    .search,
+    .select,
+    .button {
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(18,26,43,.82);
+      color: var(--text);
+      outline: none;
+      transition: .18s ease;
+    }
+
+    .search {
+      width: 100%;
+      padding: 0 15px;
+      font-size: 14px;
+    }
+
+    .search:focus,
+    .select:focus,
+    .button:hover {
+      border-color: rgba(124,156,255,.5);
+      box-shadow: 0 0 0 3px rgba(124,156,255,.08);
+    }
+
+    .select {
+      padding: 0 38px 0 14px;
+      font-size: 14px;
+    }
+
+    .summary {
+      background: rgba(18,26,43,.86);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .summary-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .progress-track {
+      height: 8px;
+      width: 100%;
+      background: rgba(255,255,255,.07);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      border-radius: inherit;
+      transition: width .25s ease;
+    }
+
+    .progress-text {
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .group {
+      margin-top: 22px;
+    }
+
+    .group-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 4px 10px;
+    }
+
+    .group-title {
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .group-count {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .task-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .task {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 64px;
+      padding: 12px 15px;
+      background: rgba(18,26,43,.9);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.15);
+      transition: transform .15s ease, opacity .15s ease, border-color .15s ease;
+    }
+
+    .task:hover {
+      transform: translateY(-1px);
+      border-color: rgba(124,156,255,.28);
+    }
+
+    .task.done {
+      opacity: .53;
+      background: rgba(18,26,43,.55);
+    }
+
+    .task.done .task-name {
+      text-decoration: line-through;
+      text-decoration-thickness: 1.5px;
+    }
+
+    .check {
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      border: 1.5px solid rgba(255,255,255,.24);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      background: rgba(255,255,255,.025);
+      margin: 0;
+    }
+
+    .check:checked {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .check:checked::after {
+      content: "✓";
+      color: #0b1020;
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .task-name {
+      font-size: 15px;
+      font-weight: 650;
+      letter-spacing: -.01em;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(124,156,255,.18);
+      padding: 6px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .state,
+    .empty {
+      padding: 38px 24px;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      text-align: center;
+      background: rgba(18,26,43,.48);
+    }
+
+    .state strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+
+    .footer {
+      margin-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .button {
+      padding: 0 13px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    @media (max-width: 640px) {
+      .wrap { padding-top: 34px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .select { width: 100%; }
+      .task { grid-template-columns: 28px 1fr; }
+      .tag { grid-column: 2; justify-self: start; }
+      .summary { grid-template-columns: 1fr; }
+      .progress-text { justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="eyebrow">Live from Google Sheets</div>
+      <h1>Gaming To-Do</h1>
+      <p class="sub">Tasks are loaded directly from the published CSV. Checkmarks are saved only in this browser.</p>
+    </header>
+
+    <section class="toolbar" aria-label="Task controls">
+      <input id="search" class="search" type="search" placeholder="Search tasks…" autocomplete="off" />
+      <select id="gameFilter" class="select" aria-label="Filter by game">
+        <option value="all">All games</option>
+      </select>
+    </section>
+
+    <section class="summary">
+      <div>
+        <div id="summaryTitle" class="summary-title">Loading tasks…</div>
+        <div class="progress-track" aria-hidden="true">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+      <div id="progressText" class="progress-text">—</div>
+    </section>
+
+    <div id="content">
+      <div class="state">
+        <strong>Loading your list</strong>
+        Reading the latest version of the published sheet.
+      </div>
+    </div>
+
+    <div class="footer">
+      <span id="lastUpdated">Source not loaded yet</span>
+      <button id="clearCompleted" class="button" type="button">Clear completed</button>
+    </div>
+  </main>
+
+  <script>
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT89QubZB2tm0Q-6-Jqu0qH75BW729p7TSa0dlc2GsfP7wtgK0iougl7BkXq8hQysjeDy64kBaJPLhO/pub?output=csv";
+    const STORAGE_KEY = "gaming-todo-completed-v1";
+
+    const els = {
+      content: document.getElementById("content"),
+      search: document.getElementById("search"),
+      gameFilter: document.getElementById("gameFilter"),
+      summaryTitle: document.getElementById("summaryTitle"),
+      progressBar: document.getElementById("progressBar"),
+      progressText: document.getElementById("progressText"),
+      lastUpdated: document.getElementById("lastUpdated"),
+      clearCompleted: document.getElementById("clearCompleted")
+    };
+
+    let tasks = [];
+    let completed = loadCompleted();
+
+    function loadCompleted() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]").map(String));
+      } catch {
+        return new Set();
+      }
+    }
+
+    function saveCompleted() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...completed]));
+    }
+
+    // Small CSV parser that supports quoted values and commas within quotes.
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let field = "";
+      let quoted = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (quoted && next === '"') {
+            field += '"';
+            i++;
+          } else {
+            quoted = !quoted;
+          }
+        } else if (char === "," && !quoted) {
+          row.push(field);
+          field = "";
+        } else if ((char === "\n" || char === "\r") && !quoted) {
+          if (char === "\r" && next === "\n") i++;
+          row.push(field);
+          field = "";
+          if (row.some(cell => cell.trim() !== "")) rows.push(row);
+          row = [];
+        } else {
+          field += char;
+        }
+      }
+
+      row.push(field);
+      if (row.some(cell => cell.trim() !== "")) rows.push(row);
+      return rows;
+    }
+
+    function csvToObjects(text) {
+      const rows = parseCSV(text);
+      if (!rows.length) return [];
+
+      const headers = rows[0].map(h => h.trim());
+      return rows.slice(1).map(row => {
+        const obj = {};
+        headers.forEach((header, i) => obj[header] = (row[i] || "").trim());
+        return obj;
+      });
+    }
+
+    function taskId(task, index) {
+      // ToDo is the preferred stable ID. Fallback keeps the page robust if the sheet changes.
+      return String(task.ToDo || `${task.Game || "Other"}-${task.Activity}-${index}`);
+    }
+
+    function getFilteredTasks() {
+      const q = els.search.value.trim().toLowerCase();
+      const game = els.gameFilter.value;
+
+      return tasks.filter(task => {
+        const matchGame = game === "all" || task.Game === game;
+        const haystack = `${task.Activity} ${task.Game}`.toLowerCase();
+        return matchGame && (!q || haystack.includes(q));
+      });
+    }
+
+    function render() {
+      const visible = getFilteredTasks();
+
+      if (!visible.length) {
+        els.content.innerHTML = `<div class="empty">No tasks match the current filter.</div>`;
+        updateProgress(visible);
+        return;
+      }
+
+      const groups = [...new Set(visible.map(t => t.Game || "Other"))];
+
+      els.content.innerHTML = groups.map(group => {
+        const groupTasks = visible.filter(t => (t.Game || "Other") === group);
+
+        const items = groupTasks.map(task => {
+          const originalIndex = tasks.indexOf(task);
+          const id = taskId(task, originalIndex);
+          const done = completed.has(id);
+
+          return `
+            <label class="task ${done ? "done" : ""}">
+              <input class="check" type="checkbox"
+                     data-id="${escapeHTML(id)}"
+                     ${done ? "checked" : ""}>
+              <span class="task-name">${escapeHTML(task.Activity)}</span>
+              <span class="tag">${escapeHTML(task.Game || "Other")}</span>
+            </label>
+          `;
+        }).join("");
+
+        const completeCount = groupTasks.filter(t => {
+          const originalIndex = tasks.indexOf(t);
+          return completed.has(taskId(t, originalIndex));
+        }).length;
+
+        return `
+          <section class="group">
+            <div class="group-head">
+              <div class="group-title">${escapeHTML(group)}</div>
+              <div class="group-count">${completeCount}/${groupTasks.length} done</div>
+            </div>
+            <div class="task-list">${items}</div>
+          </section>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".check").forEach(box => {
+        box.addEventListener("change", () => {
+          const id = String(box.dataset.id);
+          if (box.checked) completed.add(id);
+          else completed.delete(id);
+          saveCompleted();
+          render();
+        });
+      });
+
+      updateProgress(visible);
+    }
+
+    function updateProgress(visible) {
+      const total = visible.length;
+      const done = visible.filter(task => {
+        const originalIndex = tasks.indexOf(task);
+        return completed.has(taskId(task, originalIndex));
+      }).length;
+
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      els.summaryTitle.textContent = total ? `${done} of ${total} tasks completed` : "No tasks to show";
+      els.progressText.textContent = total ? `${pct}%` : "—";
+      els.progressBar.style.width = `${pct}%`;
+    }
+
+    function populateGameFilter() {
+      const games = [...new Set(tasks.map(t => t.Game).filter(Boolean))].sort();
+      els.gameFilter.innerHTML =
+        `<option value="all">All games</option>` +
+        games.map(game => `<option value="${escapeHTML(game)}">${escapeHTML(game)}</option>`).join("");
+    }
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function loadTasks() {
+      try {
+        // Cache-buster helps GitHub Pages/browser fetch the latest published sheet.
+        const response = await fetch(`${CSV_URL}&_=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const text = await response.text();
+        const rows = csvToObjects(text);
+
+        tasks = rows
+          .filter(row => row.Activity && row.Activity.trim())
+          .map(row => ({
+            ToDo: row.ToDo || "",
+            Activity: row.Activity.trim(),
+            Game: (row.Game || "Other").trim()
+          }));
+
+        populateGameFilter();
+        render();
+
+        els.lastUpdated.textContent =
+          `Loaded ${tasks.length} tasks · ${new Date().toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
+      } catch (error) {
+        console.error(error);
+        els.summaryTitle.textContent = "Could not load tasks";
+        els.progressText.textContent = "—";
+        els.content.innerHTML = `
+          <div class="state">
+            <strong>Could not read the published CSV</strong>
+            Make sure the Google Sheet is still published to the web as CSV, then refresh this page.
+          </div>
+        `;
+        els.lastUpdated.textContent = "CSV load failed";
+      }
+    }
+
+    els.search.addEventListener("input", render);
+    els.gameFilter.addEventListener("change", render);
+
+    els.clearCompleted.addEventListener("click", () => {
+      completed.clear();
+      saveCompleted();
+      render();
+    });
+
+    loadTasks();
+  </script>
+</body>
+</html>
