@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FM26 Role Rating Calculator</title>
+  <style>
+    :root{
+      --bg:#0f172a; --panel:#111827; --card:#1f2937; --border:#374151;
+      --text:#f8fafc; --muted:#94a3b8; --accent:#60a5fa; --good:#22c55e;
+      --mid:#eab308; --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1400px;margin:0 auto;padding:20px}
+    h1{margin:0 0 6px;font-size:28px}
+    .sub{color:var(--muted);margin-bottom:18px}
+    .grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:18px}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .toolbar .left{display:flex;gap:8px;flex-wrap:wrap}
+    button,select,input{font:inherit}
+    button,select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px 12px}
+    button{cursor:pointer}
+    button:hover{border-color:var(--accent)}
+    .inputs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    label{font-size:12px;color:var(--muted)}
+    input[type=number]{width:100%;margin-top:4px;background:#0b1220;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px}
+    .best{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+    .best-title{color:var(--muted);font-size:12px}
+    .best-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
+    .best-role{font-weight:700;font-size:18px}
+    .best-score{font-weight:700;font-size:30px}
+    .results{display:flex;flex-direction:column;gap:8px;max-height:920px;overflow:auto;padding-right:3px}
+    .role-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px}
+    .role-top{display:flex;align-items:center;gap:10px}
+    .rank{width:28px;color:var(--muted)}
+    .role-name{flex:1;min-width:0}
+    .role-name strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .role-meta{font-size:12px;color:var(--muted);margin-top:2px}
+    .score{width:58px;text-align:right;font-weight:700}
+    .bar{height:6px;background:#0b1220;border-radius:999px;overflow:hidden;margin-top:8px}
+    .fill{height:100%;background:var(--accent)}
+    details{margin-top:18px}
+    summary{cursor:pointer;font-weight:700}
+    .note{color:var(--muted);font-size:13px;line-height:1.5}
+    .error{color:#fca5a5;font-size:13px;margin-top:10px}
+    @media (max-width: 1000px){.grid{grid-template-columns:1fr}.results{max-height:none}}
+    @media (max-width: 760px){.inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:12px}h1{font-size:24px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>FM26 Role Rating Calculator</h1>
+  <div class="sub">Enter a player's 1–20 attributes and get a score for every outfield role. Works fully offline.</div>
+
+  <div class="grid">
+    <section class="panel">
+      <div class="toolbar">
+        <div>
+          <strong>Player attributes</strong>
+          <div class="note">Scores update automatically.</div>
+        </div>
+        <div class="left">
+          <button id="fill10" type="button">Set all to 10</button>
+          <button id="reset" type="button">Reset</button>
+        </div>
+      </div>
+      <div id="inputs" class="inputs"></div>
+      <div id="validation" class="error"></div>
+
+      <details>
+        <summary>How the score is calculated</summary>
+        <div class="note">
+          <p>Key role attributes use base weight 3.0. Preferred role attributes use 1.5. Other attributes do not contribute to that role.</p>
+          <p>Match-engine modifiers: Acceleration ×1.35, Pace ×1.35, Work Rate ×1.20, Agility ×1.15, Jumping Reach ×1.15, Anticipation ×1.10, Balance ×1.10, Stamina ×1.05 and Strength ×1.05.</p>
+          <p>Rating = weighted attribute average ÷ 20 × 100.</p>
+          <p><strong>Important:</strong> positional familiarity is not included, so this is an attribute-fit calculator rather than a full in-game role suitability grade.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel">
+      <div class="toolbar">
+        <div>
+          <strong>Role ratings</strong>
+          <div class="note">Sorted from best to worst.</div>
+        </div>
+        <select id="phase">
+          <option value="all">All roles</option>
+          <option value="IP">In possession</option>
+          <option value="OOP">Out of possession</option>
+        </select>
+      </div>
+      <div id="best" class="best"></div>
+      <div id="results" class="results"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const attrs = ['Crossing','Dribbling','Finishing','First Touch','Heading','Long Shots','Marking','Passing','Tackling','Technique','Agression','Anticipation','Bravery','Composure','Concentration','Decisions','Determination','Flair','Leadership','Off The Ball','Positioning','Teamwork','Vision','Work Rate','Acceleration','Agility','Balance','Jumping Reach','Natural Fitness','Pace','Stamina','Strength'];
+  const modifiers = {Acceleration:1.35,Pace:1.35,'Work Rate':1.20,Agility:1.15,'Jumping Reach':1.15,Anticipation:1.10,Balance:1.10,Stamina:1.05,Strength:1.05};
+  const R=(phase,pos,name,key,pref=[])=>({phase,pos,name,key,pref});
+  const roles=[
+    R('IP','DC','Centre-Back',['Heading','Marking','Tackling','Anticipation','Positioning','Jumping Reach','Strength'],['Agression','Bravery','Composure','Concentration','Decisions','Pace']),
+    R('IP','DC','Ball-Playing Centre-Back',['Heading','Marking','Passing','Tackling','Anticipation','Composure','Positioning','Jumping Reach','Strength'],['First Touch','Technique','Agression','Bravery','Concentration','Decisions','Vision','Pace']),
+    R('IP','DC','No-Nonsense Centre-Back',['Heading','Marking','Tackling','Anticipation','Positioning','Jumping Reach','Strength'],['Agression','Bravery','Concentration','Pace']),
+    R('IP','DC','Wide Centre-Back',['Heading','Marking','Tackling','Anticipation','Positioning','Jumping Reach','Strength'],['Dribbling','Agression','Bravery','Composure','Concentration','Decisions','Work Rate','Acceleration','Agility','Pace','Stamina']),
+    R('IP','DC','Advanced Centre-Back',['Heading','Marking','Passing','Tackling','Technique','Anticipation','Composure','Decisions','Positioning','Teamwork','Jumping Reach','Strength'],['Dribbling','First Touch','Agression','Bravery','Concentration','Vision','Pace','Stamina']),
+    R('IP','DC','Overlapping Centre-Back',['Crossing','Heading','Marking','Tackling','Anticipation','Work Rate','Jumping Reach','Pace','Stamina','Strength'],['Dribbling','Technique','Agression','Bravery','Composure','Concentration','Decisions','Off The Ball','Positioning','Acceleration','Agility']),
+    R('IP','DR/L','Full-Back',['Marking','Tackling','Anticipation','Concentration','Positioning','Teamwork','Acceleration'],['Crossing','Dribbling','Passing','Technique','Decisions','Work Rate','Agility','Pace','Stamina']),
+    R('IP','DR/L','Inside Full-Back',['Heading','Marking','Tackling','Anticipation','Positioning','Strength'],['Dribbling','Agression','Bravery','Composure','Concentration','Decisions','Work Rate','Acceleration','Agility','Jumping Reach','Pace','Stamina']),
+    R('IP','D/WB R/L','Inside Wing-Back',['Passing','Tackling','Anticipation','Composure','Decisions','Positioning','Teamwork','Acceleration'],['First Touch','Marking','Technique','Concentration','Work Rate','Agility','Pace','Stamina']),
+    R('IP','D/WB R/L','Playmaking Wing-Back',['First Touch','Passing','Tackling','Technique','Composure','Decisions','Positioning','Teamwork','Vision','Acceleration'],['Crossing','Dribbling','Marking','Anticipation','Concentration','Off The Ball','Work Rate','Agility','Pace','Stamina']),
+    R('IP','D/WB R/L','Wing-Back',['Crossing','Marking','Tackling','Teamwork','Work Rate','Acceleration','Pace','Stamina'],['Dribbling','First Touch','Passing','Technique','Anticipation','Concentration','Decisions','Off The Ball','Positioning','Agility','Balance']),
+    R('IP','WB R/L','Advanced Wing-Back',['Crossing','Dribbling','Technique','Off The Ball','Teamwork','Work Rate','Acceleration','Agility','Pace','Stamina'],['First Touch','Marking','Passing','Tackling','Anticipation','Decisions','Flair','Positioning','Balance']),
+    R('IP','DM','Defensive Midfielder',['Tackling','Anticipation','Concentration','Positioning','Teamwork'],['First Touch','Marking','Passing','Agression','Composure','Decisions','Work Rate','Stamina','Strength']),
+    R('IP','DM','Box-to-Box Midfielder',['Passing','Tackling','Off The Ball','Teamwork','Work Rate','Stamina'],['Dribbling','Finishing','First Touch','Long Shots','Technique','Agression','Anticipation','Composure','Decisions','Positioning','Acceleration','Balance','Pace','Strength']),
+    R('IP','DM','Box-to-Box Playmaker',['First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision','Work Rate','Stamina'],['Dribbling','Marking','Tackling','Anticipation','Positioning','Acceleration','Agility','Balance','Pace']),
+    R('IP','DM','Deep-Lying Playmaker',['First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision'],['Marking','Tackling','Anticipation','Concentration','Positioning','Work Rate','Balance','Stamina']),
+    R('IP','DM','Half-Back',['Heading','Marking','Tackling','Anticipation','Concentration','Positioning','Teamwork','Jumping Reach','Strength'],['First Touch','Passing','Agression','Bravery','Composure','Decisions','Work Rate','Stamina']),
+    R('IP','CM','Central Midfielder',['First Touch','Passing','Tackling','Decisions','Teamwork'],['Technique','Anticipation','Composure','Concentration','Off The Ball','Positioning','Vision','Work Rate','Stamina']),
+    R('IP','CM','Advanced Playmaker',['First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision'],['Crossing','Dribbling','Anticipation','Flair','Acceleration','Agility']),
+    R('IP','CM','Midfield Playmaker',['First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision'],['Dribbling','Tackling','Anticipation','Flair','Positioning','Work Rate','Agility','Stamina']),
+    R('IP','CM','Wide Central Midfielder',['First Touch','Passing','Tackling','Decisions','Teamwork'],['Crossing','Dribbling','Technique','Anticipation','Composure','Concentration','Off The Ball','Positioning','Vision','Work Rate','Agility','Stamina']),
+    R('IP','M R/L','Wide Midfielder',['Crossing','Passing','Technique','Teamwork','Work Rate','Pace','Stamina'],['Dribbling','First Touch','Anticipation','Composure','Off The Ball','Vision','Acceleration','Agility']),
+    R('IP','M/AM R/L','Inside Winger',['Dribbling','First Touch','Technique','Composure','Teamwork','Acceleration','Agility'],['Crossing','Long Shots','Passing','Anticipation','Flair','Off The Ball','Vision','Work Rate','Balance','Pace','Stamina']),
+    R('IP','M/AM R/L','Playmaking Winger',['Crossing','Dribbling','First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision','Acceleration'],['Anticipation','Flair','Work Rate','Agility','Pace','Stamina']),
+    R('IP','M/AM R/L','Winger',['Crossing','Dribbling','Technique','Teamwork','Acceleration','Agility','Pace'],['First Touch','Passing','Anticipation','Flair','Off The Ball','Work Rate','Balance','Stamina']),
+    R('IP','M/AM C','Attacking Midfielder',['First Touch','Long Shots','Passing','Technique','Composure','Flair','Off The Ball'],['Crossing','Dribbling','Finishing','Anticipation','Decisions','Vision','Acceleration','Agility']),
+    R('IP','AM C','Channel Midfielder',['Crossing','First Touch','Passing','Technique','Composure','Off The Ball','Work Rate','Acceleration'],['Dribbling','Long Shots','Anticipation','Decisions','Flair','Vision','Agility','Pace','Stamina']),
+    R('IP','AM C','Free Role',['Dribbling','First Touch','Long Shots','Passing','Technique','Composure','Flair','Off The Ball','Vision'],['Crossing','Finishing','Anticipation','Decisions','Acceleration','Agility']),
+    R('IP','AM C','Second Striker',['Finishing','First Touch','Anticipation','Composure','Off The Ball','Acceleration'],['Dribbling','Long Shots','Passing','Technique','Concentration','Decisions','Work Rate','Agility','Pace','Stamina']),
+    R('IP','AM R/L','Wide Forward',['Dribbling','First Touch','Technique','Anticipation','Off The Ball','Acceleration','Agility','Pace'],['Crossing','Finishing','Passing','Composure','Flair','Work Rate','Balance','Stamina']),
+    R('IP','AM R/L','Inside Forward',['Dribbling','First Touch','Technique','Anticipation','Composure','Off The Ball','Acceleration','Agility'],['Crossing','Finishing','Long Shots','Passing','Flair','Vision','Work Rate','Balance','Pace','Stamina']),
+    R('IP','ST','Centre Forward',['Finishing','First Touch','Heading','Technique','Composure','Off The Ball','Acceleration','Strength'],['Dribbling','Passing','Anticipation','Decisions','Agility','Balance','Jumping Reach','Pace']),
+    R('IP','ST','Channel Forward',['Dribbling','Finishing','First Touch','Technique','Composure','Off The Ball','Work Rate','Acceleration'],['Crossing','Heading','Passing','Anticipation','Decisions','Agility','Balance','Pace','Stamina']),
+    R('IP','ST','Deep-Lying Forward',['Finishing','First Touch','Technique','Composure','Off The Ball','Strength'],['Dribbling','Passing','Anticipation','Decisions','Teamwork','Vision','Balance']),
+    R('IP','ST','False Nine',['Dribbling','First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision','Acceleration'],['Finishing','Anticipation','Flair','Agility','Balance']),
+    R('IP','ST','Poacher',['Finishing','Heading','Anticipation','Composure','Concentration','Off The Ball','Acceleration'],['First Touch','Technique','Decisions','Balance']),
+    R('IP','ST','Target Forward',['Finishing','Heading','Agression','Bravery','Composure','Off The Ball','Balance','Jumping Reach','Strength'],['First Touch','Anticipation','Decisions','Teamwork']),
+    R('OOP','DC','Covering Centre-Back',['Anticipation','Pace','Marking']),
+    R('OOP','DC','Stopping Centre-Back',['Agression','Tackling','Strength']),
+    R('OOP','DC wide','Covering Wide Centre-Back',['Anticipation','Pace','Marking']),
+    R('OOP','DC wide','Stopping Wide Centre-Back',['Agression','Tackling','Strength']),
+    R('OOP','DR/L','Holding Full-Back',['Positioning','Concentration','Marking']),
+    R('OOP','DR/L','Pressing Full-Back',['Agression','Work Rate','Anticipation']),
+    R('OOP','WB R/L','Holding Wing-Back',['Positioning','Concentration','Marking']),
+    R('OOP','WB R/L','Pressing Wing-Back',['Agression','Work Rate','Anticipation']),
+    R('OOP','DM','Dropping Defensive Midfielder',['Positioning','Decisions','Anticipation']),
+    R('OOP','DM','Pressing Defensive Midfielder',['Agression','Work Rate','Anticipation']),
+    R('OOP','DM','Screening Defensive Midfielder',['Positioning','Concentration','Marking']),
+    R('OOP','DM','Wide Covering Defensive Midfielder',['Anticipation','Pace','Work Rate']),
+    R('OOP','CM','Pressing Central Midfielder',['Agression','Work Rate','Anticipation']),
+    R('OOP','CM','Screening Central Midfielder',['Positioning','Concentration','Marking']),
+    R('OOP','CM','Wide Covering Central Midfielder',['Anticipation','Pace','Work Rate']),
+    R('OOP','M R/L','Tracking Wide Midfielder',['Marking','Work Rate','Stamina']),
+    R('OOP','M R/L','Wide Outlet Wide Midfielder',['Off The Ball','Pace','Anticipation']),
+    R('OOP','AM C','Central Outlet Attacking Midfielder',['Off The Ball','Decisions','Anticipation']),
+    R('OOP','AM C','Splitting Outlet Attacking Midfielder',['Off The Ball','Pace','Anticipation']),
+    R('OOP','AM C','Tracking Attacking Midfielder',['Marking','Work Rate','Stamina']),
+    R('OOP','AM R/L','Inside Outlet Winger',['Off The Ball','Decisions','Anticipation']),
+    R('OOP','AM R/L','Tracking Winger',['Marking','Work Rate','Stamina']),
+    R('OOP','AM R/L','Wide Outlet Winger',['Off The Ball','Pace','Anticipation']),
+    R('OOP','ST','Central Outlet Centre Forward',['Off The Ball','Decisions','Anticipation']),
+    R('OOP','ST','Splitting Outlet Centre Forward',['Off The Ball','Pace','Anticipation']),
+    R('OOP','ST','Tracking Centre Forward',['Agression','Work Rate','Stamina'])
+  ];
+
+  const inputs = document.getElementById('inputs');
+  attrs.forEach(a=>{
+    const label=document.createElement('label');
+    label.textContent=a;
+    const input=document.createElement('input');
+    input.type='number'; input.min='1'; input.max='20'; input.step='1'; input.value='10';
+    input.dataset.attr=a;
+    input.addEventListener('input', calculate);
+    label.appendChild(input); inputs.appendChild(label);
+  });
+
+  function getValues(){
+    const values={}; let invalid=0;
+    document.querySelectorAll('input[data-attr]').forEach(el=>{
+      let n=Number(el.value);
+      if(!Number.isFinite(n)){n=10;invalid++}
+      if(n<1){n=1;invalid++}
+      if(n>20){n=20;invalid++}
+      values[el.dataset.attr]=n;
+    });
+    document.getElementById('validation').textContent=invalid?'Some values were outside 1–20 and were clamped for scoring.':'';
+    return values;
+  }
+
+  function scoreRole(role,v){
+    let num=0,den=0;
+    attrs.forEach(a=>{
+      const base=role.key.includes(a)?3:(role.pref.includes(a)?1.5:0);
+      const w=base*(modifiers[a]||1);
+      num+=(v[a]||10)*w; den+=w;
+    });
+    return den?(num/den)/20*100:0;
+  }
+
+  function band(s){
+    if(s>=80)return 'Elite fit';
+    if(s>=70)return 'Excellent fit';
+    if(s>=60)return 'Good fit';
+    if(s>=50)return 'Average fit';
+    return 'Weak fit';
+  }
+
+  function calculate(){
+    const v=getValues();
+    const phase=document.getElementById('phase').value;
+    const scored=roles.filter(r=>phase==='all'||r.phase===phase)
+      .map(r=>({...r,score:scoreRole(r,v)}))
+      .sort((a,b)=>b.score-a.score);
+
+    const best=scored[0];
+    document.getElementById('best').innerHTML=
+      `<div class="best-title">Best role</div>
+       <div class="best-row">
+         <div><div class="best-role">${best.pos} · ${best.name}</div><div class="role-meta">${best.phase} · ${band(best.score)}</div></div>
+         <div class="best-score">${best.score.toFixed(1)}</div>
+       </div>`;
+
+    const out=document.getElementById('results');
+    out.innerHTML='';
+    scored.forEach((r,i)=>{
+      const row=document.createElement('div');
+      row.className='role-row';
+      row.innerHTML=
+        `<div class="role-top">
+          <div class="rank">${i+1}</div>
+          <div class="role-name"><strong>${r.name}</strong><div class="role-meta">${r.pos} · ${r.phase}</div></div>
+          <div class="score">${r.score.toFixed(1)}</div>
+        </div>
+        <div class="bar"><div class="fill" style="width:${Math.max(0,Math.min(100,r.score))}%"></div></div>`;
+      out.appendChild(row);
+    });
+  }
+
+  document.getElementById('phase').addEventListener('change',calculate);
+  document.getElementById('fill10').addEventListener('click',()=>{
+    document.querySelectorAll('input[data-attr]').forEach(x=>x.value='10'); calculate();
+  });
+  document.getElementById('reset').addEventListener('click',()=>{
+    document.querySelectorAll('input[data-attr]').forEach(x=>x.value='10');
+    document.getElementById('phase').value='all'; calculate();
+  });
+
+  calculate();
+})();
+</script>
+</body>
+</html>

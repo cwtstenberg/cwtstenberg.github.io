@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FM26 Role Attribute Cheat Sheet</title>
+<style>
+:root{
+  --bg:#0b1220;--panel:#111827;--card:#1f2937;--border:#334155;
+  --text:#f8fafc;--muted:#94a3b8;--accent:#60a5fa;
+  --key:#22c55e;--pref:#eab308;--meta:#a78bfa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+.wrap{max-width:1500px;margin:0 auto;padding:20px}
+h1{margin:0 0 6px;font-size:30px}
+.sub{color:var(--muted);margin-bottom:18px}
+.controls{display:grid;grid-template-columns:1fr 180px 220px;gap:10px;margin-bottom:16px}
+input,select{width:100%;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:11px;font:inherit}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 18px;font-size:13px;color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:15px}
+.card h2{font-size:18px;margin:0 0 4px}
+.meta{font-size:12px;color:var(--muted);margin-bottom:12px}
+.section{margin-top:12px}
+.section-title{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:7px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{border-radius:999px;padding:5px 8px;font-size:12px;border:1px solid var(--border)}
+.key{color:#bbf7d0;border-color:#166534;background:#052e16}
+.pref{color:#fde68a;border-color:#854d0e;background:#422006}
+.meta-tag{color:#ddd6fe;border-color:#6d28d9;background:#2e1065}
+.priority{margin-top:12px;border-top:1px solid var(--border);padding-top:10px}
+.priority-row{display:grid;grid-template-columns:130px 1fr 42px;gap:8px;align-items:center;margin:6px 0}
+.priority-name{font-size:12px}
+.bar{height:7px;background:#020617;border-radius:999px;overflow:hidden}
+.fill{height:100%;background:var(--accent)}
+.score{font-size:12px;color:var(--muted);text-align:right}
+.empty{padding:30px;border:1px dashed var(--border);border-radius:12px;color:var(--muted);text-align:center}
+@media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){
+  .controls{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .wrap{padding:12px}
+  h1{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>FM26 Role Attribute Cheat Sheet</h1>
+  <div class="sub">Browse every outfield role and see exactly which attributes matter most. Fully offline.</div>
+
+  <div class="controls">
+    <input id="search" type="search" placeholder="Search role or attribute…">
+    <select id="phase">
+      <option value="all">All phases</option>
+      <option value="IP">In possession</option>
+      <option value="OOP">Out of possession</option>
+    </select>
+    <select id="position">
+      <option value="all">All positions</option>
+    </select>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--key)"></span>Key attribute</span>
+    <span><span class="dot" style="background:var(--pref)"></span>Preferred attribute</span>
+    <span><span class="dot" style="background:var(--meta)"></span>Meta-boosted attribute</span>
+  </div>
+
+  <div id="cards" class="grid"></div>
+</div>
+
+<script>
+(() => {
+  const modifiers = {Acceleration:1.35,Pace:1.35,'Work Rate':1.20,Agility:1.15,'Jumping Reach':1.15,Anticipation:1.10,Balance:1.10,Stamina:1.05,Strength:1.05};
+  const R=(phase,pos,name,key,pref=[])=>({phase,pos,name,key,pref});
+  const roles=[
+    R('IP','DC','Centre-Back',['Heading','Marking','Tackling','Anticipation','Positioning','Jumping Reach','Strength'],['Agression','Bravery','Composure','Concentration','Decisions','Pace']),
+    R('IP','DC','Ball-Playing Centre-Back',['Heading','Marking','Passing','Tackling','Anticipation','Composure','Positioning','Jumping Reach','Strength'],['First Touch','Technique','Agression','Bravery','Concentration','Decisions','Vision','Pace']),
+    R('IP','DC','No-Nonsense Centre-Back',['Heading','Marking','Tackling','Anticipation','Positioning','Jumping Reach','Strength'],['Agression','Bravery','Concentration','Pace']),
+    R('IP','DC','Wide Centre-Back',['Heading','Marking','Tackling','Anticipation','Positioning','Jumping Reach','Strength'],['Dribbling','Agression','Bravery','Composure','Concentration','Decisions','Work Rate','Acceleration','Agility','Pace','Stamina']),
+    R('IP','DC','Advanced Centre-Back',['Heading','Marking','Passing','Tackling','Technique','Anticipation','Composure','Decisions','Positioning','Teamwork','Jumping Reach','Strength'],['Dribbling','First Touch','Agression','Bravery','Concentration','Vision','Pace','Stamina']),
+    R('IP','DC','Overlapping Centre-Back',['Crossing','Heading','Marking','Tackling','Anticipation','Work Rate','Jumping Reach','Pace','Stamina','Strength'],['Dribbling','Technique','Agression','Bravery','Composure','Concentration','Decisions','Off The Ball','Positioning','Acceleration','Agility']),
+    R('IP','DR/L','Full-Back',['Marking','Tackling','Anticipation','Concentration','Positioning','Teamwork','Acceleration'],['Crossing','Dribbling','Passing','Technique','Decisions','Work Rate','Agility','Pace','Stamina']),
+    R('IP','DR/L','Inside Full-Back',['Heading','Marking','Tackling','Anticipation','Positioning','Strength'],['Dribbling','Agression','Bravery','Composure','Concentration','Decisions','Work Rate','Acceleration','Agility','Jumping Reach','Pace','Stamina']),
+    R('IP','D/WB R/L','Inside Wing-Back',['Passing','Tackling','Anticipation','Composure','Decisions','Positioning','Teamwork','Acceleration'],['First Touch','Marking','Technique','Concentration','Work Rate','Agility','Pace','Stamina']),
+    R('IP','D/WB R/L','Playmaking Wing-Back',['First Touch','Passing','Tackling','Technique','Composure','Decisions','Positioning','Teamwork','Vision','Acceleration'],['Crossing','Dribbling','Marking','Anticipation','Concentration','Off The Ball','Work Rate','Agility','Pace','Stamina']),
+    R('IP','D/WB R/L','Wing-Back',['Crossing','Marking','Tackling','Teamwork','Work Rate','Acceleration','Pace','Stamina'],['Dribbling','First Touch','Passing','Technique','Anticipation','Concentration','Decisions','Off The Ball','Positioning','Agility','Balance']),
+    R('IP','WB R/L','Advanced Wing-Back',['Crossing','Dribbling','Technique','Off The Ball','Teamwork','Work Rate','Acceleration','Agility','Pace','Stamina'],['First Touch','Marking','Passing','Tackling','Anticipation','Decisions','Flair','Positioning','Balance']),
+    R('IP','DM','Defensive Midfielder',['Tackling','Anticipation','Concentration','Positioning','Teamwork'],['First Touch','Marking','Passing','Agression','Composure','Decisions','Work Rate','Stamina','Strength']),
+    R('IP','DM','Box-to-Box Midfielder',['Passing','Tackling','Off The Ball','Teamwork','Work Rate','Stamina'],['Dribbling','Finishing','First Touch','Long Shots','Technique','Agression','Anticipation','Composure','Decisions','Positioning','Acceleration','Balance','Pace','Strength']),
+    R('IP','DM','Box-to-Box Playmaker',['First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision','Work Rate','Stamina'],['Dribbling','Marking','Tackling','Anticipation','Positioning','Acceleration','Agility','Balance','Pace']),
+    R('IP','DM','Deep-Lying Playmaker',['First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision'],['Marking','Tackling','Anticipation','Concentration','Positioning','Work Rate','Balance','Stamina']),
+    R('IP','DM','Half-Back',['Heading','Marking','Tackling','Anticipation','Concentration','Positioning','Teamwork','Jumping Reach','Strength'],['First Touch','Passing','Agression','Bravery','Composure','Decisions','Work Rate','Stamina']),
+    R('IP','CM','Central Midfielder',['First Touch','Passing','Tackling','Decisions','Teamwork'],['Technique','Anticipation','Composure','Concentration','Off The Ball','Positioning','Vision','Work Rate','Stamina']),
+    R('IP','CM','Advanced Playmaker',['First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision'],['Crossing','Dribbling','Anticipation','Flair','Acceleration','Agility']),
+    R('IP','CM','Midfield Playmaker',['First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision'],['Dribbling','Tackling','Anticipation','Flair','Positioning','Work Rate','Agility','Stamina']),
+    R('IP','CM','Wide Central Midfielder',['First Touch','Passing','Tackling','Decisions','Teamwork'],['Crossing','Dribbling','Technique','Anticipation','Composure','Concentration','Off The Ball','Positioning','Vision','Work Rate','Agility','Stamina']),
+    R('IP','M R/L','Wide Midfielder',['Crossing','Passing','Technique','Teamwork','Work Rate','Pace','Stamina'],['Dribbling','First Touch','Anticipation','Composure','Off The Ball','Vision','Acceleration','Agility']),
+    R('IP','M/AM R/L','Inside Winger',['Dribbling','First Touch','Technique','Composure','Teamwork','Acceleration','Agility'],['Crossing','Long Shots','Passing','Anticipation','Flair','Off The Ball','Vision','Work Rate','Balance','Pace','Stamina']),
+    R('IP','M/AM R/L','Playmaking Winger',['Crossing','Dribbling','First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision','Acceleration'],['Anticipation','Flair','Work Rate','Agility','Pace','Stamina']),
+    R('IP','M/AM R/L','Winger',['Crossing','Dribbling','Technique','Teamwork','Acceleration','Agility','Pace'],['First Touch','Passing','Anticipation','Flair','Off The Ball','Work Rate','Balance','Stamina']),
+    R('IP','M/AM C','Attacking Midfielder',['First Touch','Long Shots','Passing','Technique','Composure','Flair','Off The Ball'],['Crossing','Dribbling','Finishing','Anticipation','Decisions','Vision','Acceleration','Agility']),
+    R('IP','AM C','Channel Midfielder',['Crossing','First Touch','Passing','Technique','Composure','Off The Ball','Work Rate','Acceleration'],['Dribbling','Long Shots','Anticipation','Decisions','Flair','Vision','Agility','Pace','Stamina']),
+    R('IP','AM C','Free Role',['Dribbling','First Touch','Long Shots','Passing','Technique','Composure','Flair','Off The Ball','Vision'],['Crossing','Finishing','Anticipation','Decisions','Acceleration','Agility']),
+    R('IP','AM C','Second Striker',['Finishing','First Touch','Anticipation','Composure','Off The Ball','Acceleration'],['Dribbling','Long Shots','Passing','Technique','Concentration','Decisions','Work Rate','Agility','Pace','Stamina']),
+    R('IP','AM R/L','Wide Forward',['Dribbling','First Touch','Technique','Anticipation','Off The Ball','Acceleration','Agility','Pace'],['Crossing','Finishing','Passing','Composure','Flair','Work Rate','Balance','Stamina']),
+    R('IP','AM R/L','Inside Forward',['Dribbling','First Touch','Technique','Anticipation','Composure','Off The Ball','Acceleration','Agility'],['Crossing','Finishing','Long Shots','Passing','Flair','Vision','Work Rate','Balance','Pace','Stamina']),
+    R('IP','ST','Centre Forward',['Finishing','First Touch','Heading','Technique','Composure','Off The Ball','Acceleration','Strength'],['Dribbling','Passing','Anticipation','Decisions','Agility','Balance','Jumping Reach','Pace']),
+    R('IP','ST','Channel Forward',['Dribbling','Finishing','First Touch','Technique','Composure','Off The Ball','Work Rate','Acceleration'],['Crossing','Heading','Passing','Anticipation','Decisions','Agility','Balance','Pace','Stamina']),
+    R('IP','ST','Deep-Lying Forward',['Finishing','First Touch','Technique','Composure','Off The Ball','Strength'],['Dribbling','Passing','Anticipation','Decisions','Teamwork','Vision','Balance']),
+    R('IP','ST','False Nine',['Dribbling','First Touch','Passing','Technique','Composure','Decisions','Off The Ball','Teamwork','Vision','Acceleration'],['Finishing','Anticipation','Flair','Agility','Balance']),
+    R('IP','ST','Poacher',['Finishing','Heading','Anticipation','Composure','Concentration','Off The Ball','Acceleration'],['First Touch','Technique','Decisions','Balance']),
+    R('IP','ST','Target Forward',['Finishing','Heading','Agression','Bravery','Composure','Off The Ball','Balance','Jumping Reach','Strength'],['First Touch','Anticipation','Decisions','Teamwork']),
+    R('OOP','DC','Covering Centre-Back',['Anticipation','Pace','Marking']),
+    R('OOP','DC','Stopping Centre-Back',['Agression','Tackling','Strength']),
+    R('OOP','DC wide','Covering Wide Centre-Back',['Anticipation','Pace','Marking']),
+    R('OOP','DC wide','Stopping Wide Centre-Back',['Agression','Tackling','Strength']),
+    R('OOP','DR/L','Holding Full-Back',['Positioning','Concentration','Marking']),
+    R('OOP','DR/L','Pressing Full-Back',['Agression','Work Rate','Anticipation']),
+    R('OOP','WB R/L','Holding Wing-Back',['Positioning','Concentration','Marking']),
+    R('OOP','WB R/L','Pressing Wing-Back',['Agression','Work Rate','Anticipation']),
+    R('OOP','DM','Dropping Defensive Midfielder',['Positioning','Decisions','Anticipation']),
+    R('OOP','DM','Pressing Defensive Midfielder',['Agression','Work Rate','Anticipation']),
+    R('OOP','DM','Screening Defensive Midfielder',['Positioning','Concentration','Marking']),
+    R('OOP','DM','Wide Covering Defensive Midfielder',['Anticipation','Pace','Work Rate']),
+    R('OOP','CM','Pressing Central Midfielder',['Agression','Work Rate','Anticipation']),
+    R('OOP','CM','Screening Central Midfielder',['Positioning','Concentration','Marking']),
+    R('OOP','CM','Wide Covering Central Midfielder',['Anticipation','Pace','Work Rate']),
+    R('OOP','M R/L','Tracking Wide Midfielder',['Marking','Work Rate','Stamina']),
+    R('OOP','M R/L','Wide Outlet Wide Midfielder',['Off The Ball','Pace','Anticipation']),
+    R('OOP','AM C','Central Outlet Attacking Midfielder',['Off The Ball','Decisions','Anticipation']),
+    R('OOP','AM C','Splitting Outlet Attacking Midfielder',['Off The Ball','Pace','Anticipation']),
+    R('OOP','AM C','Tracking Attacking Midfielder',['Marking','Work Rate','Stamina']),
+    R('OOP','AM R/L','Inside Outlet Winger',['Off The Ball','Decisions','Anticipation']),
+    R('OOP','AM R/L','Tracking Winger',['Marking','Work Rate','Stamina']),
+    R('OOP','AM R/L','Wide Outlet Winger',['Off The Ball','Pace','Anticipation']),
+    R('OOP','ST','Central Outlet Centre Forward',['Off The Ball','Decisions','Anticipation']),
+    R('OOP','ST','Splitting Outlet Centre Forward',['Off The Ball','Pace','Anticipation']),
+    R('OOP','ST','Tracking Centre Forward',['Agression','Work Rate','Stamina'])
+  ];
+
+  const search=document.getElementById('search');
+  const phase=document.getElementById('phase');
+  const position=document.getElementById('position');
+  const cards=document.getElementById('cards');
+
+  [...new Set(roles.map(r=>r.pos))].sort().forEach(p=>{
+    const o=document.createElement('option'); o.value=p; o.textContent=p; position.appendChild(o);
+  });
+
+  function importance(role){
+    const all=[...new Set([...role.key,...role.pref])];
+    return all.map(a=>{
+      const base=role.key.includes(a)?3:1.5;
+      const mod=modifiers[a]||1;
+      return {a,score:base*mod,key:role.key.includes(a),boost:mod>1};
+    }).sort((x,y)=>y.score-x.score);
+  }
+
+  function render(){
+    const q=search.value.trim().toLowerCase();
+    const filtered=roles.filter(r=>{
+      const phaseOK=phase.value==='all'||r.phase===phase.value;
+      const posOK=position.value==='all'||r.pos===position.value;
+      const hay=[r.name,r.pos,r.phase,...r.key,...r.pref].join(' ').toLowerCase();
+      const searchOK=!q||hay.includes(q);
+      return phaseOK&&posOK&&searchOK;
+    });
+
+    cards.innerHTML='';
+    if(!filtered.length){
+      cards.innerHTML='<div class="empty">No roles match your filters.</div>';
+      return;
+    }
+
+    filtered.forEach(r=>{
+      const imp=importance(r);
+      const max=imp[0]?.score||1;
+      const card=document.createElement('article');
+      card.className='card';
+      const keyTags=r.key.map(a=>`<span class="tag key">${a}${(modifiers[a]||1)>1?' ★':''}</span>`).join('');
+      const prefTags=r.pref.length?r.pref.map(a=>`<span class="tag pref">${a}${(modifiers[a]||1)>1?' ★':''}</span>`).join(''):'<span class="note">None listed</span>';
+      const priority=imp.slice(0,10).map(x=>`
+        <div class="priority-row">
+          <div class="priority-name">${x.a}</div>
+          <div class="bar"><div class="fill" style="width:${(x.score/max*100).toFixed(0)}%"></div></div>
+          <div class="score">${x.score.toFixed(2)}</div>
+        </div>`).join('');
+
+      card.innerHTML=`
+        <h2>${r.name}</h2>
+        <div class="meta">${r.phase==='IP'?'In Possession':'Out of Possession'} · ${r.pos}</div>
+        <div class="section">
+          <div class="section-title">Key attributes</div>
+          <div class="tags">${keyTags}</div>
+        </div>
+        <div class="section">
+          <div class="section-title">Preferred attributes</div>
+          <div class="tags">${prefTags}</div>
+        </div>
+        <div class="priority">
+          <div class="section-title">Priority order in our model</div>
+          ${priority}
+        </div>`;
+      cards.appendChild(card);
+    });
+  }
+
+  search.addEventListener('input',render);
+  phase.addEventListener('change',render);
+  position.addEventListener('change',render);
+  render();
+})();
+</script>
+</body>
+</html>
