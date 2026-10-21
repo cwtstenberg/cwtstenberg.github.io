@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vasaloppet 2027 · Träningsplan</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap">
+<style>
+:root{
+  --bg:#EAF0F5;--surf:#fff;--ink:#0F2338;--mut:#586C80;--line:#D5DFE8;--focus:#2A6BC4;
+  --yel:#F5B800;--onyel:#0F2338;
+  --rec:#B3C4D3;--omst:#7FA9CF;--skid:#3F7BC0;--sno:#1C4F9C;--prep:#12306B;--taper:#0A1F4A;
+  --t-ski:#2A6BC4;--t-erg:#0F8F9B;--t-run:#4E8A34;--t-str:#7A4FBF;--t-rest:#9DB0C1;--t-race:#F5B800;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1624;--surf:#12233A;--ink:#E8EFF6;--mut:#93A7BA;--line:#233A55;--focus:#8DBBF5;
+    --rec:#3A5068;--omst:#4F7FAE;--skid:#5C96D6;--sno:#7FB2EC;--prep:#A6CAF2;--taper:#D3E5F8;
+    --t-ski:#6AA3F0;--t-erg:#3CC0CC;--t-run:#86C060;--t-str:#AE8CE8;--t-rest:#4A6279;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1624;--surf:#12233A;--ink:#E8EFF6;--mut:#93A7BA;--line:#233A55;--focus:#8DBBF5;
+  --rec:#3A5068;--omst:#4F7FAE;--skid:#5C96D6;--sno:#7FB2EC;--prep:#A6CAF2;--taper:#D3E5F8;
+  --t-ski:#6AA3F0;--t-erg:#3CC0CC;--t-run:#86C060;--t-str:#AE8CE8;--t-rest:#4A6279;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Barlow,system-ui,-apple-system,'Segoe UI',sans-serif}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 64px}
+
+/* hero */
+.hero{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:14px 0 26px}
+h1{font:800 clamp(52px,14vw,108px)/.9 'Barlow Condensed',Barlow,sans-serif;letter-spacing:-.01em;margin:0}
+.lede{color:var(--mut);max-width:34ch;margin:14px 0 0}
+.bib{position:relative;flex:none;background:var(--yel);color:var(--onyel);border-radius:6px;padding:20px 18px 12px;min-width:104px;text-align:center;transform:rotate(2.5deg);box-shadow:0 6px 18px rgba(15,35,56,.18)}
+.bib::before,.bib::after{content:"";position:absolute;top:7px;width:7px;height:7px;border-radius:50%;background:var(--bg)}
+.bib::before{left:8px}.bib::after{right:8px}
+.bib b{display:block;font:800 clamp(52px,13vw,76px)/.85 'Barlow Condensed',sans-serif}
+.bib span{display:block;font-weight:600;font-size:14px;margin-top:6px}
+.bib small{display:block;font-size:12px;opacity:.75}
+
+/* load chart */
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px}
+.panel h2,.weekhead h2{font:700 26px/1 'Barlow Condensed',sans-serif;margin:0}
+.sub{color:var(--mut);font-size:14px;margin:4px 0 0}
+.plot{position:relative;height:170px;margin-top:30px;padding-left:30px}
+.grid{position:absolute;left:30px;right:0;bottom:calc(var(--g)*1%);border-top:1px dashed var(--line)}
+.grid span{position:absolute;left:-30px;top:-9px;font-size:11px;color:var(--mut);width:24px;text-align:right}
+.bars{position:relative;display:flex;align-items:flex-end;gap:4px;height:100%}
+.col{all:unset;box-sizing:border-box;flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;position:relative}
+.col .bar{flex:none;height:var(--h);background:var(--c);border-radius:4px 4px 2px 2px;position:relative;transform-origin:bottom;animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i)*28ms);transition:opacity .15s}
+.bars:has(.sel) .col:not(.sel) .bar{opacity:.45}
+.bars:has(.sel) .col:not(.sel):hover .bar{opacity:.8}
+.col .val{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:4px;white-space:nowrap;font-weight:600;font-size:12px}
+.col.sel .val{display:block}
+.col .wk{position:absolute;top:100%;left:0;right:0;text-align:center;font-size:10px;color:var(--mut);margin-top:5px}
+.col.sel .wk{color:var(--ink);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:30px 0 0;padding:0;list-style:none;font-size:13px;color:var(--mut)}
+.legend i,.phase i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c);margin-right:6px;vertical-align:-1px}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* week */
+.weekhead{display:flex;align-items:center;gap:12px;margin:34px 0 4px}
+.weekhead .mid{flex:1;min-width:0}
+.weekhead h2{font-size:40px}
+.nav{all:unset;box-sizing:border-box;flex:none;width:44px;height:44px;border:1px solid var(--line);background:var(--surf);border-radius:10px;display:grid;place-items:center;font-size:24px;cursor:pointer}
+.nav:disabled{opacity:.35;cursor:default}
+.phase{display:inline-block;margin-top:8px;font-size:14px;font-weight:600}
+.days{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px}
+.day{background:var(--surf);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:10px;overflow:hidden}
+.day.rest{background:transparent;border-style:dashed;border-left-style:solid}
+.row{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:44px 1fr auto;column-gap:10px;align-items:center;padding:11px 14px 11px 10px}
+button.row{cursor:pointer}
+.day.rest .row{padding-block:8px}
+.dow{display:flex;flex-direction:column;align-items:center;font-size:12px;color:var(--mut);line-height:1.15}
+.dow b{font:700 26px/1 'Barlow Condensed',sans-serif;color:var(--ink)}
+.nm{display:block;font-weight:600;font-size:17px;line-height:1.25}
+.ty{font-size:13px;color:var(--mut)}
+.day.rest .nm{color:var(--mut);font-weight:500;font-size:15px}
+.dur{font:700 21px 'Barlow Condensed',sans-serif;white-space:nowrap}
+.today{display:inline-block;background:var(--ink);color:var(--bg);font-size:11px;font-weight:600;border-radius:99px;padding:0 7px;margin-left:6px;vertical-align:2px}
+.meter{grid-column:2/4;height:4px;border-radius:2px;background:var(--line);margin-top:9px}
+.meter i{display:block;height:100%;border-radius:2px;background:var(--c)}
+.detail{display:none;padding:2px 16px 16px 64px}
+.day.open .detail{display:block}
+.detail p{margin:0;color:var(--mut)}
+.detail .lead{color:var(--ink);font-weight:600;margin-bottom:8px}
+.steps,.ex{list-style:none;margin:0;padding:0}
+.steps{display:grid;gap:6px}
+.steps li{border-left:3px solid var(--c);padding-left:10px}
+.ex li{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px solid var(--line)}
+.ex li:last-child{border-bottom:0}
+.ex b{font:700 18px/1.3 'Barlow Condensed',sans-serif;white-space:nowrap}
+.foot{color:var(--mut);font-size:13px;margin-top:30px;max-width:62ch}
+
+.k-ski{--c:var(--t-ski)}.k-erg{--c:var(--t-erg)}.k-run{--c:var(--t-run)}.k-str{--c:var(--t-str)}.k-rest{--c:var(--t-rest)}.k-race{--c:var(--t-race)}
+.k-race .nm{font-size:19px}.k-race{background:color-mix(in srgb,var(--t-race) 14%,var(--surf))}
+
+@media (min-width:700px){
+  .wrap{padding-top:32px}
+  .detail{padding-left:64px}
+  .ex{columns:2;column-gap:32px}.ex li{break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){.col .bar{animation:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div>
+      <h1>Vasaloppet<br>2027</h1>
+      <p class="lede" id="lede"></p>
+    </div>
+    <div class="bib" id="bib" aria-live="polite"></div>
+  </header>
+
+  <section class="panel" aria-labelledby="ch">
+    <h2 id="ch">Träningsbelastning</h2>
+    <p class="sub">Timmar per vecka. Tryck på en stapel för att öppna veckan.</p>
+    <div class="plot">
+      <div class="grid" style="--g:92.3"><span>10 h</span></div>
+      <div class="grid" style="--g:46.2"><span>5 h</span></div>
+      <div class="bars" id="bars"></div>
+    </div>
+    <ul class="legend" id="legend"></ul>
+  </section>
+
+  <section aria-labelledby="wh">
+    <div class="weekhead">
+      <button class="nav" id="prev" aria-label="Föregående vecka">‹</button>
+      <div class="mid">
+        <h2 id="wh"></h2>
+        <div class="sub" id="wsub"></div>
+        <span class="phase" id="phase"></span>
+      </div>
+      <button class="nav" id="next" aria-label="Nästa vecka">›</button>
+    </div>
+    <ul class="days" id="days"></ul>
+  </section>
+
+  <p class="foot">Baserad på Vasaloppet Träning 2027. Veckosummorna är hämtade från originalplanen och kan avvika något från summan av de enskilda passen. Vecka 6, SkiErg Z3: tid saknas i underlaget.</p>
+</main>
+
+<script>
+'use strict';
+const weeks=[{"week": 0, "phase": "Recovery", "total": 125, "days": [{"date": "2026-11-02", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-03", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-04", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-05", "name": "4 km Z2", "minutes": 25, "note": "", "rest": false}, {"date": "2026-11-06", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-07", "name": "SkiErg Z1–Z2", "minutes": 40, "note": "Mycket lugnt. Fokus på rytm och teknik, ingen jakt på watt.", "rest": false}, {"date": "2026-11-08", "name": "10 km Z2", "minutes": 60, "note": "", "rest": false}]}, {"week": 1, "phase": "Omställning", "total": 345, "days": [{"date": "2026-11-09", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-10", "name": "SkiErg Z3", "minutes": 60, "note": "15 min uppvärmning · 5 × 5 min Z3 · 2 min vila · 10 min nedvarvning", "rest": false}, {"date": "2026-11-11", "name": "Styrka", "minutes": 60, "note": "RDL/Marklyft 3×6; Latsdrag/Chins 3×6–8; Bulgarian Split Squat 3×8/sida; Rodd 3×8; Tricepspress 3×10; Pallof 3×10/sida; Planka 3×45–60 s", "rest": false}, {"date": "2026-11-12", "name": "8 km Z2", "minutes": 60, "note": "", "rest": false}, {"date": "2026-11-13", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-14", "name": "20 km Z2", "minutes": 120, "note": "Long Run", "rest": false}, {"date": "2026-11-15", "name": "SkiErg Z1–Z2", "minutes": 45, "note": "", "rest": false}]}, {"week": 2, "phase": "Omställning", "total": 370, "days": [{"date": "2026-11-16", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-17", "name": "SkiErg Z3", "minutes": 65, "note": "15 min uppvärmning · 5 × 6 min Z3 · 2 min vila · 10 min nedvarvning", "rest": false}, {"date": "2026-11-18", "name": "Styrka", "minutes": 60, "note": "RDL/Marklyft 3×6; Latsdrag/Chins 3×6–8; Bulgarian Split Squat 3×8/sida; Rodd 3×8; Tricepspress 3×10; Pallof 3×10/sida; Planka 3×45–60 s", "rest": false}, {"date": "2026-11-19", "name": "10 km Z2", "minutes": 60, "note": "", "rest": false}, {"date": "2026-11-20", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-21", "name": "21 km Z2", "minutes": 135, "note": "Long Run", "rest": false}, {"date": "2026-11-22", "name": "SkiErg Z1–Z2", "minutes": 50, "note": "", "rest": false}]}, {"week": 3, "phase": "Omställning", "total": 390, "days": [{"date": "2026-11-23", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-24", "name": "SkiErg Z3", "minutes": 65, "note": "15 min uppvärmning · 4 × 8 min Z3 · 2:30 min vila · 10 min nedvarvning", "rest": false}, {"date": "2026-11-25", "name": "Styrka", "minutes": 60, "note": "RDL/Marklyft 3×6; Latsdrag/Chins 3×6–8; Bulgarian Split Squat 3×8/sida; Rodd 3×8; Tricepspress 3×10; Pallof 3×10/sida; Planka 3×45–60 s", "rest": false}, {"date": "2026-11-26", "name": "10 km Z2", "minutes": 60, "note": "", "rest": false}, {"date": "2026-11-27", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-11-28", "name": "25 km Z2", "minutes": 150, "note": "Long Run", "rest": false}, {"date": "2026-11-29", "name": "SkiErg Z1–Z2", "minutes": 55, "note": "", "rest": false}]}, {"week": 4, "phase": "Recovery", "total": 285, "days": [{"date": "2026-11-30", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-01", "name": "SkiErg Z3", "minutes": 50, "note": "4 × 5 min Z3. I övrigt lugnt.", "rest": false}, {"date": "2026-12-02", "name": "Styrka lätt", "minutes": 45, "note": "Lättare styrka: 2 set per övning. RDL/Marklyft 3×6; Latsdrag/Chins 3×6–8; Bulgarian Split Squat 3×8/sida; Rodd 3×8; Tricepspress 3×10; Pallof 3×10/sida; Planka 3×45–60 s", "rest": false}, {"date": "2026-12-03", "name": "6,5 km Z1–Z2", "minutes": 45, "note": "", "rest": false}, {"date": "2026-12-04", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-05", "name": "16 km Z2", "minutes": 105, "note": "Long Run", "rest": false}, {"date": "2026-12-06", "name": "SkiErg Z1", "minutes": 40, "note": "", "rest": false}]}, {"week": 5, "phase": "Skidbas", "total": 405, "days": [{"date": "2026-12-07", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-08", "name": "SkiErg Z3", "minutes": 60, "note": "4 × 5 min Z3. I övrigt lugnt.", "rest": false}, {"date": "2026-12-09", "name": "Styrka", "minutes": 60, "note": "RDL/Marklyft 3×6; Latsdrag/Chins 3×6–8; Bulgarian Split Squat 3×8/sida; Rodd 3×8; Straight-arm-pulldown 3×10; Tricepspress 3×10; Cable Crunch 3×10–12; Planka 3×45–60 s", "rest": false}, {"date": "2026-12-10", "name": "Skidor Z2", "minutes": 75, "note": "Om snö, annars löpning.", "rest": false}, {"date": "2026-12-11", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-12", "name": "Skidor Z2", "minutes": 150, "note": "Långpass, klassiskt och kontrollerat.", "rest": false}, {"date": "2026-12-13", "name": "Skidor Z1+Z2", "minutes": 60, "note": "", "rest": false}]}, {"week": 6, "phase": "Skidbas", "total": 375, "days": [{"date": "2026-12-14", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-15", "name": "SkiErg Z3", "minutes": null, "note": "4 × 10 min Z3", "rest": false}, {"date": "2026-12-16", "name": "Styrka", "minutes": 60, "note": "RDL/Marklyft 3×6; Latsdrag/Chins 3×6–8; Bulgarian Split Squat 3×8/sida; Rodd 3×8; Straight-arm-pulldown 3×10; Tricepspress 3×10; Cable Crunch 3×10–12; Planka 3×45–60 s", "rest": false}, {"date": "2026-12-17", "name": "Skidor Z2", "minutes": 90, "note": "Om snö, annars löpning.", "rest": false}, {"date": "2026-12-18", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-19", "name": "Skidor Z2", "minutes": 165, "note": "Långpass, klassiskt och kontrollerat.", "rest": false}, {"date": "2026-12-20", "name": "Skidor Z1+Z2", "minutes": 60, "note": "", "rest": false}]}, {"week": 7, "phase": "Skidbas", "total": 470, "days": [{"date": "2026-12-21", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-22", "name": "SkiErg Z3", "minutes": 65, "note": "3 × 12 min Z3", "rest": false}, {"date": "2026-12-23", "name": "Styrka", "minutes": 60, "note": "RDL/Marklyft 3×6; Latsdrag/Chins 3×6–8; Bulgarian Split Squat 3×8/sida; Rodd 3×8; Straight-arm-pulldown 3×10; Tricepspress 3×10; Cable Crunch 3×10–12; Planka 3×45–60 s", "rest": false}, {"date": "2026-12-24", "name": "Skidor Z2", "minutes": 90, "note": "Om snö, annars löpning.", "rest": false}, {"date": "2026-12-25", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-26", "name": "Skidor Z2", "minutes": 180, "note": "Långpass, klassiskt och kontrollerat.", "rest": false}, {"date": "2026-12-27", "name": "Skidor Z1+Z2", "minutes": 75, "note": "", "rest": false}]}, {"week": 8, "phase": "Recovery", "total": 335, "days": [{"date": "2026-12-28", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2026-12-29", "name": "SkiErg Z3", "minutes": 50, "note": "5 × 5 min Z3", "rest": false}, {"date": "2026-12-30", "name": "Styrka", "minutes": 60, "note": "Lättare styrka: 2 set per övning. RDL/Marklyft 3×6; Latsdrag/Chins 3×6–8; Bulgarian Split Squat 3×8/sida; Rodd 3×8; Straight-arm-pulldown 3×10; Tricepspress 3×10; Cable Crunch 3×10–12; Planka 3×45–60 s", "rest": false}, {"date": "2026-12-31", "name": "Skidor Z2", "minutes": 60, "note": "Om snö, annars löpning.", "rest": false}, {"date": "2027-01-01", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-02", "name": "Skidor Z2", "minutes": 120, "note": "Långpass, klassiskt och kontrollerat.", "rest": false}, {"date": "2027-01-03", "name": "Skidor Z1", "minutes": 45, "note": "", "rest": false}]}, {"week": 9, "phase": "Snö", "total": 470, "days": [{"date": "2027-01-04", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-05", "name": "Skidor Z3", "minutes": 65, "note": "5 × 6 min Z3, gärna kuperat", "rest": false}, {"date": "2027-01-06", "name": "Styrka + SkiErg Z2", "minutes": 60, "note": "RDL/Marklyft 2×6; Latsdrag/Chins 3×6; Bulgarian Split Squat 2×6/sida; Straight-arm-pulldown 3×8; Tricepspress 3×10; Pallof Press 2×10; Planka 3×45–60 s; 15 min lätt SkiErg.", "rest": false}, {"date": "2027-01-07", "name": "Skidor Z2", "minutes": 90, "note": "", "rest": false}, {"date": "2027-01-08", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-09", "name": "Skidor Z2", "minutes": 180, "note": "Långpass, klassiskt och kontrollerat.", "rest": false}, {"date": "2027-01-10", "name": "Skidor Z1", "minutes": 75, "note": "", "rest": false}]}, {"week": 10, "phase": "Snö", "total": 500, "days": [{"date": "2027-01-11", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-12", "name": "Skidor Z3", "minutes": 65, "note": "4 × 8 min Z3", "rest": false}, {"date": "2027-01-13", "name": "Styrka", "minutes": 60, "note": "RDL/Marklyft 2×6; Latsdrag/Chins 3×6; Bulgarian Split Squat 2×6/sida; Straight-arm-pulldown 3×8; Tricepspress 3×10; Pallof Press 2×10; Planka 3×45–60 s", "rest": false}, {"date": "2027-01-14", "name": "Skidor Z2", "minutes": 105, "note": "", "rest": false}, {"date": "2027-01-15", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-16", "name": "Skidor Z2", "minutes": 210, "note": "Långpass, klassiskt och kontrollerat.", "rest": false}, {"date": "2027-01-17", "name": "Skidor Z1", "minutes": 60, "note": "", "rest": false}]}, {"week": 11, "phase": "Snö", "total": 510, "days": [{"date": "2027-01-18", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-19", "name": "Skidor Z3–Z4", "minutes": 60, "note": "3 × 10 min Z3, sista nästan Z4", "rest": false}, {"date": "2027-01-20", "name": "Styrka", "minutes": 45, "note": "RDL/Marklyft 2×6; Latsdrag/Chins 3×6; Bulgarian Split Squat 2×6/sida; Straight-arm-pulldown 3×8; Tricepspress 3×10; Pallof Press 2×10; Planka 3×45–60 s", "rest": false}, {"date": "2027-01-21", "name": "Skidor Z2", "minutes": 105, "note": "", "rest": false}, {"date": "2027-01-22", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-23", "name": "Skidor Z2", "minutes": 240, "note": "Långpass, träna energi.", "rest": false}, {"date": "2027-01-24", "name": "Skidor Z1", "minutes": 60, "note": "", "rest": false}]}, {"week": 12, "phase": "Recovery", "total": 380, "days": [{"date": "2027-01-25", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-26", "name": "Skidor Z3", "minutes": 50, "note": "5 × 5 min Z3", "rest": false}, {"date": "2027-01-27", "name": "Styrka", "minutes": 60, "note": "RDL/Marklyft 2×6; Latsdrag/Chins 3×6; Bulgarian Split Squat 2×6/sida; Straight-arm-pulldown 3×8; Tricepspress 3×10; Pallof Press 2×10; Planka 3×45–60 s", "rest": false}, {"date": "2027-01-28", "name": "Skidor Z2", "minutes": 75, "note": "", "rest": false}, {"date": "2027-01-29", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-01-30", "name": "Skidor Z2", "minutes": 135, "note": "Långpass, klassiskt och kontrollerat.", "rest": false}, {"date": "2027-01-31", "name": "Skidor Z1–Z2", "minutes": 60, "note": "", "rest": false}]}, {"week": 13, "phase": "Raceprep", "total": 550, "days": [{"date": "2027-02-01", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-02", "name": "Skidor Z3", "minutes": 70, "note": "4 × 10 min Z3", "rest": false}, {"date": "2027-02-03", "name": "Styrka", "minutes": 45, "note": "RDL/Marklyft 2×6; Latsdrag/Chins 3×6; Bulgarian Split Squat 2×6/sida; Straight-arm-pulldown 3×8; Tricepspress 3×10; Pallof Press 2×10; Planka 3×45–60 s", "rest": false}, {"date": "2027-02-04", "name": "Skidor Z2", "minutes": 105, "note": "Inkl. 5 × 5 min stakning", "rest": false}, {"date": "2027-02-05", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-06", "name": "Skidor Z2", "minutes": 270, "note": "Långpass, träna energi.", "rest": false}, {"date": "2027-02-07", "name": "Skidor Z1", "minutes": 60, "note": "", "rest": false}]}, {"week": 14, "phase": "Taper", "total": 550, "days": [{"date": "2027-02-08", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-09", "name": "Skidor Z3", "minutes": 65, "note": "4 × 8 min Z3", "rest": false}, {"date": "2027-02-10", "name": "Styrka", "minutes": 45, "note": "RDL/Marklyft 2×6; Latsdrag/Chins 3×6; Bulgarian Split Squat 2×6/sida; Straight-arm-pulldown 3×8; Tricepspress 3×10; Pallof Press 2×10; Planka 3×45–60 s", "rest": false}, {"date": "2027-02-11", "name": "Skidor Z2", "minutes": 90, "note": "Lätt klassiskt", "rest": false}, {"date": "2027-02-12", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-13", "name": "Skidor Z2", "minutes": 300, "note": "50–60 km genrep. 60 g kolhydrater/timme.", "rest": false}, {"date": "2027-02-14", "name": "Skidor Z1", "minutes": 50, "note": "", "rest": false}]}, {"week": 15, "phase": "Taper", "total": 375, "days": [{"date": "2027-02-15", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-16", "name": "Skidor Z3–Z4", "minutes": 60, "note": "4 × 6 min Z3–Z4 med lång vila", "rest": false}, {"date": "2027-02-17", "name": "Skidor Z1", "minutes": 45, "note": "", "rest": false}, {"date": "2027-02-18", "name": "Skidor Z2", "minutes": 75, "note": "", "rest": false}, {"date": "2027-02-19", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-20", "name": "Skidor Z2", "minutes": 150, "note": "Långpass, sista 30 min i tänkt Vasaloppstempo.", "rest": false}, {"date": "2027-02-21", "name": "Skidor Z1", "minutes": 45, "note": "", "rest": false}]}, {"week": 16, "phase": "RACE", "total": 625, "days": [{"date": "2027-02-22", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-23", "name": "Skidor Z3", "minutes": 60, "note": "3 × 5 min, resten lugnt", "rest": false}, {"date": "2027-02-24", "name": "Skidor Z1", "minutes": 45, "note": "", "rest": false}, {"date": "2027-02-25", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-26", "name": "Skidor Z1", "minutes": 40, "note": "Lugnt + 4 × 30 sek hårt + mycket lugnt.", "rest": false}, {"date": "2027-02-27", "name": "Vila", "minutes": 0, "note": "", "rest": true}, {"date": "2027-02-28", "name": "Vasaloppet", "minutes": 480, "note": "Race day. GLHF!", "rest": false}]}];
+const WD=['Mån','Tis','Ons','Tor','Fre','Lör','Sön'];
+const PH={Recovery:['Återhämtning','--rec'],'Omställning':['Omställning','--omst'],Skidbas:['Skidbas','--skid'],'Snö':['Snö','--sno'],Raceprep:['Inför loppet','--prep'],Taper:['Nedtrappning','--taper'],RACE:['Loppsvecka','--yel']};
+const $=id=>document.getElementById(id);
+const utc=s=>{const [y,m,d]=s.split('-').map(Number);return Date.UTC(y,m-1,d)};
+const now=new Date(), today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+const todayStr=new Date(today).toISOString().slice(0,10);
+const fmt=s=>new Date(s+'T12:00:00').toLocaleDateString('sv-SE',{day:'numeric',month:'short'});
+const dur=m=>m==null?'–':m<60?m+' min':Math.floor(m/60)+' h'+(m%60?' '+m%60+' min':'');
+const MAX=650;
+
+function kind(d){
+  const n=d.name;
+  if(d.rest)return['rest','Vila'];
+  if(/^Vasaloppet/.test(n))return['race','Lopp'];
+  if(/Styrka/.test(n))return['str','Styrka'];
+  if(/SkiErg/.test(n))return['erg','SkiErg'];
+  if(/Skidor/.test(n))return['ski','Skidor'];
+  return['run','Löpning'];
+}
+
+/* hero */
+const totalMin=weeks.reduce((a,w)=>a+w.total,0);
+$('lede').textContent='Sälen till Mora, 90 km. '+weeks.length+' veckor med SkiErg, styrka, löpning och skidor – ungefär '+Math.round(totalMin/60)+' timmars träning.';
+const race=utc('2027-02-28'), start=utc(weeks[0].days[0].date);
+const left=Math.round((race-today)/864e5);
+$('bib').innerHTML=left>0
+  ?'<b>'+left+'</b><span>dagar kvar</span><small>28 februari</small>'
+  :left===0?'<b>Idag</b><span>är det lopp</span>':'<b>Mål</b><span>i Mora</span>';
+
+/* chart (built once) */
+$('bars').innerHTML=weeks.map((w,i)=>{
+  const c='var('+PH[w.phase][1]+')';
+  return '<button class="col" data-i="'+i+'" aria-label="Vecka '+w.week+', '+dur(w.total)+'" style="--c:'+c+';--h:'+(w.total/MAX*100)+'%;--i:'+i+'"><span class="bar"><span class="val">'+dur(w.total)+'</span></span><span class="wk">'+w.week+'</span></button>';
+}).join('');
+const seen=[];
+Object.keys(PH).forEach(k=>{if(weeks.some(w=>w.phase===k))seen.push(k)});
+$('legend').innerHTML=seen.map(k=>'<li><i style="--c:var('+PH[k][1]+')"></i>'+PH[k][0]+'</li>').join('');
+$('bars').onclick=e=>{const b=e.target.closest('.col');if(b)pick(+b.dataset.i)};
+
+/* detail body */
+function detail(d,k){
+  if(d.rest||!d.note)return '<p>'+(d.rest?'Vilodag. Återhämtning och uppladdning.':'Inga ytterligare instruktioner i planen.')+'</p>';
+  let note=d.note,lead='';
+  const m=note.match(/^(Lättare styrka: [^.]*\.)\s*(.*)$/);
+  if(m){lead='<p class="lead">'+m[1]+'</p>';note=m[2]}
+  if(note.includes(' · '))return lead+'<ol class="steps">'+note.split(' · ').map(s=>'<li>'+s+'</li>').join('')+'</ol>';
+  if(note.includes('; ')){
+    return lead+'<ul class="ex">'+note.split('; ').map(s=>{
+      s=s.replace(/\.$/,'');const x=s.match(/^(.*?)\s+(\d.*)$/);
+      return x?'<li><span>'+x[1]+'</span><b>'+x[2]+'</b></li>':'<li><span>'+s+'</span></li>';
+    }).join('')+'</ul>';
+  }
+  return lead+'<p>'+note+'</p>';
+}
+
+/* week */
+let sw=0, sd=-1;
+function render(){
+  const w=weeks[sw], ph=PH[w.phase];
+  $('wh').textContent='Vecka '+w.week;
+  $('wsub').textContent=fmt(w.days[0].date)+' – '+fmt(w.days[6].date)+', '+dur(w.total);
+  $('phase').innerHTML='<i style="--c:var('+ph[1]+')"></i>'+ph[0];
+  $('prev').disabled=sw===0;$('next').disabled=sw===weeks.length-1;
+  document.querySelectorAll('.col').forEach((c,i)=>{c.classList.toggle('sel',i===sw);c.setAttribute('aria-pressed',i===sw)});
+  $('days').innerHTML=w.days.map((d,i)=>{
+    const [k,label]=kind(d), dt=new Date(d.date+'T12:00:00').getDate();
+    const tag=d.date===todayStr?'<span class="today">Idag</span>':'';
+    const head='<span class="dow"><b>'+dt+'</b>'+WD[i]+'</span><span><span class="nm">'+d.name+tag+'</span><span class="ty">'+label+'</span></span><span class="dur">'+(d.rest?'':dur(d.minutes))+'</span>';
+    if(d.rest)return '<li class="day rest k-rest"><div class="row">'+head+'</div></li>';
+    return '<li class="day k-'+k+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+detail(d,k)+'</div></li>';
+  }).join('');
+}
+$('days').onclick=e=>{
+  const b=e.target.closest('button.row');if(!b)return;
+  const i=+b.dataset.d, was=sd===i;sd=was?-1:i;
+  document.querySelectorAll('#days .day').forEach(li=>{
+    const r=li.querySelector('button.row');if(!r)return;
+    const on=!was&&+r.dataset.d===i;
+    li.classList.toggle('open',on);r.setAttribute('aria-expanded',on);
+  });
+};
+function firstActive(w){const i=w.days.findIndex(d=>!d.rest);return i<0?-1:i}
+function pick(i){sw=i;sd=firstActive(weeks[i]);render()}
+$('prev').onclick=()=>sw>0&&pick(sw-1);
+$('next').onclick=()=>sw<weeks.length-1&&pick(sw+1);
+document.addEventListener('keydown',e=>{
+  if(e.target.closest&&e.target.closest('input,textarea'))return;
+  if(e.key==='ArrowLeft'&&sw>0)pick(sw-1);
+  if(e.key==='ArrowRight'&&sw<weeks.length-1)pick(sw+1);
+});
+
+/* start on the current week, else first / last */
+let i0=0;
+const hit=weeks.findIndex(w=>utc(w.days[0].date)<=today&&today<=utc(w.days[6].date));
+if(hit>=0)i0=hit;else if(today>race)i0=weeks.length-1;
+sw=i0;
+const ti=weeks[i0].days.findIndex(d=>d.date===todayStr&&!d.rest);
+sd=ti>=0?ti:firstActive(weeks[i0]);
+render();
+</script>
+</body>
+</html>
