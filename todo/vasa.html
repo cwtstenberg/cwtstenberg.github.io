@@ -249,6 +249,8 @@ function detail(d){
   return lead+'<p>'+note+'</p>';
 }
 
+let AUTO={};
+function withAuto(ws){ws.forEach(w=>w.days.forEach(d=>{if(!d.rest&&!d.strava&&AUTO[d.date])d.strava=AUTO[d.date]}));return ws}
 let weeks=[],sw=0,sd=-1;
 function firstActive(w){return w.days.findIndex(d=>!d.rest)}
 
@@ -313,16 +315,23 @@ document.addEventListener('keydown',e=>{
 });
 
 /* start med reservplanen direkt, byt sedan till kalkylarket när det hämtats */
-init(finalize(FALLBACK));
+init(withAuto(finalize(FALLBACK)));
 $('src').textContent='Hämtar senaste planen från Google Kalkylark …';
 fetch(SHEET_URL,{cache:'no-store'})
   .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text()})
   .then(t=>{
-    const ws=toWeeks(parseCSV(t));
+    const ws=withAuto(toWeeks(parseCSV(t)));
     if(JSON.stringify(ws)!==JSON.stringify(weeks))init(ws,weeks[sw].week,sd);
     $('src').textContent='Planen hämtas från Google Kalkylark. Veckosummorna räknas ut från passen. Hämtad '+new Date().toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'})+'.';
   })
   .catch(e=>{$('src').textContent='Kunde inte läsa kalkylarket ('+e.message+'). Visar den inbyggda planen, som kan vara inaktuell.'});
+
+/* automatiskt ifyllda Strava-länkar (strava.json: {"2026-11-05":"https://www.strava.com/activities/123"}) */
+fetch('strava.json',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(j=>{
+  const a={};Object.keys(j||{}).forEach(k=>{const u=stravaUrl(j[k]),d=isoDate(k);if(d&&u)a[d]=u});
+  AUTO=a;
+  if(Object.keys(a).length){weeks=withAuto(weeks);init(weeks,weeks[sw].week,sd)}
+}).catch(()=>{});
 </script>
 </body>
 </html>
