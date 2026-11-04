@@ -98,6 +98,10 @@ button.row{cursor:pointer}
 .ex li{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px solid var(--line)}
 .ex li:last-child{border-bottom:0}
 .ex b{font:700 18px/1.3 'Barlow Condensed',sans-serif;white-space:nowrap}
+.done{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:6px;border-radius:50%;background:var(--t-run);color:var(--bg);font-size:12px;font-weight:700;line-height:1;vertical-align:1px}
+.detail .sl{margin:0 0 12px}
+.sl a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:99px;background:var(--bg);color:var(--ink);font-weight:600;text-decoration:none}
+.sl a::before{content:"";width:9px;height:9px;border-radius:50%;background:#FC4C02}
 .foot{color:var(--mut);font-size:13px;margin-top:30px;max-width:62ch}
 
 .k-ski{--c:var(--t-ski)}.k-erg{--c:var(--t-erg)}.k-run{--c:var(--t-run)}.k-str{--c:var(--t-str)}.k-rest{--c:var(--t-rest)}.k-race{--c:var(--t-race)}
@@ -181,6 +185,12 @@ function isoDate(s){
   if(m){let d=+m[1],mo=+m[2];if(mo>12&&d<=12){const t=d;d=mo;mo=t}return m[3]+'-'+p2(mo)+'-'+p2(d)}
   return null;
 }
+function stravaUrl(s){
+  s=String(s||'').trim();
+  if(/^\d{6,}$/.test(s))return 'https://www.strava.com/activities/'+s;
+  try{const u=new URL(s);if(u.protocol==='https:'&&/(^|\.)(strava\.com|strava\.app\.link)$/.test(u.hostname))return u.href}catch(e){}
+  return '';
+}
 function finalize(ws){
   ws.sort((a,b)=>a.week-b.week);
   ws.forEach(w=>{w.days.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);w.total=w.days.reduce((s,d)=>s+(d.minutes||0),0)});
@@ -200,7 +210,7 @@ function toWeeks(rows){
     let min=g('minutes')===''?null:Number(g('minutes').replace(',','.'));
     if(min!==null&&isNaN(min))min=null;
     if(!by.has(wk))by.set(wk,{week:wk,phase:g('phase')||'Skidbas',days:[]});
-    by.get(wk).days.push({date,name:g('name'),minutes:rest?0:min,note:g('note'),rest});
+    by.get(wk).days.push({date,name:g('name'),minutes:rest?0:min,note:g('note'),rest,strava:rest?'':stravaUrl(g('strava'))});
   });
   if(!by.size)throw new Error('inga giltiga rader');
   return finalize([...by.values()]);
@@ -270,16 +280,17 @@ function init(ws,keepWeek,keepDay){
 function render(){
   const w=weeks[sw],ph=phaseOf(w.phase);
   $('wh').textContent='Vecka '+w.week;
-  $('wsub').textContent=fmt(w.days[0].date)+' – '+fmt(w.days[w.days.length-1].date)+', '+dur(w.total);
+  const act=w.days.filter(d=>!d.rest),fin=act.filter(d=>d.strava).length;
+  $('wsub').textContent=fmt(w.days[0].date)+' – '+fmt(w.days[w.days.length-1].date)+', '+dur(w.total)+(fin?' · '+fin+' av '+act.length+' pass klara':'');
   $('phase').innerHTML='<i style="--c:var('+ph[1]+')"></i>'+ph[0];
   $('prev').disabled=sw===0;$('next').disabled=sw===weeks.length-1;
   document.querySelectorAll('.col').forEach((c,i)=>{c.classList.toggle('sel',i===sw);c.setAttribute('aria-pressed',i===sw)});
   $('days').innerHTML=w.days.map((d,i)=>{
     const [k,label]=kind(d),dt=+d.date.slice(8,10),wd=WD[new Date(d.date+'T12:00:00').getDay()];
-    const tag=d.date===todayStr?'<span class="today">Idag</span>':'';
+    const tag=(d.date===todayStr?'<span class="today">Idag</span>':'')+(d.strava?'<span class="done" title="Klar, finns på Strava">✓</span>':'');
     const head='<span class="dow"><b>'+dt+'</b>'+wd+'</span><span><span class="nm">'+d.name+tag+'</span><span class="ty">'+label+'</span></span><span class="dur">'+(d.rest?'':dur(d.minutes))+'</span>';
     if(d.rest)return '<li class="day rest k-rest"><div class="row">'+head+'</div></li>';
-    return '<li class="day k-'+k+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+detail(d)+'</div></li>';
+    return '<li class="day k-'+k+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+(d.strava?'<p class="sl"><a href="'+d.strava+'" target="_blank" rel="noopener noreferrer">Se aktiviteten på Strava ↗</a></p>':'')+detail(d)+'</div></li>';
   }).join('');
 }
 function pick(i){sw=i;sd=firstActive(weeks[i]);render()}
