@@ -102,6 +102,11 @@ button.row{cursor:pointer}
 .detail .sl{margin:0 0 12px}
 .sl a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:99px;background:var(--bg);color:var(--ink);font-weight:600;text-decoration:none}
 .sl a::before{content:"";width:9px;height:9px;border-radius:50%;background:#FC4C02}
+.actt{margin:0 0 6px;font-size:13px;color:var(--mut)}
+.act{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:0 0 14px}
+.act div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.act dt{font-size:12px;color:var(--mut)}
+.act dd{margin:0;font:700 22px/1.15 'Barlow Condensed',sans-serif;color:var(--ink);white-space:nowrap}
 .foot{color:var(--mut);font-size:13px;margin-top:30px;max-width:62ch}
 
 .k-ski{--c:var(--t-ski)}.k-erg{--c:var(--t-erg)}.k-run{--c:var(--t-run)}.k-str{--c:var(--t-str)}.k-rest{--c:var(--t-rest)}.k-race{--c:var(--t-race)}
@@ -250,7 +255,28 @@ function detail(d){
 }
 
 let AUTO={};
-function withAuto(ws){ws.forEach(w=>w.days.forEach(d=>{if(!d.rest&&!d.strava&&AUTO[d.date])d.strava=AUTO[d.date]}));return ws}
+function cleanStats(v){
+  if(!v||typeof v!=='object')return null;
+  const n=(x,lo,hi)=>{x=Number(x);return isFinite(x)&&x>=lo&&x<=hi?x:null};
+  return{km:n(v.distance_km,0.01,1000),sec:n(v.moving_time_s,1,172800),pace:n(v.pace_s_per_km,60,3600),hr:n(v.avg_hr,30,250),maxhr:n(v.max_hr,30,250),elev:n(v.elevation_m,1,10000)};
+}
+function withAuto(ws){ws.forEach(w=>w.days.forEach(d=>{
+  const a=AUTO[d.date];if(d.rest||!a)return;
+  if(!d.strava)d.strava=a.url;
+  if(d.strava===a.url)d.act=a.stats;
+}));return ws}
+function actHtml(a){
+  if(!a)return '';
+  const t=s=>{s=Math.round(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),r=s%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(r).padStart(2,'0')};
+  const it=[];
+  if(a.km)it.push(['Distans',a.km.toLocaleString('sv-SE',{minimumFractionDigits:2,maximumFractionDigits:2})+' km']);
+  if(a.sec)it.push(['Tid',t(a.sec)]);
+  if(a.pace&&a.km)it.push(['Tempo',t(a.pace)+' /km']);
+  if(a.hr)it.push(['Snittpuls',Math.round(a.hr)+' slag/min']);
+  if(a.maxhr)it.push(['Maxpuls',Math.round(a.maxhr)+' slag/min']);
+  if(a.elev)it.push(['Stigning',Math.round(a.elev)+' m']);
+  return it.length?'<p class="actt">Så gick passet</p><dl class="act">'+it.map(i=>'<div><dt>'+i[0]+'</dt><dd>'+i[1]+'</dd></div>').join('')+'</dl>':'';
+}
 let weeks=[],sw=0,sd=-1;
 function firstActive(w){return w.days.findIndex(d=>!d.rest)}
 
@@ -292,7 +318,7 @@ function render(){
     const tag=(d.date===todayStr?'<span class="today">Idag</span>':'')+(d.strava?'<span class="done" title="Klar, finns på Strava">✓</span>':'');
     const head='<span class="dow"><b>'+dt+'</b>'+wd+'</span><span><span class="nm">'+d.name+tag+'</span><span class="ty">'+label+'</span></span><span class="dur">'+(d.rest?'':dur(d.minutes))+'</span>';
     if(d.rest)return '<li class="day rest k-rest"><div class="row">'+head+'</div></li>';
-    return '<li class="day k-'+k+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+(d.strava?'<p class="sl"><a href="'+d.strava+'" target="_blank" rel="noopener noreferrer">Se aktiviteten på Strava ↗</a></p>':'')+detail(d)+'</div></li>';
+    return '<li class="day k-'+k+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+actHtml(d.act)+(d.strava?'<p class="sl"><a href="'+d.strava+'" target="_blank" rel="noopener noreferrer">Se aktiviteten på Strava ↗</a></p>':'')+detail(d)+'</div></li>';
   }).join('');
 }
 function pick(i){sw=i;sd=firstActive(weeks[i]);render()}
@@ -328,7 +354,7 @@ fetch(SHEET_URL,{cache:'no-store'})
 
 /* automatiskt ifyllda Strava-länkar (strava.json: {"2026-11-05":"https://www.strava.com/activities/123"}) */
 fetch('strava.json',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(j=>{
-  const a={};Object.keys(j||{}).forEach(k=>{const u=stravaUrl(j[k]),d=isoDate(k);if(d&&u)a[d]=u});
+  const a={};Object.keys(j||{}).forEach(k=>{const v=j[k],u=stravaUrl(typeof v==='string'?v:v&&v.url),d=isoDate(k);if(d&&u)a[d]={url:u,stats:cleanStats(v)}});
   AUTO=a;
   if(Object.keys(a).length){weeks=withAuto(weeks);init(weeks,weeks[sw].week,sd)}
 }).catch(()=>{});
