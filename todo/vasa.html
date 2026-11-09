@@ -10,7 +10,7 @@
   --bg:#EAF0F5;--surf:#fff;--ink:#0F2338;--mut:#586C80;--line:#D5DFE8;--focus:#2A6BC4;
   --yel:#F5B800;--onyel:#0F2338;
   --rec:#B3C4D3;--omst:#7FA9CF;--skid:#3F7BC0;--sno:#1C4F9C;--prep:#12306B;--taper:#0A1F4A;
-  --t-ski:#2A6BC4;--t-erg:#0F8F9B;--t-run:#4E8A34;--t-str:#7A4FBF;--t-rest:#9DB0C1;--t-race:#F5B800;
+  --t-ski:#2A6BC4;--t-erg:#0F8F9B;--t-run:#4E8A34;--t-str:#7A4FBF;--t-rest:#9DB0C1;--warn:#B45309;--t-race:#F5B800;
   color-scheme:light;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -18,14 +18,14 @@
   :root:not([data-theme="light"]){
     --bg:#0A1624;--surf:#12233A;--ink:#E8EFF6;--mut:#93A7BA;--line:#233A55;--focus:#8DBBF5;
     --rec:#3A5068;--omst:#4F7FAE;--skid:#5C96D6;--sno:#7FB2EC;--prep:#A6CAF2;--taper:#D3E5F8;
-    --t-ski:#6AA3F0;--t-erg:#3CC0CC;--t-run:#86C060;--t-str:#AE8CE8;--t-rest:#4A6279;
+    --t-ski:#6AA3F0;--t-erg:#3CC0CC;--t-run:#86C060;--t-str:#AE8CE8;--t-rest:#4A6279;--warn:#F2A65A;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0A1624;--surf:#12233A;--ink:#E8EFF6;--mut:#93A7BA;--line:#233A55;--focus:#8DBBF5;
   --rec:#3A5068;--omst:#4F7FAE;--skid:#5C96D6;--sno:#7FB2EC;--prep:#A6CAF2;--taper:#D3E5F8;
-  --t-ski:#6AA3F0;--t-erg:#3CC0CC;--t-run:#86C060;--t-str:#AE8CE8;--t-rest:#4A6279;
+  --t-ski:#6AA3F0;--t-erg:#3CC0CC;--t-run:#86C060;--t-str:#AE8CE8;--t-rest:#4A6279;--warn:#F2A65A;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -107,6 +107,11 @@ button.row{cursor:pointer}
 .act div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
 .act dt{font-size:12px;color:var(--mut)}
 .act dd{margin:0;font:700 22px/1.15 'Barlow Condensed',sans-serif;color:var(--ink);white-space:nowrap}
+.skip{display:inline-block;margin-left:6px;padding:0 8px;border:1px solid var(--warn);border-radius:99px;color:var(--warn);font-size:11px;font-weight:600;vertical-align:2px}
+.day.skipped{border-left-color:var(--warn);border-style:dashed;border-left-style:solid;background:transparent}
+.day.skipped .nm,.day.skipped .dur{text-decoration:line-through;color:var(--mut)}
+.day.skipped .meter{display:none}
+.detail .skipn{margin-bottom:10px;color:var(--ink);font-weight:600}
 .foot{color:var(--mut);font-size:13px;margin-top:30px;max-width:62ch}
 
 .k-ski{--c:var(--t-ski)}.k-erg{--c:var(--t-erg)}.k-run{--c:var(--t-run)}.k-str{--c:var(--t-str)}.k-rest{--c:var(--t-rest)}.k-race{--c:var(--t-race)}
@@ -190,6 +195,12 @@ function isoDate(s){
   if(m){let d=+m[1],mo=+m[2];if(mo>12&&d<=12){const t=d;d=mo;mo=t}return m[3]+'-'+p2(mo)+'-'+p2(d)}
   return null;
 }
+function skipKind(s){
+  s=String(s||'').trim().toLowerCase();
+  if(/^(sick|sjuk|sjukdom|ill)$/.test(s))return 'sick';
+  if(/^(injury|injured|skada|skadad|skadat)$/.test(s))return 'injury';
+  return '';
+}
 function stravaUrl(s){
   s=String(s||'').trim();
   if(/^\d{6,}$/.test(s))return 'https://www.strava.com/activities/'+s;
@@ -215,7 +226,7 @@ function toWeeks(rows){
     let min=g('minutes')===''?null:Number(g('minutes').replace(',','.'));
     if(min!==null&&isNaN(min))min=null;
     if(!by.has(wk))by.set(wk,{week:wk,phase:g('phase')||'Skidbas',days:[]});
-    by.get(wk).days.push({date,name:g('name'),minutes:rest?0:min,note:g('note'),rest,strava:rest?'':stravaUrl(g('strava'))});
+    by.get(wk).days.push({date,name:g('name'),minutes:rest?0:min,note:g('note'),rest,skip:rest?'':skipKind(g('strava')),strava:rest||skipKind(g('strava'))?'':stravaUrl(g('strava'))});
   });
   if(!by.size)throw new Error('inga giltiga rader');
   return finalize([...by.values()]);
@@ -261,7 +272,7 @@ function cleanStats(v){
   return{km:n(v.distance_km,0.01,1000),sec:n(v.moving_time_s,1,172800),pace:n(v.pace_s_per_km,60,3600),hr:n(v.avg_hr,30,250),maxhr:n(v.max_hr,30,250),elev:n(v.elevation_m,1,10000)};
 }
 function withAuto(ws){ws.forEach(w=>w.days.forEach(d=>{
-  const a=AUTO[d.date];if(d.rest||!a)return;
+  const a=AUTO[d.date];if(d.rest||d.skip||!a)return;
   if(!d.strava)d.strava=a.url;
   if(d.strava===a.url)d.act=a.stats;
 }));return ws}
@@ -308,17 +319,18 @@ function init(ws,keepWeek,keepDay){
 function render(){
   const w=weeks[sw],ph=phaseOf(w.phase);
   $('wh').textContent='Vecka '+w.week;
-  const act=w.days.filter(d=>!d.rest),fin=act.filter(d=>d.strava).length;
-  $('wsub').textContent=fmt(w.days[0].date)+' – '+fmt(w.days[w.days.length-1].date)+', '+dur(w.total)+(fin?' · '+fin+' av '+act.length+' pass klara':'');
+  const nskip=w.days.filter(d=>d.skip).length,act=w.days.filter(d=>!d.rest&&!d.skip),fin=act.filter(d=>d.strava).length;
+  $('wsub').textContent=fmt(w.days[0].date)+' – '+fmt(w.days[w.days.length-1].date)+', '+dur(w.total)+(fin?' · '+fin+' av '+act.length+' pass klara':'')+(nskip?' · '+nskip+' inställt':'');
   $('phase').innerHTML='<i style="--c:var('+ph[1]+')"></i>'+ph[0];
   $('prev').disabled=sw===0;$('next').disabled=sw===weeks.length-1;
   document.querySelectorAll('.col').forEach((c,i)=>{c.classList.toggle('sel',i===sw);c.setAttribute('aria-pressed',i===sw)});
   $('days').innerHTML=w.days.map((d,i)=>{
     const [k,label]=kind(d),dt=+d.date.slice(8,10),wd=WD[new Date(d.date+'T12:00:00').getDay()];
-    const tag=(d.date===todayStr?'<span class="today">Idag</span>':'')+(d.strava?'<span class="done" title="Klar, finns på Strava">✓</span>':'');
-    const head='<span class="dow"><b>'+dt+'</b>'+wd+'</span><span><span class="nm">'+d.name+tag+'</span><span class="ty">'+label+'</span></span><span class="dur">'+(d.rest?'':dur(d.minutes))+'</span>';
+    const sk=d.skip==='sick'?'sjukdom':d.skip==='injury'?'skada':'';
+    const tag=(d.date===todayStr?'<span class="today">Idag</span>':'')+(d.skip?'<span class="skip">'+(d.skip==='sick'?'Sjuk':'Skadad')+'</span>':'')+(d.strava?'<span class="done" title="Klar, finns på Strava">✓</span>':'');
+    const head='<span class="dow"><b>'+dt+'</b>'+wd+'</span><span><span class="nm">'+d.name+tag+'</span><span class="ty">'+(d.skip?'Inställt på grund av '+sk:label)+'</span></span><span class="dur">'+(d.rest?'':dur(d.minutes))+'</span>';
     if(d.rest)return '<li class="day rest k-rest"><div class="row">'+head+'</div></li>';
-    return '<li class="day k-'+k+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+actHtml(d.act)+(d.strava?'<p class="sl"><a href="'+d.strava+'" target="_blank" rel="noopener noreferrer">Se aktiviteten på Strava ↗</a></p>':'')+detail(d)+'</div></li>';
+    return '<li class="day k-'+k+(d.skip?' skipped':'')+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+(d.skip?'<p class="skipn">Passet ställdes in på grund av '+sk+'.</p>':'')+actHtml(d.act)+(d.strava?'<p class="sl"><a href="'+d.strava+'" target="_blank" rel="noopener noreferrer">Se aktiviteten på Strava ↗</a></p>':'')+detail(d)+'</div></li>';
   }).join('');
 }
 function pick(i){sw=i;sd=firstActive(weeks[i]);render()}
