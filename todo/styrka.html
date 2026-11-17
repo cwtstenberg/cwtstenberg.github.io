@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Styrkepassen · Vasaloppet 2027</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap">
+<style>
+:root{
+  --bg:#EAF0F5;--surf:#fff;--ink:#0F2338;--mut:#586C80;--line:#D5DFE8;--focus:#2A6BC4;--t-str:#7A4FBF;
+  color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0A1624;--surf:#12233A;--ink:#E8EFF6;--mut:#93A7BA;--line:#233A55;--focus:#8DBBF5;--t-str:#AE8CE8;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0A1624;--surf:#12233A;--ink:#E8EFF6;--mut:#93A7BA;--line:#233A55;--focus:#8DBBF5;--t-str:#AE8CE8;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 Barlow,system-ui,-apple-system,'Segoe UI',sans-serif}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding:18px 16px 64px}
+.back{display:inline-flex;align-items:center;min-height:44px;color:var(--mut);text-decoration:none;font-weight:500}
+.back:hover{color:var(--ink)}
+h1{font:800 clamp(52px,14vw,96px)/.92 'Barlow Condensed',Barlow,sans-serif;letter-spacing:-.01em;margin:6px 0 0}
+.lede{color:var(--mut);max-width:52ch;margin:14px 0 0}
+.small{color:var(--mut);font-size:14px;margin:10px 0 0;max-width:62ch}
+h2{font:700 30px/1.05 'Barlow Condensed',sans-serif;margin:0}
+h3{font-size:13px;font-weight:600;color:var(--mut);margin:16px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.chips a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:99px;background:var(--surf);text-decoration:none;font-size:14px;font-weight:500}
+.chips a:hover{border-color:var(--mut)}
+.overview{margin-top:36px}
+.tw{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--surf)}
+table{border-collapse:collapse;width:100%;min-width:430px;font-size:15px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:baseline}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+thead th{font-weight:600;font-size:14px;white-space:nowrap}
+thead th span{display:block;font-weight:400;font-size:12px;color:var(--mut)}
+tbody th{font-weight:500}
+tbody th a{text-decoration-color:var(--line);text-underline-offset:3px}
+td{font:700 19px/1.2 'Barlow Condensed',sans-serif;white-space:nowrap}
+.no{color:var(--mut);font-weight:400}
+.ex{display:grid;gap:16px;margin-top:34px;padding-top:30px;border-top:1px solid var(--line);scroll-margin-top:12px}
+.ex figure{margin:0;background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:6px;align-self:start}
+.ex figcaption{font-size:13px;color:var(--mut);padding:0 8px 6px}
+.ex svg{display:block;width:100%;height:auto}
+.sub2{display:block;font:400 15px/1.3 Barlow,sans-serif;color:var(--mut);margin-top:4px}
+.trains{margin:8px 0 0}
+ol,ul{margin:0;padding-left:1.3em}
+li{margin:3px 0}
+.plan{margin:14px 0 0;font-weight:600}
+/* figures */
+.gr{stroke:var(--mut);stroke-width:1.5;opacity:.5}
+.st{fill:none;stroke:var(--mut);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.55}
+rect.st{fill:var(--mut);fill-opacity:.12}
+.b{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.a{fill:none;stroke:var(--t-str);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.hd{fill:var(--ink)}
+.eq{fill:none;stroke:var(--mut);stroke-width:4}
+.eqf{fill:var(--mut)}
+.cb{stroke:var(--mut);stroke-width:1.5}
+.gd{stroke:var(--t-str);stroke-width:2;stroke-dasharray:5 4;fill:none}
+.foot{color:var(--mut);font-size:13px;margin-top:40px;max-width:62ch}
+@media (max-width:520px){
+  h1{font-size:clamp(42px,14vw,96px)}
+  .tw{overflow:visible;border:0;background:none}
+  table,tbody{display:block;min-width:0}
+  thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 8px;margin-bottom:8px;padding:10px 12px 11px;background:var(--surf);border:1px solid var(--line);border-radius:12px}
+  tbody tr:last-child th,tbody tr:last-child td,tbody th,td{border-bottom:0}
+  tbody th{grid-column:1/-1;padding:0 0 4px;font-weight:600}
+  td{padding:0;font-size:18px}
+  td::before{content:attr(data-label);display:block;font:400 12px/1.3 Barlow,system-ui,sans-serif;color:var(--mut)}
+}
+@media (min-width:700px){
+  .wrap{padding-top:28px}
+  .ex{grid-template-columns:300px 1fr;gap:28px}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <a class="back" href="vasa.html">‹ Träningsplan</a>
+  <h1>Styrkepassen</h1>
+  <p class="lede">Ett pass i veckan, oftast på onsdagar. Det bygger kraften du använder i stakning och uppförsbackar: ben, bål och rygg. Här ser du hur varje övning går till och vad som ingår i vilket block.</p>
+
+  <nav class="chips" aria-label="Övningar"><a href="#rdl">RDL / Marklyft</a><a href="#latsdrag">Latsdrag / Chins</a><a href="#bulgarian">Bulgarian split squat</a><a href="#rodd">Rodd</a><a href="#straightarm">Straight-arm pulldown</a><a href="#triceps">Tricepspress</a><a href="#pallof">Pallof press</a><a href="#cablecrunch">Cable crunch</a><a href="#planka">Planka</a></nav>
+
+  <section class="overview" aria-labelledby="ov">
+    <h2 id="ov">Så ser passen ut</h2>
+    <div class="tw"><table><thead><tr><th scope="col">Övning</th><th scope="col">Block 1<span>vecka 1–4</span></th><th scope="col">Block 2<span>vecka 5–8</span></th><th scope="col">Block 3<span>vecka 9–14</span></th></tr></thead><tbody><tr><th scope="row"><a href="#rdl">RDL / Marklyft</a></th><td data-label="Block 1 (v1–4)">3×6</td><td data-label="Block 2 (v5–8)">3×6</td><td data-label="Block 3 (v9–14)">2×6</td></tr><tr><th scope="row"><a href="#latsdrag">Latsdrag / Chins</a></th><td data-label="Block 1 (v1–4)">3×6–8</td><td data-label="Block 2 (v5–8)">3×6–8</td><td data-label="Block 3 (v9–14)">3×6</td></tr><tr><th scope="row"><a href="#bulgarian">Bulgarian split squat</a></th><td data-label="Block 1 (v1–4)">3×8/sida</td><td data-label="Block 2 (v5–8)">3×8/sida</td><td data-label="Block 3 (v9–14)">2×6/sida</td></tr><tr><th scope="row"><a href="#rodd">Rodd</a></th><td data-label="Block 1 (v1–4)">3×8</td><td data-label="Block 2 (v5–8)">3×8</td><td data-label="Block 3 (v9–14)"><span class=no>–</span></td></tr><tr><th scope="row"><a href="#straightarm">Straight-arm pulldown</a></th><td data-label="Block 1 (v1–4)"><span class=no>–</span></td><td data-label="Block 2 (v5–8)">3×10</td><td data-label="Block 3 (v9–14)">3×8</td></tr><tr><th scope="row"><a href="#triceps">Tricepspress</a></th><td data-label="Block 1 (v1–4)">3×10</td><td data-label="Block 2 (v5–8)">3×10</td><td data-label="Block 3 (v9–14)">3×10</td></tr><tr><th scope="row"><a href="#pallof">Pallof press</a></th><td data-label="Block 1 (v1–4)">3×10/sida</td><td data-label="Block 2 (v5–8)"><span class=no>–</span></td><td data-label="Block 3 (v9–14)">2×10</td></tr><tr><th scope="row"><a href="#cablecrunch">Cable crunch</a></th><td data-label="Block 1 (v1–4)"><span class=no>–</span></td><td data-label="Block 2 (v5–8)">3×10–12</td><td data-label="Block 3 (v9–14)"><span class=no>–</span></td></tr><tr><th scope="row"><a href="#planka">Planka</a></th><td data-label="Block 1 (v1–4)">3×45–60 s</td><td data-label="Block 2 (v5–8)">3×45–60 s</td><td data-label="Block 3 (v9–14)">3×45–60 s</td></tr></tbody></table></div><p class="small">Passet tar 45–60 minuter. Vecka 4 och 8 är lättare, med 2 set per övning. Vecka 9 avslutas med 15 minuter lätt SkiErg.</p>
+  </section>
+
+  <article class="ex" id="rdl">
+<figure><svg viewBox="0 0 200 150" role="img" aria-label="Animation: RDL / Marklyft" focusable="false"><line class="gr" x1="8" y1="141" x2="192" y2="141"/><path class="b" d="M100 81 L105.9 110.4 L101 138 L110 138"><animate attributeName="d" values="M100 81 L105.9 110.4 L101 138 L110 138;M100 81 L105.9 110.4 L101 138 L110 138;M81 85 L97.2 110.3 L101 138 L110 138;M81 85 L97.2 110.3 L101 138 L110 138;M100 81 L105.9 110.4 L101 138 L110 138" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><path class="b" d="M100 81 Q101.5 59.0 103.1 37.1"><animate attributeName="d" values="M100 81 Q101.5 59.0 103.1 37.1;M100 81 Q101.5 59.0 103.1 37.1;M81 85 Q100.8 75.3 120.5 65.7;M81 85 Q100.8 75.3 120.5 65.7;M100 81 Q101.5 59.0 103.1 37.1" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="hd" r="8" cx="104.0" cy="24.1"><animate attributeName="cx" values="104.0;104.0;132.2;132.2;104.0" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="24.1;24.1;60.0;60.0;24.1" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle><path class="a" d="M103.1 37.1 L98.8 56.6 L106.1 73.1"><animate attributeName="d" values="M103.1 37.1 L98.8 56.6 L106.1 73.1;M103.1 37.1 L98.8 56.6 L106.1 73.1;M120.5 65.7 L113.5 84.4 L118.5 101.7;M120.5 65.7 L113.5 84.4 L118.5 101.7;M103.1 37.1 L98.8 56.6 L106.1 73.1" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="eq" r="10" cx="106.1" cy="73.1"><animate attributeName="cx" values="106.1;106.1;118.5;118.5;106.1" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="73.1;73.1;101.7;101.7;73.1" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle></svg></figure>
+<div class="txt">
+<h2>RDL / Marklyft<span class="sub2">Rumänsk marklyft</span></h2>
+<p class="trains">Baksida lår, säte och nedre rygg. Ger kraften i avstampet och håller ryggen stark under långa pass.</p>
+<h3>Så gör du</h3>
+<ol><li>Stå med fötterna höftbrett och lätt böjda knän. Håll stången eller hantlarna nära låren.</li><li>Skjut höften rakt bakåt, som att stänga en bildörr med rumpan. Ryggen är rak och blicken några meter framför fötterna.</li><li>Sänk tills du känner en tydlig stretch i baksidan av låren, oftast strax under knäna.</li><li>Driv höften framåt och res dig. Kläm ihop rumpan i toppen utan att svanka.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>Rundad ländrygg.</li><li>Knäna böjs mer och mer så att det blir en knäböj.</li><li>Stången vandrar bort från benen.</li></ul>
+<p class="small">Vanlig marklyft startar från golvet vid varje repetition och är tyngre.</p>
+<p class="plan">I planen: Block 1: 3×6 · Block 2: 3×6 · Block 3: 2×6</p>
+</div>
+</article>
+<article class="ex" id="latsdrag">
+<figure><svg viewBox="0 0 200 150" role="img" aria-label="Animation: Latsdrag / Chins" focusable="false"><line class="gr" x1="8" y1="141" x2="192" y2="141"/><rect class="st" x="62" y="112" width="40" height="6" rx="3"/><path class="st" d="M82 118V140M96 118V140"/><path class="st" d="M96 99H124"/><path class="st" d="M176 8V140M176 8H108"/><circle class="st" cx="110" cy="10" r="3.5"/><line class="cb" x1="110" y1="10" x2="98" y2="34"><animate attributeName="x2" values="98;98;96;96;98" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="y2" values="34;34;64;64;34" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></line><path class="b" d="M86 108 L115.9 110.7 L122 138 L131 138"></path><path class="b" d="M86 108 Q83.7 86.1 81.4 64.2"></path><circle class="hd" r="8" cx="79.6" cy="51.3"></circle><path class="a" d="M81.4 64.2 L97.2 52.0 L98 34"><animate attributeName="d" values="M81.4 64.2 L97.2 52.0 L98 34;M81.4 64.2 L97.2 52.0 L98 34;M81.4 64.2 L91.5 81.4 L96 64;M81.4 64.2 L91.5 81.4 L96 64;M81.4 64.2 L97.2 52.0 L98 34" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="eqf" r="3.5" cx="98" cy="34"><animate attributeName="cx" values="98;98;96;96;98" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="34;34;64;64;34" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle></svg></figure>
+<div class="txt">
+<h2>Latsdrag / Chins</h2>
+<p class="trains">Breda ryggmuskeln och biceps. Samma dragrörelse som i stakningens nedtryck.</p>
+<h3>Så gör du</h3>
+<ol><li>Ta ett grepp som är lite bredare än axlarna. Sitt med låren under stödet.</li><li>Bröstet upp och en liten lutning bakåt. Axlarna ner, bort från öronen.</li><li>Dra stången mot övre bröstet och för armbågarna ner mot höfterna.</li><li>Släpp upp kontrollerat tills armarna är raka igen.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>Dra stången bakom nacken.</li><li>Svinga med överkroppen för att få upp vikten.</li><li>Dra med armarna i stället för med ryggen.</li></ul>
+<p class="small">Chins är samma rörelse hängande i en stång och är svårare. Ett gummiband under knäna eller en långsam sänkning ner från toppläget gör det lättare att komma igång.</p>
+<p class="plan">I planen: Block 1: 3×6–8 · Block 2: 3×6–8 · Block 3: 3×6</p>
+</div>
+</article>
+<article class="ex" id="bulgarian">
+<figure><svg viewBox="0 0 200 150" role="img" aria-label="Animation: Bulgarian split squat" focusable="false"><line class="gr" x1="8" y1="141" x2="192" y2="141"/><rect class="st" x="34" y="106" width="36" height="6" rx="3"/><path class="st" d="M40 112V140M64 112V140"/><path class="b" d="M116 82 L128.1 109.5 L123 137 L132 137"><animate attributeName="d" values="M116 82 L128.1 109.5 L123 137 L132 137;M116 82 L128.1 109.5 L123 137 L132 137;M97 104 L126.5 109.2 L123 137 L132 137;M97 104 L126.5 109.2 L123 137 L132 137;M116 82 L128.1 109.5 L123 137 L132 137" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><path class="b" d="M116 82 L91.8 99.7 L64 103 L56 103"><animate attributeName="d" values="M116 82 L91.8 99.7 L64 103 L56 103;M116 82 L91.8 99.7 L64 103 L56 103;M97 104 L78.0 127.2 L64 103 L56 103;M97 104 L78.0 127.2 L64 103 L56 103;M116 82 L91.8 99.7 L64 103 L56 103" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><path class="b" d="M116 82 Q119.0 60.2 122.1 38.4"><animate attributeName="d" values="M116 82 Q119.0 60.2 122.1 38.4;M116 82 Q119.0 60.2 122.1 38.4;M97 104 Q100.0 82.2 103.1 60.4;M97 104 Q100.0 82.2 103.1 60.4;M116 82 Q119.0 60.2 122.1 38.4" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="hd" r="8" cx="123.9" cy="25.5"><animate attributeName="cx" values="123.9;123.9;104.9;104.9;123.9" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="25.5;25.5;47.5;47.5;25.5" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle><path class="a" d="M122.1 38.4 L117.2 57.8 L124.1 74.4"><animate attributeName="d" values="M122.1 38.4 L117.2 57.8 L124.1 74.4;M122.1 38.4 L117.2 57.8 L124.1 74.4;M103.1 60.4 L98.2 79.8 L105.1 96.4;M103.1 60.4 L98.2 79.8 L105.1 96.4;M122.1 38.4 L117.2 57.8 L124.1 74.4" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="eqf" r="5" cx="124.1" cy="74.4"><animate attributeName="cx" values="124.1;124.1;105.1;105.1;124.1" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="74.4;74.4;96.4;96.4;74.4" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle></svg></figure>
+<div class="txt">
+<h2>Bulgarian split squat</h2>
+<p class="trains">Framsida lår, säte och balans på ett ben. Efterliknar avstampet i klassisk stil.</p>
+<h3>Så gör du</h3>
+<ol><li>Ställ bakre foten på en bänk, ungefär i knähöjd. Främre foten ett långt steg fram.</li><li>Håll överkroppen upprätt eller lätt framåtlutad, med en hantel i varje hand.</li><li>Sänk dig rakt ner tills främre låret är ungefär parallellt med golvet. Främre knät följer tårna.</li><li>Tryck upp genom hela främre foten.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>För kort steg, så att hälen lyfter.</li><li>Knät faller inåt.</li><li>Du trycker mest med bakre benet.</li></ul>
+<p class="small">Gör alla repetitioner på ena benet och byt sedan. Antalet i planen gäller per sida.</p>
+<p class="plan">I planen: Block 1: 3×8/sida · Block 2: 3×8/sida · Block 3: 2×6/sida</p>
+</div>
+</article>
+<article class="ex" id="rodd">
+<figure><svg viewBox="0 0 200 150" role="img" aria-label="Animation: Rodd" focusable="false"><line class="gr" x1="8" y1="141" x2="192" y2="141"/><rect class="st" x="38" y="120" width="44" height="6" rx="3"/><path class="st" d="M50 126V140M72 126V140"/><path class="st" d="M116 98V140"/><path class="st" d="M180 66V140"/><circle class="st" cx="178" cy="92" r="3.5"/><line class="cb" x1="178" y1="92" x2="110" y2="80"><animate attributeName="x2" values="110;110;80;80;110" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="y2" values="80;80;90;90;80" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></line><path class="b" d="M62 114 L89.9 102.9 L112 120 L119 120"></path><path class="b" d="M62 114 Q68.0 92.8 74.1 71.7"><animate attributeName="d" values="M62 114 Q68.0 92.8 74.1 71.7;M62 114 Q68.0 92.8 74.1 71.7;M62 114 Q59.7 92.1 57.4 70.2;M62 114 Q59.7 92.1 57.4 70.2;M62 114 Q68.0 92.8 74.1 71.7" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="hd" r="8" cx="77.7" cy="59.2"><animate attributeName="cx" values="77.7;77.7;56.0;56.0;77.7" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="59.2;59.2;57.3;57.3;59.2" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle><path class="a" d="M74.1 71.7 L92.0 80.6 L110 80"><animate attributeName="d" values="M74.1 71.7 L92.0 80.6 L110 80;M74.1 71.7 L92.0 80.6 L110 80;M57.4 70.2 L62.0 89.7 L80 90;M57.4 70.2 L62.0 89.7 L80 90;M74.1 71.7 L92.0 80.6 L110 80" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="eqf" r="3.5" cx="110" cy="80"><animate attributeName="cx" values="110;110;80;80;110" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="80;80;90;90;80" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle></svg></figure>
+<div class="txt">
+<h2>Rodd</h2>
+<p class="trains">Övre rygg och bakre axlar. Håller hållningen uppe när tröttheten kommer.</p>
+<h3>Så gör du</h3>
+<ol><li>Sitt upprätt med lätt böjda knän och fötterna mot plattan.</li><li>Dra handtaget mot naveln. Armbågarna går längs kroppen.</li><li>Kläm ihop skulderbladen i slutläget och håll en sekund.</li><li>Låt armarna sträckas kontrollerat utan att ryggen rundas.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>Gunga med överkroppen för att få fart.</li><li>Axlarna dras upp mot öronen.</li></ul>
+<p class="small">Rodd går att göra med kabel, hantel eller stång. Poängen är att dra med ryggen.</p>
+<p class="plan">I planen: Block 1: 3×8 · Block 2: 3×8</p>
+</div>
+</article>
+<article class="ex" id="straightarm">
+<figure><svg viewBox="0 0 200 150" role="img" aria-label="Animation: Straight-arm pulldown" focusable="false"><line class="gr" x1="8" y1="141" x2="192" y2="141"/><path class="st" d="M176 8V140M176 8H138"/><circle class="st" cx="140" cy="10" r="3.5"/><line class="cb" x1="140" y1="10" x2="147" y2="39"><animate attributeName="x2" values="147;147;113;113;147" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="y2" values="39;39;77;77;39" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></line><path class="b" d="M93 81 L99.7 110.2 L96 138 L105 138"></path><path class="b" d="M93 81 Q101.2 60.6 109.5 40.2"></path><circle class="hd" r="8" cx="116.4" cy="29.2"></circle><path class="a" d="M109.5 40.2 L129.4 42.6 L147 39"><animate attributeName="d" values="M109.5 40.2 L129.4 42.6 L147 39;M109.5 40.2 L129.4 42.6 L147 39;M109.5 40.2 L107.0 60.0 L113 77;M109.5 40.2 L107.0 60.0 L113 77;M109.5 40.2 L129.4 42.6 L147 39" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="eqf" r="3.5" cx="147" cy="39"><animate attributeName="cx" values="147;147;113;113;147" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="39;39;77;77;39" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle></svg></figure>
+<div class="txt">
+<h2>Straight-arm pulldown</h2>
+<p class="trains">Breda ryggmuskeln med raka armar. Liknar nedtrycket i stakning.</p>
+<h3>Så gör du</h3>
+<ol><li>Stå med fötterna höftbrett, höften bakåt och överkroppen lätt framåtlutad.</li><li>Ta tag i repet eller stången med nästan raka armar, ungefär i huvudhöjd.</li><li>Tryck händerna ner i en båge mot låren. Det är ryggen som jobbar, inte armböjningen.</li><li>Låt det gå upp kontrollerat tills du känner stretch i ryggen.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>Armarna böjs så att det blir en tricepsövning.</li><li>Du gungar med kroppen.</li><li>För tung vikt.</li></ul>
+
+<p class="plan">I planen: Block 2: 3×10 · Block 3: 3×8</p>
+</div>
+</article>
+<article class="ex" id="triceps">
+<figure><svg viewBox="0 0 200 150" role="img" aria-label="Animation: Tricepspress" focusable="false"><line class="gr" x1="8" y1="141" x2="192" y2="141"/><path class="st" d="M176 6V140M176 6H108"/><circle class="st" cx="110" cy="8" r="3.5"/><line class="cb" x1="110" y1="8" x2="118.7" y2="48.7"><animate attributeName="x2" values="118.7;118.7;105.3;105.3;118.7" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="y2" values="48.7;48.7;75.0;75.0;48.7" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></line><path class="b" d="M96 81 L101.4 110.5 L96 138 L105 138"></path><path class="b" d="M96 81 Q97.9 59.1 99.8 37.2"></path><circle class="hd" r="8" cx="100.9" cy="24.2"></circle><path class="a" d="M99.8 37.2 L102.8 57.2 L118.7 48.7"><animate attributeName="d" values="M99.8 37.2 L102.8 57.2 L118.7 48.7;M99.8 37.2 L102.8 57.2 L118.7 48.7;M99.8 37.2 L102.8 57.2 L105.3 75.0;M99.8 37.2 L102.8 57.2 L105.3 75.0;M99.8 37.2 L102.8 57.2 L118.7 48.7" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="eqf" r="3.5" cx="118.7" cy="48.7"><animate attributeName="cx" values="118.7;118.7;105.3;105.3;118.7" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="48.7;48.7;75.0;75.0;48.7" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle></svg></figure>
+<div class="txt">
+<h2>Tricepspress<span class="sub2">Kabel, nedtryck</span></h2>
+<p class="trains">Baksida överarm. Kraften i slutet av varje stavtag.</p>
+<h3>Så gör du</h3>
+<ol><li>Stå nära kabeln med armbågarna intill kroppen.</li><li>Håll överarmarna stilla och pressa ner tills armarna är raka.</li><li>Håll en sekund och spänn triceps.</li><li>Gå upp kontrollerat tills underarmarna är ungefär i 90 grader.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>Armbågarna flaxar framåt.</li><li>Hela kroppen hänger över vikten.</li><li>För tung vikt.</li></ul>
+<p class="small">Kabel är ett vanligt sätt att göra den. Hantel över huvudet fungerar också.</p>
+<p class="plan">I planen: Block 1: 3×10 · Block 2: 3×10 · Block 3: 3×10</p>
+</div>
+</article>
+<article class="ex" id="pallof">
+<figure><svg viewBox="0 24 200 100" role="img" aria-label="Animation: Pallof press" focusable="false"><path class="st" d="M182 40V118"/><circle class="st" cx="178" cy="84" r="3.5"/><ellipse class="st" cx="100" cy="96" rx="26" ry="10"/><line class="cb" x1="178" y1="84" x2="101" y2="84"><animate attributeName="x2" values="101;101;102;102;101" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="y2" values="84;84;64;64;84" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></line><path class="b" d="M82 96 Q100 96 118 96"></path><circle class="hd" r="8" cx="100" cy="94"></circle><path class="a" d="M82 96 L84.8 76.2 L101 84"><animate attributeName="d" values="M82 96 L84.8 76.2 L101 84;M82 96 L84.8 76.2 L101 84;M82 96 L90.6 78.0 L102 64;M82 96 L90.6 78.0 L102 64;M82 96 L84.8 76.2 L101 84" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><path class="a" d="M118 96 L117.1 76.0 L101 84"><animate attributeName="d" values="M118 96 L117.1 76.0 L101 84;M118 96 L117.1 76.0 L101 84;M118 96 L115.2 76.2 L102 64;M118 96 L115.2 76.2 L102 64;M118 96 L117.1 76.0 L101 84" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="eqf" r="3.5" cx="101" cy="84"><animate attributeName="cx" values="101;101;102;102;101" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="84;84;64;64;84" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle></svg><figcaption>Sedd uppifrån. Figuren står med ansiktet uppåt i bilden.</figcaption></figure>
+<div class="txt">
+<h2>Pallof press</h2>
+<p class="trains">Bålen. Du står emot vridning, som kroppen gör när kraften går från ben till armar i stakning.</p>
+<h3>Så gör du</h3>
+<ol><li>Ställ dig vinkelrätt mot kabeln med handtaget vid bröstet. Fötterna axelbrett.</li><li>Pressa händerna rakt fram. Kabeln försöker vrida dig och du står emot.</li><li>Håll 1–2 sekunder med raka armar.</li><li>För tillbaka händerna till bröstet. Byt sida efter alla repetitioner.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>Överkroppen vrider sig mot kabeln.</li><li>Höften svajar åt sidan.</li><li>Du håller andan.</li></ul>
+
+<p class="plan">I planen: Block 1: 3×10/sida · Block 3: 2×10</p>
+</div>
+</article>
+<article class="ex" id="cablecrunch">
+<figure><svg viewBox="0 0 200 150" role="img" aria-label="Animation: Cable crunch" focusable="false"><line class="gr" x1="8" y1="141" x2="192" y2="141"/><path class="st" d="M120 8V16M134 8H106"/><circle class="st" cx="120" cy="10" r="3.5"/><line class="cb" x1="120" y1="10" x2="112" y2="50"><animate attributeName="x2" values="112;112;147;147;112" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="y2" values="50;50;93;93;50" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></line><path class="b" d="M104 106 L104 136 L74 136 L66 136"></path><path class="b" d="M104 106 Q104.0 84.0 104.0 62.0"><animate attributeName="d" values="M104 106 Q104.0 84.0 104.0 62.0;M104 106 Q104.0 84.0 104.0 62.0;M104 106 Q113 88 134 90;M104 106 Q113 88 134 90;M104 106 Q104.0 84.0 104.0 62.0" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="hd" r="8" cx="106" cy="47"><animate attributeName="cx" values="106;106;143;143;106" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="47;47;100;100;47" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle><path class="a" d="M104.0 62.0 L123.9 63.5 L112 50"><animate attributeName="d" values="M104.0 62.0 L123.9 63.5 L112 50;M104.0 62.0 L123.9 63.5 L112 50;M134 90 L139.3 109.3 L147 93;M134 90 L139.3 109.3 L147 93;M104.0 62.0 L123.9 63.5 L112 50" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></path><circle class="eqf" r="3.5" cx="112" cy="50"><animate attributeName="cx" values="112;112;147;147;112" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/><animate attributeName="cy" values="50;50;93;93;50" keyTimes="0;0.1;0.45;0.6;1" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1;.45 0 .55 1" dur="3.6s" repeatCount="indefinite"/></circle></svg></figure>
+<div class="txt">
+<h2>Cable crunch</h2>
+<p class="trains">Raka bukmuskeln. Kraften i nedtrycket när du stakar.</p>
+<h3>Så gör du</h3>
+<ol><li>Knäa under kabeln och håll repet vid pannan eller nacken.</li><li>Rulla ihop bröstkorgen mot höfterna genom att runda ryggen. Titta ner.</li><li>Höften står still. Det är magen som jobbar, inte armarna.</li><li>Rulla upp långsamt.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>Du drar ner med armarna.</li><li>Höften åker bakåt mot hälarna.</li><li>För tung vikt.</li></ul>
+
+<p class="plan">I planen: Block 2: 3×10–12</p>
+</div>
+</article>
+<article class="ex" id="planka">
+<figure><svg viewBox="0 66 200 84" role="img" aria-label="Animation: Planka" focusable="false"><line class="gr" x1="8" y1="141" x2="192" y2="141"/><line class="gd" x1="33.2" y1="133.0" x2="146" y2="108"><animate attributeName="stroke-dashoffset" values="0;-12" dur="1.2s" repeatCount="indefinite"/></line><path class="b" d="M89.0 127.1 L60.6 133.1 L33.2 139.0 L32.2 139.5"></path><path class="b" d="M89.0 127.1 Q110.5 122.5 132 118"></path><circle class="hd" r="8" cx="146" cy="112"></circle><path class="a" d="M132 118 L132 138 L150 138"></path></svg></figure>
+<div class="txt">
+<h2>Planka<span class="sub2">Underarmsplanka</span></h2>
+<p class="trains">Hela bålen. Stabilitet för långa pass.</p>
+<h3>Så gör du</h3>
+<ol><li>Underarmarna i golvet med armbågarna rakt under axlarna.</li><li>Kroppen i en rak linje från huvud till hälar.</li><li>Spänn mage och säte och andas lugnt.</li><li>Håll 45–60 sekunder. Avbryt när formen släpper, inte först när det gör ont.</li></ol>
+<h3>Vanliga fel</h3>
+<ul><li>Höften hänger.</li><li>Rumpan åker upp i luften.</li><li>Du håller andan.</li></ul>
+<p class="small">Den streckade linjen visar hur rak kroppen ska vara.</p>
+<p class="plan">I planen: Block 1: 3×45–60 s · Block 2: 3×45–60 s · Block 3: 3×45–60 s</p>
+</div>
+</article>
+
+  <p class="foot">Det här är allmänna tips, inte personlig coachning. Börja med en vikt du klarar med bra teknik och öka först när det känns stabilt. Vanlig muskeltrötthet är okej. Känner du smärta, avbryt och byt övning. Figurerna är förenklade teckningar som visar rörelsens riktning.</p>
+</main>
+<script>
+(function(){
+  try{
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){
+      document.querySelectorAll('svg').forEach(function(s){if(s.pauseAnimations){s.pauseAnimations();s.setCurrentTime(0)}});
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

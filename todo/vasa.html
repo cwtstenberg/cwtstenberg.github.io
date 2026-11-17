@@ -112,6 +112,11 @@ button.row{cursor:pointer}
 .day.skipped .nm,.day.skipped .dur{text-decoration:line-through;color:var(--mut)}
 .day.skipped .meter{display:none}
 .detail .skipn{margin-bottom:10px;color:var(--ink);font-weight:600}
+.more{margin:10px 0 0;font-size:15px}
+.more a{text-decoration-color:var(--line);text-underline-offset:3px}
+.ex a{color:inherit;text-decoration-color:var(--line);text-underline-offset:3px}
+.detail .sx{margin:12px 0 0}
+.sx a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:99px;background:var(--bg);color:var(--ink);font-weight:600;text-decoration:none}
 .foot{color:var(--mut);font-size:13px;margin-top:30px;max-width:62ch}
 
 .k-ski{--c:var(--t-ski)}.k-erg{--c:var(--t-erg)}.k-run{--c:var(--t-run)}.k-str{--c:var(--t-str)}.k-rest{--c:var(--t-rest)}.k-race{--c:var(--t-race)}
@@ -131,6 +136,7 @@ button.row{cursor:pointer}
     <div>
       <h1>Vasaloppet<br>2027</h1>
       <p class="lede" id="lede"></p>
+      <p class="more"><a href="styrka.html">Så gör du styrkeövningarna</a></p>
     </div>
     <div class="bib" id="bib" aria-live="polite"></div>
   </header>
@@ -252,6 +258,10 @@ function kind(d){
   if(/Skidor/i.test(n))return['ski','Skidor'];
   return['run','Löpning'];
 }
+function exLink(n){
+  const m=[['rdl',/^RDL/],['latsdrag',/^Latsdrag/],['bulgarian',/^Bulgarian/],['rodd',/^Rodd/],['straightarm',/^Straight-arm/],['triceps',/^Tricepspress/],['pallof',/^Pallof/],['cablecrunch',/^Cable Crunch/],['planka',/^Planka/]].find(e=>e[1].test(n));
+  return m?'<a href="styrka.html#'+m[0]+'">'+n+'</a>':n;
+}
 function detail(d){
   if(d.rest||!d.note)return '<p>'+(d.rest?'Vilodag. Återhämtning och uppladdning.':'Inga ytterligare instruktioner i planen.')+'</p>';
   let note=d.note,lead='';
@@ -260,7 +270,7 @@ function detail(d){
   if(note.includes(' · '))return lead+'<ol class="steps">'+note.split(' · ').map(s=>'<li>'+s+'</li>').join('')+'</ol>';
   if(note.includes('; '))return lead+'<ul class="ex">'+note.split('; ').map(s=>{
     s=s.replace(/\.$/,'');const x=s.match(/^(.*?)\s+(\d.*)$/);
-    return x?'<li><span>'+x[1]+'</span><b>'+x[2]+'</b></li>':'<li><span>'+s+'</span></li>';
+    return x?'<li><span>'+exLink(x[1])+'</span><b>'+x[2]+'</b></li>':'<li><span>'+s+'</span></li>';
   }).join('')+'</ul>';
   return lead+'<p>'+note+'</p>';
 }
@@ -330,7 +340,7 @@ function render(){
     const tag=(d.date===todayStr?'<span class="today">Idag</span>':'')+(d.skip?'<span class="skip">'+(d.skip==='sick'?'Sjuk':'Skadad')+'</span>':'')+(d.strava?'<span class="done" title="Klar, finns på Strava">✓</span>':'');
     const head='<span class="dow"><b>'+dt+'</b>'+wd+'</span><span><span class="nm">'+d.name+tag+'</span><span class="ty">'+(d.skip?'Inställt på grund av '+sk:label)+'</span></span><span class="dur">'+(d.rest?'':dur(d.minutes))+'</span>';
     if(d.rest)return '<li class="day rest k-rest"><div class="row">'+head+'</div></li>';
-    return '<li class="day k-'+k+(d.skip?' skipped':'')+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+(d.skip?'<p class="skipn">Passet ställdes in på grund av '+sk+'.</p>':'')+actHtml(d.act)+(d.strava?'<p class="sl"><a href="'+d.strava+'" target="_blank" rel="noopener noreferrer">Se aktiviteten på Strava ↗</a></p>':'')+detail(d)+'</div></li>';
+    return '<li class="day k-'+k+(d.skip?' skipped':'')+(i===sd?' open':'')+'"><button class="row" data-d="'+i+'" aria-expanded="'+(i===sd)+'">'+head+'<span class="meter"><i style="width:'+Math.min(100,(d.minutes||0)/300*100)+'%"></i></span></button><div class="detail">'+(d.skip?'<p class="skipn">Passet ställdes in på grund av '+sk+'.</p>':'')+actHtml(d.act)+(d.strava?'<p class="sl"><a href="'+d.strava+'" target="_blank" rel="noopener noreferrer">Se aktiviteten på Strava ↗</a></p>':'')+detail(d)+(/Styrka/i.test(d.name)?'<p class="sx"><a href="styrka.html">Så gör du övningarna</a></p>':'')+'</div></li>';
   }).join('');
 }
 function pick(i){sw=i;sd=firstActive(weeks[i]);render()}
