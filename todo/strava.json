@@ -28,5 +28,13 @@
     "moving_time_s": 3700,
     "pace_s_per_km": 369.5,
     "url": "https://www.strava.com/activities/21048314867"
+  },
+  "2026-11-21": {
+    "avg_hr": 149.1,
+    "distance_km": 10.11,
+    "max_hr": 174,
+    "moving_time_s": 3727,
+    "pace_s_per_km": 368.5,
+    "url": "https://www.strava.com/activities/21068787011"
   }
 }
